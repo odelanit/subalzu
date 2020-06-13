@@ -20,8 +20,11 @@
     <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
+
 </head>
+
 <body>
+
 <!-- Begin page -->
 <div id="wrapper">
 
@@ -61,7 +64,7 @@
             </ul>
 
             <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
-                <li class="nav-item d-none d-lg-block">
+                <li class="nav-item active d-none d-lg-block">
                     <a href="/company" class="nav-link">정보보기</a>
                 </li>
                 <li class="d-none d-sm-block">
@@ -333,12 +336,107 @@
                     <div class="col-md-12">
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Shreyu</a></li>
-                                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Starter</li>
+                                <li class="breadcrumb-item"><a href="#">Pando</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">기업정보 보기</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">Starter Page</h4>
+                        <h4 class="mb-1 mt-0">기업정보 보기</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="header-title mt-0">기업정보</h4>
+                                <hr>
+                                <form class="mt-5">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">사업자명</label>
+                                        <div class="col-10">
+                                            <input class="form-control" type="text" name="username" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">사업자등록번호</label>
+                                        <div class="col-10">
+                                            <input class="form-control" type="text" name="user_number" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">대표자</label>
+                                        <div class="col-10">
+                                            <input class="form-control" type="text" name="represent" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label class="col-form-label col-2">사업장 소재지</label>
+                                        <div class="col-10">
+                                            <input class="form-control" type="text" readonly name="address_number">
+                                            <input class="form-control mt-2" type="text" readonly name="address1">
+                                            <input class="form-control mt-2" type="text" name="address2">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-4">사업종류</label>
+                                                <div class="col-8">
+                                                    <input class="form-control" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-4">사업종목</label>
+                                                <div class="col-8">
+                                                    <input class="form-control" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-4">사업장 연락처</label>
+                                                <div class="col-8">
+                                                    <input class="form-control" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-4">이메일</label>
+                                                <div class="col-8">
+                                                    <input class="form-control" type="text" name="email">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-4">FAX 번호</label>
+                                                <div class="col-8">
+                                                    <input class="form-control" type="text" name="fax">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="header-title mt-0">청산계좌 정보</h4>
+                                <hr>
+                                <form class="form-horizontal">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">청산계좌 정보</label>
+                                        <div class="col-10">
+                                            <input class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

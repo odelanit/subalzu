@@ -20,8 +20,11 @@
     <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
+
 </head>
+
 <body>
+
 <!-- Begin page -->
 <div id="wrapper">
 
@@ -333,12 +336,43 @@
                     <div class="col-md-12">
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Shreyu</a></li>
-                                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Starter</li>
+                                <li class="breadcrumb-item"><a href="/">Pando</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">Starter Page</h4>
+                        <h4 class="mb-1 mt-0">Dashboard</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-0 mt-0 header-title">판매 진행 현황(한달기준)</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mt-0 mb-0 header-title">체크항목</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mt-0 mb-0 header-title">주문현황</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mt-0 mb-0 header-title">공지사항 및 문의사항</h5>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> <!-- container-fluid -->
@@ -351,7 +385,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
