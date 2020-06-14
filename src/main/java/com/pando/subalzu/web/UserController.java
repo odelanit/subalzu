@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class UserController {
     @Autowired
@@ -54,5 +56,12 @@ public class UserController {
             model.addAttribute("message", "You have been logged out successfully.");
         }
         return "login";
+    }
+
+    @GetMapping("/employees")
+    public String employeeList(Model model) {
+        List<User> employees = userService.findAll();
+        model.addAttribute("employees", employees);
+        return "employees";
     }
 }

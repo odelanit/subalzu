@@ -334,10 +334,46 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Blank</li>
+                                <li class="breadcrumb-item active" aria-current="page">직원 관리</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">Starter Page</h4>
+                        <h4 class="mb-1 mt-0">직원관리</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>생성일</th>
+                                            <th>담당자</th>
+                                            <th>담당거래처</th>
+                                            <th>아이디</th>
+                                            <th>비고</th>
+                                            <th>담당자 삭제</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach var="employee" items="${employees}">
+                                            <tr>
+                                                <td>${employee.id}</td>
+                                                <td>${employee.createdAt}</td>
+                                                <td>${employee.fullName}</td>
+                                                <td></td>
+                                                <td>${employee.username}</td>
+                                                <td>${employee.bio}</td>
+                                                <td></td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

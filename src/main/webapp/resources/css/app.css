@@ -3719,7 +3719,7 @@ body.authentication-bg {
     width: 22px
 }
 
-.authentication-form .form-group.required label:after {
+.form-group.required > label:after {
     content: '*';
     color: #ff5c75;
     margin-left: 3px;

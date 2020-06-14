@@ -35,7 +35,7 @@
             <a href="/" class="navbar-brand mr-0 mr-md-2 logo">
                         <span class="logo-lg">
                             <img src="${contextPath}/resources/images/logo.png" alt="" height="24"/>
-                            <span class="d-inline h5 ml-1 text-logo">Shreyu</span>
+                            <span class="d-inline h5 ml-1 text-logo">Pando</span>
                         </span>
                 <span class="logo-sm">
                             <img src="${contextPath}/resources/images/logo.png" alt="" height="24">
@@ -92,8 +92,10 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Shreyu"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Shreyu"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
+                 alt="Shreyu"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
+                 alt="Shreyu"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -336,7 +338,7 @@
                     <div class="col-md-12">
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Pando</a></li>
+                                <li class="breadcrumb-item"><a href="/">Pando</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">기업정보 보기</li>
                             </ol>
                         </nav>
@@ -345,98 +347,207 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="header-title mt-0">기업정보</h4>
-                                <hr>
-                                <form class="mt-5">
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">사업자명</label>
-                                        <div class="col-10">
-                                            <input class="form-control" type="text" name="username" required>
+                        <c:if test="${message != null}" >
+                            <div class="alert alert-success">
+                                <span>${message}</span>
+                            </div>
+                        </c:if>
+                        <%--@elvariable id="companyForm" type="com.pando.subalzu.model.Company"--%>
+                        <form:form method="post" modelAttribute="companyForm">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="header-title mt-0">기업정보</h4>
+                                    <hr>
+                                    <spring:bind path="id">
+                                        <form:hidden path="id"/>
+                                    </spring:bind>
+                                    <spring:bind path="ownerName">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-2">사업자명</label>
+                                            <div class="col-10">
+                                                <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                            type="text" path="ownerName"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="ownerName"/>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">사업자등록번호</label>
-                                        <div class="col-10">
-                                            <input class="form-control" type="text" name="user_number" required>
+                                    </spring:bind>
+                                    <spring:bind path="registeredNumber">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-2">사업자등록번호</label>
+                                            <div class="col-10">
+                                                <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                            type="text" path="registeredNumber"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="registeredNumber"/>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">대표자</label>
-                                        <div class="col-10">
-                                            <input class="form-control" type="text" name="represent" required>
+                                    </spring:bind>
+                                    <spring:bind path="represent">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-2">대표자</label>
+                                            <div class="col-10">
+                                                <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                            type="text" path="represent"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="represent"/>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </spring:bind>
                                     <div class="form-group row align-items-center">
                                         <label class="col-form-label col-2">사업장 소재지</label>
                                         <div class="col-10">
-                                            <input class="form-control" type="text" readonly name="address_number">
-                                            <input class="form-control mt-2" type="text" readonly name="address1">
-                                            <input class="form-control mt-2" type="text" name="address2">
+                                            <spring:bind path="addressNumber">
+                                                <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}"
+                                                            path="addressNumber"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="addressNumber"/>
+                                                </div>
+                                            </spring:bind>
+                                            <spring:bind path="addressLine1">
+                                                <form:input
+                                                        cssClass="form-control mt-2 ${status.error ? 'is-invalid' : ''}"
+                                                        path="addressLine1"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="addressLine1"/>
+                                                </div>
+                                            </spring:bind>
+                                            <spring:bind path="addressLine2">
+                                                <form:input
+                                                        cssClass="form-control mt-2 ${status.error ? 'is-invalid' : ''}"
+                                                        path="addressLine2"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="addressLine2"/>
+                                                </div>
+                                            </spring:bind>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-4">사업종류</label>
-                                                <div class="col-8">
-                                                    <input class="form-control" type="text">
+                                            <spring:bind path="businessTypes">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-4">사업종류</label>
+                                                    <div class="col-8">
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessTypes"/>
+                                                        <div class="invalid-feedback">
+                                                            <form:errors path="businessTypes"/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </spring:bind>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-4">사업종목</label>
-                                                <div class="col-8">
-                                                    <input class="form-control" type="text">
+                                            <spring:bind path="businessType">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-4">사업종목</label>
+                                                    <div class="col-8">
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessType"/>
+                                                        <div class="invalid-feedback">
+                                                            <form:errors path="businessType"/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </spring:bind>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-4">사업장 연락처</label>
-                                                <div class="col-8">
-                                                    <input class="form-control" type="text">
+                                            <spring:bind path="phone">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-4">사업장 연락처</label>
+                                                    <div class="col-8">
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="phone"/>
+                                                        <div class="invalid-feedback">
+                                                            <form:errors path="phone"/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </spring:bind>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-4">이메일</label>
-                                                <div class="col-8">
-                                                    <input class="form-control" type="text" name="email">
+                                            <spring:bind path="email">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-4">이메일</label>
+                                                    <div class="col-8">
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="email"/>
+                                                        <div class="invalid-feedback">
+                                                            <form:errors path="email"/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </spring:bind>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-4">FAX 번호</label>
-                                                <div class="col-8">
-                                                    <input class="form-control" type="text" name="fax">
+                                            <spring:bind path="fax">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-4">FAX 번호</label>
+                                                    <div class="col-8">
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="fax"/>
+                                                        <div class="invalid-feedback">
+                                                            <form:errors path="fax"/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </spring:bind>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="header-title mt-0">청산계좌 정보</h4>
-                                <hr>
-                                <form class="form-horizontal">
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">청산계좌 정보</label>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="header-title mt-0">청산계좌 정보</h4>
+                                    <hr>
+                                    <div class="row align-items-center">
+                                        <div class="col-2">
+                                            <label>청산계좌 정보</label>
+                                        </div>
                                         <div class="col-10">
-                                            <input class="form-control" type="text">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <spring:bind path="bankName">
+                                                        <div class="form-group">
+                                                            <label>은행명</label>
+                                                            <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="bankName"/>
+                                                            <div class="invalid-feedback">
+                                                                <form:errors path="bankName"/>
+                                                            </div>
+                                                        </div>
+                                                    </spring:bind>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <spring:bind path="bankNumber">
+                                                        <div class="form-group">
+                                                            <label>은행계좌</label>
+                                                            <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="bankNumber"/>
+                                                            <div class="invalid-feedback">
+                                                                <form:errors path="bankNumber"/>
+                                                            </div>
+                                                        </div>
+                                                    </spring:bind>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <spring:bind path="accountHolder">
+                                                        <div class="form-group">
+                                                            <label>예금주</label>
+                                                            <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="accountHolder"/>
+                                                            <div class="invalid-feedback">
+                                                                <form:errors path="accountHolder"/>
+                                                            </div>
+                                                        </div>
+                                                    </spring:bind>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">저장하기</button>
+                            </div>
+                        </form:form>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

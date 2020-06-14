@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -89,8 +90,8 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Shreyu"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Shreyu"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -334,10 +335,68 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Blank</li>
+                                <li class="breadcrumb-item">서비스관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">공지사항</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">Starter Page</h4>
+                        <h4 class="mb-1 mt-0">공지사항</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <a class="btn btn-outline-primary" href="/notifications/create"><i data-feather="plus" class="icon-xs"></i>공지사항 등록</a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive mt-3">
+                                    <table class="table">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>발송타입<br>(브랜드/거래처수)</th>
+                                            <th>제목</th>
+                                            <th>팝업공개</th>
+                                            <th>등록일</th>
+                                            <th>삭제</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach var="notification" items="${notifications}">
+                                            <tr>
+                                                <td>${notification.id}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${notification.notificationType == 0}">전체발송</c:when>
+                                                        <c:when test="${notification.notificationType == 1}">거래처별 발송</c:when>
+                                                        <c:when test="${notification.notificationType == 2}">브랜드별 발송</c:when>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    ${notification.title}
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${notification.isPopup == true}">공개</c:when>
+                                                        <c:when test="${notification.isPopup == false}">비공개</c:when>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    ${notification.createdAt.format(formatter)}
+                                                </td>
+                                                <td><a class="btn btn-sm btn-outline-danger" href="/notifications/${notification.id}/delete"><i data-feather="trash" class="icon-xs"></i>삭제</a></td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

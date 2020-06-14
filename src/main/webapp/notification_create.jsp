@@ -281,7 +281,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 서비스 관리 </span>
@@ -289,8 +289,8 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/notifications">공지사항</a>
+                            <li class="mm-active">
+                                <a class="active" href="/notifications">공지사항</a>
                             </li>
                             <li>
                                 <a href="#">고객문의</a>
@@ -334,10 +334,89 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Blank</li>
+                                <li class="breadcrumb-item">서비스 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">공지사항 등록</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">Starter Page</h4>
+                        <h4 class="mb-1 mt-0">공지사항 등록</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h4 class="header-title">기본 정보</h4>
+                                    </div>
+                                    <div class="col text-right">
+                                        <p><span class="text-danger">*</span>필수 입력사항입니다.</p>
+                                    </div>
+                                </div>
+                                <hr />
+                                <%--@elvariable id="notificationForm" type="com.pando.subalzu.model.Notification"--%>
+                                <form:form method="post" modelAttribute="notificationForm">
+                                    <spring:bind path="notificationType">
+                                        <div class="form-group row required align-items-center">
+                                            <label class="col-form-label col-2">발송타입</label>
+                                            <div class="col-10">
+                                                <div class="form-check form-check-inline">
+                                                    <form:radiobutton cssClass="form-check-input" path="notificationType" id="type1" value="0" />
+                                                    <label class="form-check-label" for="type1">전체발송</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <form:radiobutton cssClass="form-check-input" path="notificationType" value="1" id="type2" />
+                                                    <label class="form-check-label" for="type2">거래처 발송</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <form:radiobutton cssClass="form-check-input" path="notificationType" value="2" id="type3" />
+                                                    <label class="form-check-label" for="type3">브랜드별 발송</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                    <spring:bind path="isPopup">
+                                        <div class="form-group row align-items-center">
+                                            <label class="col-form-label col-2">팝업 공개</label>
+                                            <div class="col-10">
+                                                <div class="form-check">
+                                                    <form:checkbox path="isPopup" cssClass="form-check-input" id="is-popup" value="true" />
+                                                    <label class="form-check-label" for="is-popup">선택시 공지사항이 팝업으로 노출됩니다.</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                    <spring:bind path="title">
+                                        <div class="form-group row align-items-center required">
+                                            <label class="col-form-label col-2">제목</label>
+                                            <div class="col-10">
+                                                <form:input path="title" cssClass="form-control ${status.error ? 'is-invalid' : ''}" />
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="title"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                    <spring:bind path="description">
+                                        <div class="form-group row align-items-center required">
+                                            <label class="col-form-label col-2">내용</label>
+                                            <div class="col-10">
+                                                <form:textarea path="description" cssClass="form-control ${status.error ? 'is-invalid' : ''}" />
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="description"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                    <div class="form-group row">
+                                        <div class="col-10 offset-2">
+                                            <button class="btn btn-primary">등록하기</button>
+                                            <a href="/notifications" class="btn btn-secondary">목록으로</a>
+                                        </div>
+                                    </div>
+                                </form:form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

@@ -35,7 +35,7 @@
             <a href="/" class="navbar-brand mr-0 mr-md-2 logo">
                         <span class="logo-lg">
                             <img src="${contextPath}/resources/images/logo.png" alt="" height="24"/>
-                            <span class="d-inline h5 ml-1 text-logo">Shreyu</span>
+                            <span class="d-inline h5 ml-1 text-logo">홈</span>
                         </span>
                 <span class="logo-sm">
                             <img src="${contextPath}/resources/images/logo.png" alt="" height="24">
@@ -336,7 +336,7 @@
                     <div class="col-md-12">
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="/">Pando</a></li>
+                                <li class="breadcrumb-item"><a href="/">홈</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                             </ol>
                         </nav>
