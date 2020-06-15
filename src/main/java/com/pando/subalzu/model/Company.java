@@ -41,6 +41,10 @@ public class Company {
 
     private String accountHolder;
 
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -181,5 +185,13 @@ public class Company {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -1,7 +1,7 @@
 package com.pando.subalzu.validator;
 
 import com.pando.subalzu.model.Company;
-import com.pando.subalzu.service.CompanyService;
+import com.pando.subalzu.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 @Component
 public class CompanyValidator implements Validator {
     @Autowired
-    private CompanyService companyService;
+    private CompanyRepository companyRepository;
 
     @Override
     public boolean supports(Class<?> aClass) {

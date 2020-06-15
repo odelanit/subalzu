@@ -56,13 +56,13 @@
                     <a href="#" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">거래처 등록</a>
+                    <a href="/clients/create" class="nav-link">거래처 등록</a>
                 </li>
             </ul>
 
             <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="/company" class="nav-link">정보보기</a>
+                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
                 </li>
                 <li class="d-none d-sm-block">
                     <div class="app-search">
@@ -169,7 +169,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/prices/group">단가 그룹 관리</a>
+                                <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
                                 <a href="/prices/special">특 단가 관리</a>
@@ -210,7 +210,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/customers">거래처 목록</a>
+                                <a href="/clients">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>

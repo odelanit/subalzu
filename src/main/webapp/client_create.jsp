@@ -62,7 +62,8 @@
 
             <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                            value="${pageContext.request.remoteUser}"/> 정보보기</a>
                 </li>
                 <li class="d-none d-sm-block">
                     <div class="app-search">
@@ -89,8 +90,10 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
+                 alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
+                 alt="Pando"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -201,7 +204,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 거래처 관리 </span>
@@ -209,7 +212,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li>
+                            <li class="mm-active">
                                 <a href="/clients">거래처 목록</a>
                             </li>
                             <li>
@@ -281,7 +284,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 서비스 관리 </span>
@@ -289,7 +292,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li class="mm-active">
+                            <li>
                                 <a href="/notifications">공지사항</a>
                             </li>
                             <li>
@@ -334,89 +337,163 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item">서비스 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">공지사항 등록</li>
+                                <li class="breadcrumb-item"><a href="/clients">거래처 관리</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">거래처 등록</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">공지사항 등록</h4>
+                        <h4 class="mb-1 mt-0">거래처 등록</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h4 class="header-title">기본 정보</h4>
+                        <%--@elvariable id="clientForm" type="com.pando.subalzu.model.Client"--%>
+                        <form:form modelAttribute="clientForm" method="post">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        거래처 정보
+                                        <span class="font-size-12 float-right"><span class="text-danger">*</span>필수 입력사항입니다.</span>
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">거래처 코드</label>
+                                        <div class="col-10">
+
+                                        </div>
                                     </div>
-                                    <div class="col text-right">
-                                        <p><span class="text-danger">*</span>필수 입력사항입니다.</p>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-2">거래처명</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-2">거래처 업종</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">브랜드 선택</label>
+                                        <div class="col-10">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-2">배송지</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">배송 유형</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">FAX 번호</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-2">이메일</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-2">거래처 연락처(아이디)</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-2">거래처 아이디/비밀번호</label>
+                                        <div class="col-10">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-2">거래처 담당자/휴대전화 번호</label>
+                                        <div class="col-10">
+
+                                        </div>
                                     </div>
                                 </div>
-                                <hr />
-                                <%--@elvariable id="notificationForm" type="com.pando.subalzu.model.Notification"--%>
-                                <form:form method="post" modelAttribute="notificationForm">
-                                    <spring:bind path="notificationType">
-                                        <div class="form-group row required align-items-center">
-                                            <label class="col-form-label col-2">발송타입</label>
-                                            <div class="col-10">
-                                                <div class="form-check form-check-inline">
-                                                    <form:radiobutton cssClass="form-check-input" path="notificationType" id="type1" value="0" />
-                                                    <label class="form-check-label" for="type1">전체발송</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <form:radiobutton cssClass="form-check-input" path="notificationType" value="1" id="type2" />
-                                                    <label class="form-check-label" for="type2">거래처 발송</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <form:radiobutton cssClass="form-check-input" path="notificationType" value="2" id="type3" />
-                                                    <label class="form-check-label" for="type3">브랜드별 발송</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="isPopup">
-                                        <div class="form-group row align-items-center">
-                                            <label class="col-form-label col-2">팝업 공개</label>
-                                            <div class="col-10">
-                                                <div class="form-check">
-                                                    <form:checkbox path="isPopup" cssClass="form-check-input" id="is-popup" value="true" />
-                                                    <label class="form-check-label" for="is-popup">선택시 공지사항이 팝업으로 노출됩니다.</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="title">
-                                        <div class="form-group row align-items-center required">
-                                            <label class="col-form-label col-2">제목</label>
-                                            <div class="col-10">
-                                                <form:input path="title" cssClass="form-control ${status.error ? 'is-invalid' : ''}" />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="title"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="description">
-                                        <div class="form-group row align-items-center required">
-                                            <label class="col-form-label col-2">내용</label>
-                                            <div class="col-10">
-                                                <form:textarea path="description" cssClass="form-control ${status.error ? 'is-invalid' : ''}" />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="description"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <div class="form-group row">
-                                        <div class="col-10 offset-2">
-                                            <button class="btn btn-primary">등록하기</button>
-                                            <a href="/notifications" class="btn btn-secondary">목록으로</a>
-                                        </div>
-                                    </div>
-                                </form:form>
                             </div>
-                        </div>
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        배송/영업 담당자 정보
+                                        <span class="font-size-12 float-right"><span class="text-danger">*</span>필수 입력사항입니다.</span>
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        단가 그룹
+                                        <span class="font-size-12 float-right">거래처에서 선택된 단가속성의 금액으로 물건을 주문할수 있습니다.</span>
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        할인/할증율 등급
+                                        <span class="font-size-12 float-right">거래처에서 등급별 할인된 가격으로 상품 구매가 가능합니다.</span>
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        결제수단 설정
+                                        <span class="font-size-12 float-right">거래처에서 주문시, 설정된 결제수단으로 결제할수 있습니다.</span>
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        외상잔액 한도 설정
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="header-title">
+                                        수입물품 유통이력 정보
+                                        <span class="font-size-12 float-right"></span>
+                                    </h5>
+                                    <hr>
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form:form>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

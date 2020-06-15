@@ -41,6 +41,9 @@ public class User {
     @ManyToMany
     private Set<Role> roles;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private Company company;
+
     @ManyToMany
     private Set<Permission> permissions;
 
@@ -130,5 +133,13 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

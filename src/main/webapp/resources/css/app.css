@@ -810,6 +810,14 @@ body {
     margin-bottom: 0
 }
 
+.page-title .breadcrumb .breadcrumb-item a {
+    color: #6c757d;
+}
+
+.page-title .breadcrumb .breadcrumb-item.active {
+    color: #5369f8;
+}
+
 .page-title h4 {
     font-size: 19px
 }
