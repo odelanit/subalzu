@@ -47,6 +47,9 @@ public class User {
     @ManyToMany
     private Set<Permission> permissions;
 
+    @OneToOne(mappedBy = "owner")
+    private Supplier supplier;
+
     public Long getId() {
         return id;
     }
@@ -141,5 +144,13 @@ public class User {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 }

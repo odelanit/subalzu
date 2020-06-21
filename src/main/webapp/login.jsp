@@ -38,8 +38,6 @@
                                         <h3 class="d-inline align-middle ml-1 text-logo">Pando</h3>
                                     </a>
                                 </div>
-                                <h6 class="h5 mb-0 mt-4">Welcome back!</h6>
-                                <p class="text-muted mt-1 mb-4">Enter your username and password to access admin panel.</p>
 
                                 <c:if test="${error != null}" >
                                     <div class="alert alert-danger">
@@ -56,23 +54,16 @@
                                 <form method="POST" action="${contextPath}/login" class="authentication-form">
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                     <div class="form-group">
-                                        <label class="form-control-label">Username</label>
-                                        <input name="username" type="text" class="form-control" placeholder="Username"
+                                        <label class="form-control-label">ID</label>
+                                        <input name="username" type="text" class="form-control" placeholder="ID"
                                                autofocus="true"/>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-control-label">Password</label>
-                                        <input name="password" type="password" class="form-control" placeholder="Enter your password"/>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input"
-                                                   id="checkbox-signin" checked>
-                                            <label class="custom-control-label" for="checkbox-signin">Remember me</label>
-                                        </div>
+                                        <label class="form-control-label">비밀번호</label>
+                                        <input name="password" type="password" class="form-control" placeholder="비밀번호"/>
                                     </div>
                                     <div class="form-group mb-0">
-                                        <button class="btn btn-primary btn-block" type="submit">Log In</button>
+                                        <button class="btn btn-primary btn-block" type="submit">가입</button>
                                     </div>
                                 </form>
                             </div>
@@ -86,7 +77,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-12 text-center">
-                        <p class="text-muted">Don't have an account? <a href="${contextPath}/register" class="text-primary font-weight-bold ml-1">Sign Up</a></p>
+                        <p class="text-muted"><a href="${contextPath}/register" class="text-primary font-weight-bold ml-1">계정 등록</a></p>
                     </div> <!-- end col -->
                 </div>
             </div>

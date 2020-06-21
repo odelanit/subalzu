@@ -53,7 +53,7 @@
 
             <ul class="navbar-nav mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">신규주문 등록</a>
+                    <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="#" class="nav-link">상품 등록</a>
@@ -117,10 +117,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/demands">주문 목록</a>
+                                <a href="/orders">주문 목록</a>
                             </li>
                             <li>
-                                <a href="/product-demands">상품별 주문 목록</a>
+                                <a href="/product-orders">상품별 주문 목록</a>
                             </li>
                             <li>
                                 <a href="/returns">반품 내역</a>
@@ -139,7 +139,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/orders">발주 관리</a>
+                                <a href="/shipping">발주 관리</a>
                             </li>
                             <li>
                                 <a href="/suppliers">매입처 관리</a>
@@ -363,8 +363,8 @@
                                     </spring:bind>
                                     <spring:bind path="ownerName">
                                         <div class="form-group row">
-                                            <label class="col-form-label col-2">사업자명</label>
-                                            <div class="col-10">
+                                            <label class="col-form-label col-lg-2">사업자명</label>
+                                            <div class="col-lg-10">
                                                 <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
                                                             type="text" path="ownerName"/>
                                                 <div class="invalid-feedback">
@@ -375,8 +375,8 @@
                                     </spring:bind>
                                     <spring:bind path="registeredNumber">
                                         <div class="form-group row">
-                                            <label class="col-form-label col-2">사업자등록번호</label>
-                                            <div class="col-10">
+                                            <label class="col-form-label col-lg-2">사업자등록번호</label>
+                                            <div class="col-lg-10">
                                                 <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
                                                             type="text" path="registeredNumber"/>
                                                 <div class="invalid-feedback">
@@ -387,8 +387,8 @@
                                     </spring:bind>
                                     <spring:bind path="represent">
                                         <div class="form-group row">
-                                            <label class="col-form-label col-2">대표자</label>
-                                            <div class="col-10">
+                                            <label class="col-form-label col-lg-2">대표자</label>
+                                            <div class="col-lg-10">
                                                 <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
                                                             type="text" path="represent"/>
                                                 <div class="invalid-feedback">
@@ -398,11 +398,16 @@
                                         </div>
                                     </spring:bind>
                                     <div class="form-group row align-items-center">
-                                        <label class="col-form-label col-2">사업장 소재지</label>
-                                        <div class="col-10">
+                                        <label class="col-form-label col-lg-2">사업장 소재지</label>
+                                        <div class="col-lg-10">
                                             <spring:bind path="addressNumber">
-                                                <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}"
-                                                            path="addressNumber"/>
+                                                <div class="input-group">
+                                                    <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                path="addressNumber"/>
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary">주소검색</button>
+                                                    </div>
+                                                </div>
                                                 <div class="invalid-feedback">
                                                     <form:errors path="addressNumber"/>
                                                 </div>
@@ -429,8 +434,8 @@
                                         <div class="col-md-6">
                                             <spring:bind path="businessTypes">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-4">사업종류</label>
-                                                    <div class="col-8">
+                                                    <label class="col-form-label col-lg-4">사업종류</label>
+                                                    <div class="col-lg-8">
                                                         <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessTypes"/>
                                                         <div class="invalid-feedback">
                                                             <form:errors path="businessTypes"/>
@@ -442,8 +447,8 @@
                                         <div class="col-md-6">
                                             <spring:bind path="businessType">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-4">사업종목</label>
-                                                    <div class="col-8">
+                                                    <label class="col-form-label col-lg-4">사업종목</label>
+                                                    <div class="col-lg-8">
                                                         <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessType"/>
                                                         <div class="invalid-feedback">
                                                             <form:errors path="businessType"/>
@@ -457,8 +462,8 @@
                                         <div class="col-md-6">
                                             <spring:bind path="phone">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-4">사업장 연락처</label>
-                                                    <div class="col-8">
+                                                    <label class="col-form-label col-lg-4">사업장 연락처</label>
+                                                    <div class="col-lg-8">
                                                         <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="phone"/>
                                                         <div class="invalid-feedback">
                                                             <form:errors path="phone"/>
@@ -470,8 +475,8 @@
                                         <div class="col-md-6">
                                             <spring:bind path="email">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-4">이메일</label>
-                                                    <div class="col-8">
+                                                    <label class="col-form-label col-lg-4">이메일</label>
+                                                    <div class="col-lg-8">
                                                         <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="email"/>
                                                         <div class="invalid-feedback">
                                                             <form:errors path="email"/>
@@ -483,8 +488,8 @@
                                         <div class="col-md-6">
                                             <spring:bind path="fax">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-4">FAX 번호</label>
-                                                    <div class="col-8">
+                                                    <label class="col-form-label col-lg-4">FAX 번호</label>
+                                                    <div class="col-lg-8">
                                                         <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="fax"/>
                                                         <div class="invalid-feedback">
                                                             <form:errors path="fax"/>
@@ -501,10 +506,10 @@
                                     <h4 class="header-title mt-0">청산계좌 정보</h4>
                                     <hr>
                                     <div class="row align-items-center">
-                                        <div class="col-2">
+                                        <div class="col-lg-2">
                                             <label>청산계좌 정보</label>
                                         </div>
-                                        <div class="col-10">
+                                        <div class="col-lg-10">
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <spring:bind path="bankName">

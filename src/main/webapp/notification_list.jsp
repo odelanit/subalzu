@@ -51,7 +51,7 @@
 
             <ul class="navbar-nav mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">신규주문 등록</a>
+                    <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="#" class="nav-link">상품 등록</a>
@@ -113,10 +113,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/demands">주문 목록</a>
+                                <a href="/orders">주문 목록</a>
                             </li>
                             <li>
-                                <a href="/product-demands">상품별 주문 목록</a>
+                                <a href="/product-orders">상품별 주문 목록</a>
                             </li>
                             <li>
                                 <a href="/returns">반품 내역</a>
@@ -135,7 +135,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/orders">발주 관리</a>
+                                <a href="/shipping">발주 관리</a>
                             </li>
                             <li>
                                 <a href="/suppliers">매입처 관리</a>

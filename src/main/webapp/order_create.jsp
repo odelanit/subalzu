@@ -7,7 +7,7 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8"/>
-    <title>Pando</title>
+    <title>Pando Subalzu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="" name="description"/>
     <meta content="" name="author"/>
@@ -20,11 +20,8 @@
     <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
-
 </head>
-
 <body>
-
 <!-- Begin page -->
 <div id="wrapper">
 
@@ -35,7 +32,7 @@
             <a href="/" class="navbar-brand mr-0 mr-md-2 logo">
                         <span class="logo-lg">
                             <img src="${contextPath}/resources/images/logo.png" alt="" height="24"/>
-                            <span class="d-inline h5 ml-1 text-logo">홈</span>
+                            <span class="d-inline h5 ml-1 text-logo">Pando</span>
                         </span>
                 <span class="logo-sm">
                             <img src="${contextPath}/resources/images/logo.png" alt="" height="24">
@@ -92,8 +89,8 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Shreyu"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Shreyu"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -106,7 +103,7 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <ul class="metismenu" id="menu-bar">
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 주문 관리 </span>
@@ -114,7 +111,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li>
+                            <li class="mm-active">
                                 <a href="/orders">주문 목록</a>
                             </li>
                             <li>
@@ -337,153 +334,118 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                <li class="breadcrumb-item"><a href="/orders">주문 관리</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">신규주문 등록</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">Dashboard</h4>
+                        <h4 class="mb-1 mt-0">신규주문 등록</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6">
-                        <h5 class="header-title">판매 진행 현황(한달기준)</h5>
-                        <div class="row">
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body">
-                                                <span class="text-muted text-uppercase font-size-12 font-weight-bold">출고전</span>
-                                                <h2 class="mb-0">24</h2>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <div id="today-revenue-chart" class="apex-charts"></div>
-                                                <span class="text-success font-weight-bold font-size-13"><i
-                                                        class='uil uil-arrow-up'></i> 10.21%</span>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">주문 정보</h5>
+                                <form>
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-md-2">거래처 선택</label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <input class="form-control" type="text" placeholder="거래처명을 입력해주세요.">
+                                                <div class="input-group-append">
+                                                    <button type="button" data-toggle="modal" data-target="#supplier-modal" class="btn btn-outline-primary">거래처 선택</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body">
-                                                <span class="text-muted text-uppercase font-size-12 font-weight-bold">출고완료</span>
-                                                <h2 class="mb-0">40</h2>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">배송유형</label>
+                                                <div class="col-md-8 align-self-center">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="customRadioInline1" class="custom-control-input">
+                                                        <label class="custom-control-label" for="customRadioInline1">직배송</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="customRadioInline2" class="custom-control-input">
+                                                        <label class="custom-control-label" for="customRadioInline2">택배 배송</label>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="align-self-center">
-                                                <div id="today-product-sold-chart" class="apex-charts"></div>
-                                                <span class="text-danger font-weight-bold font-size-13"><i
-                                                        class='uil uil-arrow-down'></i> 5.05%</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">배송요청일</label>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" id="request-date">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body">
-                                                <span class="text-muted text-uppercase font-size-12 font-weight-bold">출고거절</span>
-                                                <h2 class="mb-0">2</h2>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group required row">
+                                                <label class="col-form-label col-md-4">배송 담당자</label>
+                                                <div class="col-md-8 align-self-center">
+                                                    <select class="form-control">
+                                                        <option value="">-- 선택 --</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div class="align-self-center">
-                                                <div id="today-new-customer-chart" class="apex-charts"></div>
-                                                <span class="text-success font-weight-bold font-size-13"><i
-                                                        class='uil uil-arrow-up'></i> 25.16%</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">영업 담당자</label>
+                                                <div class="col-md-8">
+                                                    <select class="form-control">
+                                                        <option value="">-- 선택 --</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <h5 class="header-title">체크항목</h5>
-                        <div class="card">
-                            <div class="card-body p-0">
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <span class="text-muted">재고부족</span>
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">691건</h4>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-2">요청사항</label>
+                                        <div class="col-md-10">
+                                            <textarea class="form-control" rows="3"></textarea>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5 class="header-title">주문현황</h5>
-                        <div class="card">
-                            <div class="card-body p-0">
-                                <h5 class="card-title header-title border-bottom p-3 mb-0">당일</h5>
-                                <!-- stat 1 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">13건</h4>
-                                        <span class="text-muted">주문</span>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-2">메모</label>
+                                        <div class="col-md-10">
+                                            <textarea class="form-control" rows="3"></textarea>
+                                        </div>
                                     </div>
-                                    <p class="h3 align-self-center">
-                                        552,720원
-                                    </p>
+                                </form>
+                                <hr>
+                                <h5 class="card-title">
+                                    상품 목록
+                                    <button class="btn btn-sm btn-outline-primary float-right">상품추가</button>
+                                </h5>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>상품코드</th>
+                                            <th>대표매입처</th>
+                                            <th>상품명</th>
+                                            <th>규격(단위)</th>
+                                            <th>제조사(원산지)</th>
+                                            <th>수량</th>
+                                            <th>단가(원)</th>
+                                            <th>공급가액</th>
+                                            <th>부가세</th>
+                                            <th>합계금액</th>
+                                            <th>삭제</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
                                 </div>
-
-                                <!-- stat 2 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">2건</h4>
-                                        <span class="text-muted">취소</span>
-                                    </div>
-                                    <p class="h3 align-self-center">
-                                        58,890원
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-2">
-                            <div class="card-body p-0">
-                                <h5 class="card-title header-title border-bottom p-3 mb-0">한단</h5>
-                                <!-- stat 1 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">58건</h4>
-                                        <span class="text-muted">주문</span>
-                                    </div>
-                                    <p class="h3 align-self-center">
-                                        2,836,859원
-                                    </p>
-                                </div>
-
-                                <!-- stat 2 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">10건</h4>
-                                        <span class="text-muted">취소</span>
-                                    </div>
-                                    <p class="h3 align-self-center">
-                                        271,264원
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h5 class="header-title">공지사항 및 문의사항</h5>
-                        <div class="card">
-                            <div class="card-body p-0">
-                                <ul class="nav nav-tabs">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" data-toggle="tab" href="#notification-tab">공지사항</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane fade show active" id="notification-tab">
-                                        공지 사항 리스트
-                                    </div>
+                                <div class="form-group text-center">
+                                    <a href="/orders" class="btn btn-dark">목록으로</a>
+                                    <button class="btn btn-outline-primary">등록하기</button>
                                 </div>
                             </div>
                         </div>
@@ -499,7 +461,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2020 &copy; Pando. All Rights Reserved.
+                        2019 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
@@ -514,15 +476,30 @@
 
 
 </div>
+<div class="modal fade" id="supplier-modal">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    직배송 상품 검색 및 선택
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                <button class="btn btn-primary">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/js/vendor.min.js"></script>
-<script src="${contextPath}/resources/libs/moment/moment.min.js"></script>
-<script src="${contextPath}/resources/libs/apexcharts/apexcharts.min.js"></script>
-<script src="${contextPath}/resources/libs/flatpickr/flatpickr.min.js"></script>
-
-<!-- page js -->
-<script src="${contextPath}/resources/js/pages/dashboard.init.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 
 </body>
