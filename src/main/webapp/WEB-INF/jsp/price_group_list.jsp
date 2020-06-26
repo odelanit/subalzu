@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -106,7 +106,7 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <ul class="metismenu" id="menu-bar">
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 주문 관리 </span>
@@ -114,7 +114,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li class="mm-active">
+                            <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
                             <li>
@@ -124,7 +124,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -175,10 +175,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -191,13 +191,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -337,83 +337,87 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item"><a href="/orders">주문 목록</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">거래명세표</li>
+                                <li class="breadcrumb-item">단가 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">단가 그룹 관리</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">거래명세표</h4>
+                        <h4 class="mb-1 mt-0">단가 그룹 관리</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <div class="card" style="height: 69vh;">
+                    <div class="col-md-12">
+                        <div class="card">
                             <div class="card-body">
-                                <div class="slimscroll">
-                                    <table class="table-bordered table">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-light">
                                         <tr>
-                                            <td class="bg-light" style="text-align: center; vertical-align: middle;" rowspan="5">공급자</td>
-                                            <td>사업자등록번호</td>
-                                            <td>123-45-67</td>
-                                            <td class="bg-light" style="text-align: center; vertical-align: middle;" rowspan="5">공급받는자</td>
-                                            <td>사업자등록번호</td>
-                                            <td>123-45-67</td>
+                                            <th>#</th>
+                                            <th>단가 그룹 명</th>
+                                            <th>추가/수정/삭제</th>
                                         </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach var="priceGroup" items="${priceGroups}">
+                                            <tr>
+                                                <form method="post" action="/price-groups/${priceGroup.id}/update">
+                                                    <td>${priceGroup.id}</td>
+                                                    <td>
+                                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                        <input class="form-control" required name="name" value="${priceGroup.name}">
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-outline-warning">수정</button>
+                                                        <a class="btn btn-outline-danger" href="/price-groups/${priceGroup.id}/delete">삭제</a>
+                                                    </td>
+                                                </form>
+                                            </tr>
+                                        </c:forEach>
                                         <tr>
-                                            <td>상호(법인명)</td>
-                                            <td>서라벌농장(주)</td>
-                                            <td>상호(법인명)</td>
-                                            <td>진이최고당</td>
+                                            <%--@elvariable id="priceGroupForm" type="com.pando.subalzu.model.PriceGroup"--%>
+                                            <form:form id="new-price-group" method="post"
+                                                       modelAttribute="priceGroupForm" action="/price-groups/store">
+                                                <td></td>
+                                                <td>
+                                                    <spring:bind path="name">
+                                                        <form:input id="new-group-name" cssClass="form-control"
+                                                                    path="name" required="true"/>
+                                                    </spring:bind>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-outline-primary">추가</button>
+                                                </td>
+                                            </form:form>
                                         </tr>
-                                        <tr>
-                                            <td>주소</td>
-                                            <td>[423-841]경기 광명시 철산로 지하 13(철산동, 철산역) 118동 303호</td>
-                                            <td>주소</td>
-                                            <td>[15616]경기 안산시 단원구 첨단로 7(성곡동) 1</td>
-                                        </tr>
-                                        <tr>
-                                            <td>연락처/FAX</td>
-                                            <td>02-562-7005 / 02-6204-2144</td>
-                                            <td>연락처/FAX</td>
-                                            <td>02-562-7005</td>
-                                        </tr>
-                                        <tr>
-                                            <td>담당자/연락처</td>
-                                            <td>(배송)나눔/010-5840-2130</td>
-                                            <td>담당자/연락처</td>
-                                            <td>김웅/010-5840-2130</td>
-                                        </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <button class="btn btn-outline-primary">출력하기</button>
-                        </div>
+                    </div>
+                </div>
+            </div> <!-- container-fluid -->
+
+        </div> <!-- content -->
+
+
+        <!-- Footer Start -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        2019 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
-        </div> <!-- container-fluid -->
+        </footer>
+        <!-- end Footer -->
 
-    </div> <!-- content -->
+    </div>
 
-
-    <!-- Footer Start -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    2019 &copy; Pando. All Rights Reserved.
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- end Footer -->
-
-</div>
-
-<!-- ============================================================== -->
-<!-- End Page content -->
-<!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
 
 
 </div>

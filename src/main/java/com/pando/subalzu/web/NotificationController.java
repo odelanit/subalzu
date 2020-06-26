@@ -1,7 +1,6 @@
 package com.pando.subalzu.web;
 
 import com.pando.subalzu.model.Notification;
-import com.pando.subalzu.repository.CompanyRepository;
 import com.pando.subalzu.repository.NotificationRepository;
 import com.pando.subalzu.validator.NotificationValidator;
 import org.springframework.beans.factory.annotation.Autowired;

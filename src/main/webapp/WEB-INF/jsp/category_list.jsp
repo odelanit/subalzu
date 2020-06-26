@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -62,8 +62,7 @@
 
             <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
-                            value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
                 </li>
                 <li class="d-none d-sm-block">
                     <div class="app-search">
@@ -90,10 +89,8 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                 alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                 alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -106,7 +103,7 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <ul class="metismenu" id="menu-bar">
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 주문 관리 </span>
@@ -114,7 +111,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li class="mm-active">
+                            <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
                             <li>
@@ -124,7 +121,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -175,10 +172,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -191,13 +188,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -337,82 +334,106 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item"><a href="/orders">주문 목록</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">출고 지시서</li>
+                                <li class="breadcrumb-item">상품 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">카테고리 설정</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">출고 지시서</h4>
+                        <h4 class="mb-1 mt-0">카테고리 설정</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div class="card" style="height: 69vh;">
+                        <div class="card">
                             <div class="card-body">
-                                <div class="slimscroll">
-                                    <table class="table-bordered table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>거래처</th>
-                                            <th>창고 구역</th>
-                                            <th>상품코드</th>
-                                            <th>상품명</th>
-                                            <th>수량</th>
-                                            <th>규격(단위)</th>
-                                            <th>위치표</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>2</td>
-                                            <td>3</td>
-                                            <td>4</td>
-                                            <td>5</td>
-                                            <td>6</td>
-                                            <td>7</td>
-                                            <td>8</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="8" class="text-right bg-light">총 상품수량:22</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3">거래 가맹점명</td>
-                                            <td colspan="5">1234: 거래명세표에는 바뀔까요.</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                <form>
+                                    <div class="form-group row align-items-center">
+                                        <label class="col-form-label col-2">카테고리 팝업 노출 설정</label>
+                                        <div class="col-10">
+                                            <div class="form-check-inline">
+                                                <input type="radio" class="form-check-input" name="setPopup" value="on" checked id="set-popup1">
+                                                <label class="form-check-label" for="set-popup1">ON</label>
+                                            </div>
+                                            <div class="form-check-inline">
+                                                <input type="radio" class="form-check-input" name="setPopup" value="off" id="set-popup2">
+                                                <label class="form-check-label" for="set-popup2">OFF</label>
+                                            </div>
+                                            <span class="form-text text-primary">
+                                                * 상품 주문시 카테고리 팝업이 상품보다 먼저 노출
+                                            </span>
+                                        </div>
+                                    </div>
+                                </form>
+                                <ul>
+                                    <li>
+                                        카테고리 '단가 정액/정률 별도 사용'에 체크하시면, <u>단가 관리 > 정액/정률 관리</u>에서 개별 설정이 가능합니다.<br>
+                                        (하위 카테고리를 개별 설정하시려면, 상위 카테고리의 체크를 해제해 주세요.)
+                                    </li>
+                                    <li>
+                                        현재 <u>단가 관리 > 정액/정률 관리</u>의 설정 여부가 '비설정'상태입니다.<br>
+                                        '단가 정액/정률 별도 사용'기능을 사용하시려면, 설정 여부를 '설정'으로 변경해 주세요.
+                                    </li>
+                                </ul>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th colspan="2" style="text-align: center;">1차 카테고리 목록<br>(상위 카테고리)</th>
+                                                    <th>단가 정액/정률 별도 사용</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <c:forEach items="${categories}" var="category">
+                                                    <tr>
+                                                        <td>${category.name}</td>
+                                                        <td><a href="#" class="btn btn-outline-warning btn-sm">수정</a><a href="/categories/${category.id}/delete" class="btn btn-outline-danger btn-sm">삭제</a></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </c:forEach>
+                                                <tr>
+                                                    <form method="post" action="/categories/store">
+                                                        <td>
+                                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                            <input name="name" class="form-control" type="text" required>
+                                                        </td>
+                                                        <td><button class="btn btn-outline-primary">추가</button></td>
+                                                    </form>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <button class="btn btn-outline-primary">출력하기</button>
-                        </div>
+                    </div>
+                </div>
+            </div> <!-- container-fluid -->
+
+        </div> <!-- content -->
+
+
+        <!-- Footer Start -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        2019 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
-        </div> <!-- container-fluid -->
+        </footer>
+        <!-- end Footer -->
 
-    </div> <!-- content -->
+    </div>
 
-
-    <!-- Footer Start -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    2019 &copy; Pando. All Rights Reserved.
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- end Footer -->
-
-</div>
-
-<!-- ============================================================== -->
-<!-- End Page content -->
-<!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
 
 
 </div>

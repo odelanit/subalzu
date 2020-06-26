@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -121,7 +121,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -172,10 +172,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -188,13 +188,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -334,33 +334,86 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">매입처 관리</li>
+                                <li class="breadcrumb-item">재고 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">입/출고 관리</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">매입처 관리</h4>
+                        <h4 class="mb-1 mt-0">입/출고 관리</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-
+                                <form class="form-row">
+                                    <div class="col-8">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-lg-3">키워드 검색</label>
+                                            <div class="col-lg-9">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <select class="form-control">
+                                                            <option>상품명</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <button class="btn btn-primary">검색</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col text-right">
-                                        <a class="btn btn-outline-danger" href="/suppliers/create">신규 매입처 등록</a>
+                                </form>
+                                <hr>
+                                <form>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-lg-2">즉시 검색</label>
+                                        <div class="col-lg-10">
+                                            <div class="form-row">
+                                                <div class="col-auto">
+                                                    <select class="form-control">
+                                                        <option>재고상태</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <select class="form-control">
+                                                        <option>브랜드</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <select class="form-control">
+                                                        <option>1차 카테고리</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <select class="form-control">
+                                                        <option>2차 카테고리</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="table-responsive mt-4">
+                                </form>
+                                <hr>
+                                <div class="table-responsive">
                                     <table class="table">
                                         <thead class="thead-light">
                                         <tr>
+                                            <th><input type="checkbox"></th>
                                             <th>#</th>
-                                            <th>매입처코드</th>
-                                            <th>매입처명</th>
-                                            <th>상품수</th>
-                                            <th>삭제</th>
+                                            <th>구역명</th>
+                                            <th>상품코드</th>
+                                            <th>썸네일</th>
+                                            <th>상품명</th>
+                                            <th>규격(단위)</th>
+                                            <th>제조사(원산지)</th>
+                                            <th>현재 재고</th>
+                                            <th>구분</th>
+                                            <th>수량</th>
+                                            <th>변경 후 재고</th>
                                         </tr>
                                         </thead>
                                     </table>

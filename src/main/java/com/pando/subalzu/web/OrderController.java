@@ -35,4 +35,14 @@ public class OrderController {
     public String ordersPerProduct() {
         return "orders_per_product";
     }
+
+    @GetMapping("/returns")
+    public String returnedOrders() {
+        return "returned_orders";
+    }
+
+    @GetMapping("/order-setting")
+    public String setting() {
+        return "order_setting";
+    }
 }

@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -121,11 +121,11 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 매입 관리 </span>
@@ -136,7 +136,7 @@
                             <li>
                                 <a href="/shipping">발주 관리</a>
                             </li>
-                            <li class="mm-active">
+                            <li>
                                 <a href="/suppliers">매입처 관리</a>
                             </li>
                             <li>
@@ -172,10 +172,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -188,13 +188,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -334,39 +334,10 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item">매입처 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">신규 매입처 등록</li>
+                                <li class="breadcrumb-item active" aria-current="page">Blank</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">신규 매입처 등록</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="header-title">기본 정보</h5>
-                                <hr>
-
-                            </div>
-                        </div>
-                        <div class="card mt-4">
-                            <div class="card-body">
-                                <h5 class="header-title">매입처 계정 정보</h5>
-                                <hr>
-                            </div>
-                        </div>
-                        <div class="card mt-4">
-                            <div class="card-body">
-                                <h5 class="header-title">매입처 상품</h5>
-                                <hr>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <a href="/suppliers" class="btn btn-outline-secondary">목록으로</a>
-                            <button class="btn btn-outline-primary">저장하기</button>
-                        </div>
+                        <h4 class="mb-1 mt-0">Starter Page</h4>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

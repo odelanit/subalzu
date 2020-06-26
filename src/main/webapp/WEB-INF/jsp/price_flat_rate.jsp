@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -121,7 +121,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -160,7 +160,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 단가 관리 </span>
@@ -172,10 +172,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -188,13 +188,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -334,172 +334,50 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">상품별 주문 목록</li>
+                                <li class="breadcrumb-item">단가 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">정액 / 정률 관리</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">상품별 주문 목록</h4>
+                        <h4 class="mb-1 mt-0">정액/정률 관리</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간 구분</label>
-                                            <div class="col-lg-9 align-self-center">
-                                                <div class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" id="customRadioInline1" class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadioInline1">주문 일시</label>
-                                                </div>
-                                                <div class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" id="customRadioInline2" class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadioInline2">배송 요정일</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <input class="form-control" type="text" placeholder="검색어를 입력해주세요.">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>상품명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 align-self-center text-right">
-                                        <button class="btn btn-primary">검색</button>
-                                    </div>
-                                </form>
-                                <hr>
+                                <h6 class="header-title">정액/정률 사용 설정</h6>
                                 <form>
                                     <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
+                                        <label class="col-form-label col-lg-2">설정 여부</label>
                                         <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>배송유형</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>주문상태</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>1차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>2차 카테고리</option>
-                                                    </select>
-                                                </div>
+                                            <div class="custom-control custom-control-inline custom-radio">
+                                                <input type="radio" class="custom-control-input" name="is_flat" id="flat1">
+                                                <label class="custom-control-label" for="flat1">설정</label>
                                             </div>
+                                            <div class="custom-control custom-control-inline custom-radio">
+                                                <input type="radio" class="custom-control-input" name="is_flat" id="flat2">
+                                                <label class="custom-control-label" for="flat2">비설정</label>
+                                            </div>
+                                            <span class="form-text">
+                                                * 타이를 우측의 ?를 누르면 자세한 내용을 확인하실수 있습니다.
+                                            </span>
                                         </div>
                                     </div>
                                 </form>
                                 <hr>
+                                <h6 class="header-title">단가 그룹/상품 카테고리</h6>
+                                <p>* 정률값( (매입단가/100) &times; 설정% )의 소숫점은 올림 처리하고, 나머지 원 단위는 절삭합니다.</p>
+                                <p>* 상품 카테고리별로 정액/정률을 별도 설정하시려면 <a href="/categories">상품 관리 > 카테고리 설정</a>에서 먼저 사용여부를 설정해 주세요.</p>
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class="thead-light">
                                         <tr>
-                                            <th>#</th>
-                                            <th>주문일시</th>
-                                            <th>배송요청일</th>
-                                            <th>주문번호</th>
-                                            <th>거래처</th>
-                                            <th>상품명</th>
-                                            <th>판매규격(단위)</th>
-                                            <th>주문수량</th>
-                                            <th>단가</th>
-                                            <th>대표매입처</th>
-                                            <th>주문상태</th>
+                                            <th>카테고리</th>
+                                            <th>직배송 단가</th>
+                                            <th>택배배송 단가</th>
+                                            <th>기본 단가</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td><a href="/orders/1">1</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고전</td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="/orders/2">2</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고 거절</td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="/orders/3">3</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고 완료</td>
-                                        </tr>
-                                        </tbody>
                                     </table>
                                 </div>
                             </div>

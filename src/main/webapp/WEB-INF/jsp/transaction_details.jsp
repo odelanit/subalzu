@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -62,7 +62,8 @@
 
             <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                            value="${pageContext.request.remoteUser}"/> 정보보기</a>
                 </li>
                 <li class="d-none d-sm-block">
                     <div class="app-search">
@@ -89,8 +90,10 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
+                 alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
+                 alt="Pando"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -121,7 +124,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -172,10 +175,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -188,13 +191,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -334,168 +337,85 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item"><a href="/orders">주문 관리</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">신규주문 등록</li>
+                                <li class="breadcrumb-item"><a href="/orders">주문 목록</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">거래명세표</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">신규주문 등록</h4>
+                        <h4 class="mb-1 mt-0">거래명세표</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
+                    <div class="col">
+                        <div class="card" style="height: 69vh;">
                             <div class="card-body">
-                                <h5 class="card-title">주문 정보</h5>
-                                <form>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-md-2">거래처 선택</label>
-                                        <div class="col-md-10">
-                                            <div class="input-group">
-                                                <input class="form-control" type="text" placeholder="거래처명을 입력해주세요.">
-                                                <div class="input-group-append">
-                                                    <button type="button" data-toggle="modal" data-target="#supplier-modal" class="btn btn-outline-primary">거래처 선택</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-md-4">배송유형</label>
-                                                <div class="col-md-8 align-self-center">
-                                                    <div class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" id="customRadioInline1" class="custom-control-input">
-                                                        <label class="custom-control-label" for="customRadioInline1">직배송</label>
-                                                    </div>
-                                                    <div class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" id="customRadioInline2" class="custom-control-input">
-                                                        <label class="custom-control-label" for="customRadioInline2">택배 배송</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-md-4">배송요청일</label>
-                                                <div class="col-md-8">
-                                                    <input class="form-control" type="text" id="request-date">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group required row">
-                                                <label class="col-form-label col-md-4">배송 담당자</label>
-                                                <div class="col-md-8 align-self-center">
-                                                    <select class="form-control">
-                                                        <option value="">-- 선택 --</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-md-4">영업 담당자</label>
-                                                <div class="col-md-8">
-                                                    <select class="form-control">
-                                                        <option value="">-- 선택 --</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-md-2">요청사항</label>
-                                        <div class="col-md-10">
-                                            <textarea class="form-control" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-md-2">메모</label>
-                                        <div class="col-md-10">
-                                            <textarea class="form-control" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <h5 class="card-title">
-                                    상품 목록
-                                    <button class="btn btn-sm btn-outline-primary float-right">상품추가</button>
-                                </h5>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
+                                <div class="slimscroll">
+                                    <table class="table-bordered table">
                                         <tr>
-                                            <th>#</th>
-                                            <th>상품코드</th>
-                                            <th>대표매입처</th>
-                                            <th>상품명</th>
-                                            <th>규격(단위)</th>
-                                            <th>제조사(원산지)</th>
-                                            <th>수량</th>
-                                            <th>단가(원)</th>
-                                            <th>공급가액</th>
-                                            <th>부가세</th>
-                                            <th>합계금액</th>
-                                            <th>삭제</th>
+                                            <td class="bg-light" style="text-align: center; vertical-align: middle;" rowspan="5">공급자</td>
+                                            <td>사업자등록번호</td>
+                                            <td>123-45-67</td>
+                                            <td class="bg-light" style="text-align: center; vertical-align: middle;" rowspan="5">공급받는자</td>
+                                            <td>사업자등록번호</td>
+                                            <td>123-45-67</td>
                                         </tr>
-                                        </thead>
+                                        <tr>
+                                            <td>상호(법인명)</td>
+                                            <td>서라벌농장(주)</td>
+                                            <td>상호(법인명)</td>
+                                            <td>진이최고당</td>
+                                        </tr>
+                                        <tr>
+                                            <td>주소</td>
+                                            <td>[423-841]경기 광명시 철산로 지하 13(철산동, 철산역) 118동 303호</td>
+                                            <td>주소</td>
+                                            <td>[15616]경기 안산시 단원구 첨단로 7(성곡동) 1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>연락처/FAX</td>
+                                            <td>02-562-7005 / 02-6204-2144</td>
+                                            <td>연락처/FAX</td>
+                                            <td>02-562-7005</td>
+                                        </tr>
+                                        <tr>
+                                            <td>담당자/연락처</td>
+                                            <td>(배송)나눔/010-5840-2130</td>
+                                            <td>담당자/연락처</td>
+                                            <td>김웅/010-5840-2130</td>
+                                        </tr>
                                     </table>
-                                </div>
-                                <div class="form-group text-center">
-                                    <a href="/orders" class="btn btn-dark">목록으로</a>
-                                    <button class="btn btn-outline-primary">등록하기</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div> <!-- container-fluid -->
-
-        </div> <!-- content -->
-
-
-        <!-- Footer Start -->
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        <div class="form-group">
+                            <button class="btn btn-outline-primary">출력하기</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </footer>
-        <!-- end Footer -->
+        </div> <!-- container-fluid -->
 
-    </div>
-
-    <!-- ============================================================== -->
-    <!-- End Page content -->
-    <!-- ============================================================== -->
+    </div> <!-- content -->
 
 
-</div>
-<div class="modal fade" id="supplier-modal">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">
-                    직배송 상품 검색 및 선택
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    2019 &copy; Pando. All Rights Reserved.
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                <button class="btn btn-primary">저장</button>
             </div>
         </div>
-    </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+
+<!-- ============================================================== -->
+<!-- End Page content -->
+<!-- ============================================================== -->
+
+
 </div>
 <!-- END wrapper -->
 

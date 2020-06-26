@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -103,7 +103,7 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <ul class="metismenu" id="menu-bar">
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 주문 관리 </span>
@@ -111,7 +111,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li class="mm-active">
+                            <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
                             <li>
@@ -121,7 +121,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -172,10 +172,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -188,13 +188,13 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
@@ -334,109 +334,10 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item"><a href="/orders">주문 관리</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">주문 상세내역</li>
+                                <li class="breadcrumb-item active" aria-current="page">Blank</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">주문 상세내역</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="text-center">주문번호 1 상세내역입니다.</h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button class="btn btn-sm btn-danger">주문삭제</button>
-                                        <button class="btn btn-sm btn-warning">주문취소</button>
-                                        <button class="btn btn-sm btn-soft-danger">주문거절</button>
-                                    </div>
-                                    <div class="col-md-6 text-right">
-                                        <button class="btn btn-sm btn-secondary">거래명세표</button>
-                                        <button class="btn btn-sm btn-primary">출고완료</button>
-                                    </div>
-                                </div>
-                                <hr>
-                                <h6 class="card-title">주문 정보</h6>
-                                <table class="table">
-                                    <tbody>
-                                    <tr>
-                                        <th class="bg-light">주문번호</th>
-                                        <td></td>
-                                        <th class="bg-light">거래처</th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">주문일자</th>
-                                        <td></td>
-                                        <th class="bg-light">담당자/연락처</th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">거래처 주소</th>
-                                        <td colspan="3"></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">결제수단</th>
-                                        <td></td>
-                                        <th class="bg-light">총 주문금액</th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">거래처 주소</th>
-                                        <td colspan="3"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <hr>
-                                <h6 class="card-title">배송 정보</h6>
-                                <table class="table">
-                                    <tbody>
-                                    <tr>
-                                        <th class="bg-light">배송 요청일</th>
-                                        <td></td>
-                                        <th class="bg-light">배송 유형</th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">배송 담당자</th>
-                                        <td></td>
-                                        <th class="bg-light">영업 담당자</th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">요청사항</th>
-                                        <td colspan="3"></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">추가 메모</th>
-                                        <td colspan="3"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <hr>
-                                <h6 class="card-title">주문 상품 목록</h6>
-                                <table class="table">
-                                    <thead class="thead-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>상품코드</th>
-                                        <th>대표 매입처</th>
-                                        <th>상품명</th>
-                                        <th>규격(단위)</th>
-                                        <th>제조사(원산지)</th>
-                                        <th>수량</th>
-                                        <th>단가(원)</th>
-                                        <th>공급가액</th>
-                                        <th>부가세</th>
-                                        <th>합계금액</th>
-                                        <th>삭제</th>
-                                    </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
+                        <h4 class="mb-1 mt-0">Starter Page</h4>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

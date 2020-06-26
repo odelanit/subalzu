@@ -53,7 +53,7 @@
                     <a href="/orders/create" class="nav-link">신규주문 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
-                    <a href="#" class="nav-link">상품 등록</a>
+                    <a href="/products/create" class="nav-link">상품 등록</a>
                 </li>
                 <li class="nav-item d-none d-lg-block">
                     <a href="/clients/create" class="nav-link">거래처 등록</a>
@@ -62,8 +62,7 @@
 
             <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
                 <li class="nav-item d-none d-lg-block">
-                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
-                            value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
                 </li>
                 <li class="d-none d-sm-block">
                     <div class="app-search">
@@ -90,10 +89,8 @@
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
         <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                 alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                 alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
 
             <div class="media-body">
                 <a href="/company">
@@ -124,7 +121,7 @@
                                 <a href="/returns">반품 내역</a>
                             </li>
                             <li>
-                                <a href="/demand-setting">주문 설정</a>
+                                <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
                     </li>
@@ -175,10 +172,10 @@
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/special">특 단가 관리</a>
+                                <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
-                                <a href="/prices/all">상품 단가 일괄 적용</a>
+                                <a href="/prices">상품 단가 일괄 적용</a>
                             </li>
                         </ul>
                     </li>
@@ -191,20 +188,20 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store/all">입/출고 관리</a>
+                                <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store/details">입/출고 내역</a>
+                                <a href="/store-history">입/출고 내역</a>
                             </li>
                             <li>
-                                <a href="/store/current">재고 현황</a>
+                                <a href="/store-status">재고 현황</a>
                             </li>
                             <li>
                                 <a href="#">구역 관리</a>
                             </li>
                         </ul>
                     </li>
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 거래처 관리 </span>
@@ -212,7 +209,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li class="mm-active">
+                            <li>
                                 <a href="/clients">거래처 목록</a>
                             </li>
                             <li>
@@ -337,163 +334,46 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item"><a href="/clients">거래처 관리</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">거래처 등록</li>
+                                <li class="breadcrumb-item active" aria-current="page">직원 관리</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">거래처 등록</h4>
+                        <h4 class="mb-1 mt-0">직원관리</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <%--@elvariable id="clientForm" type="com.pando.subalzu.model.Client"--%>
-                        <form:form modelAttribute="clientForm" method="post">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        거래처 정보
-                                        <span class="font-size-12 float-right"><span class="text-danger">*</span>필수 입력사항입니다.</span>
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">거래처 코드</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-2">거래처명</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-2">거래처 업종</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">브랜드 선택</label>
-                                        <div class="col-10">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-2">배송지</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">배송 유형</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">FAX 번호</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-2">이메일</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-2">거래처 연락처(아이디)</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-2">거래처 아이디/비밀번호</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-2">거래처 담당자/휴대전화 번호</label>
-                                        <div class="col-10">
-
-                                        </div>
-                                    </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>생성일</th>
+                                            <th>담당자</th>
+                                            <th>담당거래처</th>
+                                            <th>아이디</th>
+                                            <th>비고</th>
+                                            <th>담당자 삭제</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach var="employee" items="${employees}">
+                                            <tr>
+                                                <td>${employee.id}</td>
+                                                <td>${employee.createdAt}</td>
+                                                <td>${employee.fullName}</td>
+                                                <td></td>
+                                                <td>${employee.username}</td>
+                                                <td>${employee.bio}</td>
+                                                <td></td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        배송/영업 담당자 정보
-                                        <span class="font-size-12 float-right"><span class="text-danger">*</span>필수 입력사항입니다.</span>
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        단가 그룹
-                                        <span class="font-size-12 float-right">거래처에서 선택된 단가속성의 금액으로 물건을 주문할수 있습니다.</span>
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        할인/할증율 등급
-                                        <span class="font-size-12 float-right">거래처에서 등급별 할인된 가격으로 상품 구매가 가능합니다.</span>
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        결제수단 설정
-                                        <span class="font-size-12 float-right">거래처에서 주문시, 설정된 결제수단으로 결제할수 있습니다.</span>
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        외상잔액 한도 설정
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">
-                                        수입물품 유통이력 정보
-                                        <span class="font-size-12 float-right"></span>
-                                    </h5>
-                                    <hr>
-                                    <div class="form-group">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </form:form>
+                        </div>
                     </div>
                 </div>
             </div> <!-- container-fluid -->

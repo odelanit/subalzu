@@ -22,4 +22,9 @@ public class ClientController {
         model.addAttribute("clientForm", new Client());
         return "/client_create";
     }
+
+    @GetMapping("/clients/discount-levels")
+    public String discountLevel() {
+        return "/client_discount_level";
+    }
 }
