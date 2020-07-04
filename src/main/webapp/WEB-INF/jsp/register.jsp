@@ -15,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.ico">
+    <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
     <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>

@@ -14,7 +14,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "NVARCHAR")
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -23,13 +23,14 @@ public class User {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(64)")
     private String fullName;
 
     @Column(columnDefinition = "TEXT")
     private String bio;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -46,9 +47,6 @@ public class User {
 
     @ManyToMany
     private Set<Permission> permissions;
-
-    @OneToOne(mappedBy = "owner")
-    private Supplier supplier;
 
     public Long getId() {
         return id;
@@ -144,13 +142,5 @@ public class User {
 
     public void setCompany(Company company) {
         this.company = company;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
     }
 }

@@ -15,7 +15,11 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(nullable = false)
+    private String koName;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -64,5 +68,13 @@ public class Role {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getKoName() {
+        return koName;
+    }
+
+    public void setKoName(String koName) {
+        this.koName = koName;
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 import java.util.regex.Pattern;
 
 @Component
-public class UserValidator implements Validator {
+public class UserUpdateValidator implements Validator {
     @Autowired
     private UserRepository userRepository;
 
@@ -24,35 +24,17 @@ public class UserValidator implements Validator {
     public void validate(Object o, Errors errors) {
         User user = (User) o;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fullName", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "roles", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "permissions", "NotEmpty");
 
-        if (user.getUsername().length() < 4) {
-            errors.rejectValue("username", "Size.userForm.username");
-        }
-
-        if (!Pattern.matches("^[a-zA-Z0-9]*$", user.getUsername())) {
-            errors.rejectValue("username", "Size.userForm.username");
-        }
-
         if (!Pattern.matches("^[0-9]*$", user.getPhone())) {
             errors.rejectValue("phone", "Numeric");
         }
-
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            errors.rejectValue("username", "Duplicate.userForm.username");
-        }
-
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
-        if (user.getPassword().length() < 6) {
+        String password = user.getPassword();
+        if (password.length() < 6 && !password.isEmpty()) {
             errors.rejectValue("password", "Size.userForm.password");
-        }
-
-        if (!user.getPasswordConfirm().equals(user.getPassword())) {
-            errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
         }
     }
 }

@@ -14,75 +14,60 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.ico">
+    <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
     <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
-<body>
+<body class="left-side-menu-dark">
 <!-- Begin page -->
 <div id="wrapper">
 
     <!-- Topbar Start -->
-    <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
-        <div class="container-fluid">
-            <!-- LOGO -->
-            <a href="/" class="navbar-brand mr-0 mr-md-2 logo">
-                        <span class="logo-lg">
-                            <img src="${contextPath}/resources/images/logo.png" alt="" height="24"/>
-                            <span class="d-inline h5 ml-1 text-logo">Pando</span>
-                        </span>
-                <span class="logo-sm">
-                            <img src="${contextPath}/resources/images/logo.png" alt="" height="24">
-                        </span>
-            </a>
+    <div class="navbar navbar-expand navbar-custom">
+        <ul class="navbar-nav menu-left mb-0">
+            <li class="">
+                <button class="button-menu-mobile open-left disable-btn">
+                    <i data-feather="menu" class="menu-icon"></i>
+                    <i data-feather="x" class="close-icon"></i>
+                </button>
+            </li>
+        </ul>
 
-            <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
-                <li class="">
-                    <button class="button-menu-mobile open-left disable-btn">
-                        <i data-feather="menu" class="menu-icon"></i>
-                        <i data-feather="x" class="close-icon"></i>
-                    </button>
-                </li>
-            </ul>
+        <ul class="navbar-nav mb-0 d-none d-xl-flex">
+            <li class="nav-item">
+                <a href="/orders/create" class="nav-link">신규주문 등록</a>
+            </li>
+            <li class="nav-item">
+                <a href="/products/create" class="nav-link">상품 등록</a>
+            </li>
+            <li class="nav-item">
+                <a href="/clients/create" class="nav-link">거래처 등록</a>
+            </li>
+        </ul>
 
-            <ul class="navbar-nav mb-0">
-                <li class="nav-item d-none d-lg-block">
-                    <a href="/orders/create" class="nav-link">신규주문 등록</a>
-                </li>
-                <li class="nav-item d-none d-lg-block">
-                    <a href="/products/create" class="nav-link">상품 등록</a>
-                </li>
-                <li class="nav-item d-none d-lg-block">
-                    <a href="/clients/create" class="nav-link">거래처 등록</a>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
-                <li class="nav-item d-none d-lg-block">
-                    <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
-                </li>
-                <li class="d-none d-sm-block">
-                    <div class="app-search">
-                        <form>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <span data-feather="search"></span>
-                            </div>
-                        </form>
-                    </div>
-                </li>
-                <li class="nav-item d-none d-lg-block">
-                    <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
-                </li>
-                <form class="d-none" action="/logout" method="post" id="logout-form">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
-                </form>
-            </ul>
-        </div>
-
+        <ul class="navbar-nav ml-auto topnav-menu mb-0">
+            <li class="nav-item d-none d-lg-block">
+                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+            </li>
+            <li class="nav-item d-none d-lg-block">
+                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
+            </li>
+            <li class="d-none d-sm-block">
+                <div class="app-search">
+                    <form>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <span data-feather="search"></span>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            <form:form class="d-none" action="/logout" method="post" id="logout-form">
+            </form:form>
+        </ul>
     </div>
     <!-- end Topbar -->
 
@@ -281,7 +266,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 서비스 관리 </span>
@@ -299,7 +284,7 @@
                                 <a href="#">자주하는 질문 FAQ</a>
                             </li>
                             <li>
-                                <a href="/employees">직원 관리</a>
+                                <a href="/users">직원 관리</a>
                             </li>
                             <li>
                                 <a href="#">문자 관리</a>
@@ -334,49 +319,133 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">직원 관리</li>
+                                <li class="breadcrumb-item">직원 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">직원 등록</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">직원관리</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>생성일</th>
-                                            <th>담당자</th>
-                                            <th>담당거래처</th>
-                                            <th>아이디</th>
-                                            <th>비고</th>
-                                            <th>담당자 삭제</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <c:forEach var="employee" items="${employees}">
-                                            <tr>
-                                                <td>${employee.id}</td>
-                                                <td>${employee.createdAt}</td>
-                                                <td>${employee.fullName}</td>
-                                                <td></td>
-                                                <td>${employee.username}</td>
-                                                <td>${employee.bio}</td>
-                                                <td></td>
-                                            </tr>
-                                        </c:forEach>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        <h4 class="mb-1 mt-0">직원 등록</h4>
                     </div>
                 </div>
             </div> <!-- container-fluid -->
+            <div class="row">
+                <div class="col">
+                    <form:form method="post" modelAttribute="userForm">
+                        <spring:bind path="id">
+                            <form:hidden path="id"/>
+                        </spring:bind>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">기본 정보</h5>
+                                <div class="row">
+                                    <spring:bind path="fullName">
+                                        <div class="col-lg-6">
+                                            <div class="form-group row required">
+                                                <label class="col-form-label col-lg-4">담당자</label>
+                                                <div class="col-lg-8">
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="담당자" path="fullName" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="fullName" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                    <spring:bind path="phone">
+                                        <div class="col-lg-6">
+                                            <div class="form-group row required">
+                                                <label class="col-form-label col-lg-4">담당자 휴대폰</label>
+                                                <div class="col-lg-8">
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="숫자만 입력해주세요."  path="phone" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="phone" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                </div>
+                                <div class="form-group row required">
+                                    <label class="col-form-label col-lg-2">아이디</label>
+                                    <div class="col-lg-10">
+                                        <form:input path="username" class="form-control" placeholder="4자 이상 영문 또는 숫자만 사용 가능" readonly="true" />
+                                    </div>
+                                </div>
+                                <spring:bind path="password">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-lg-2">비밀번호</label>
+                                        <div class="col-lg-10">
+                                            <form:password path="password" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="비밀번호 변경시 입력해주세요." />
+                                            <div class="invalid-feedback">
+                                                <form:errors path="password" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                                <spring:bind path="bio">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-lg-2">비고</label>
+                                        <div class="col-lg-10">
+                                            <form:input path="bio" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="내용을 입력해주세요." />
+                                            <div class="invalid-feedback">
+                                                <form:errors path="bio" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">권한 정보</h5>
+                                <spring:bind path="roles">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">권한 유형</label>
+                                        <div class="col-lg-10">
+                                            <c:forEach var="role" items="${roles}">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <form:radiobutton
+                                                            id="role-${role.name}"
+                                                            value="${role.id}"
+                                                            class="custom-control-input"
+                                                            path="roles"
+                                                            checked="${userRole.id == role.id ? 'checked' : '' }"
+                                                    />
+                                                    <label class="custom-control-label" for="role-${role.name}">${role.koName}</label>
+                                                </div>
+                                            </c:forEach>
+                                            <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                <form:errors path="roles" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                                <spring:bind path="permissions">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">정보조회 권한</label>
+                                        <div class="col-lg-10">
+                                            <c:forEach var="permission" items="${permissions}">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <form:radiobutton
+                                                            id="permission-${permission.name}"
+                                                            value="${permission.id}"
+                                                            path="permissions"
+                                                            class="custom-control-input"
+                                                            checked="${userPermission.id == permission.id ? 'checked' : '' }"
+                                                    />
+                                                    <label class="custom-control-label" for="permission-${permission.name}">${permission.koName}</label>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary">등록</button>
+                        </div>
+                    </form:form>
+                </div>
+            </div>
 
         </div> <!-- content -->
 

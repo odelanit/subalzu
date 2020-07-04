@@ -145,7 +145,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 단가 관리 </span>
@@ -319,50 +319,119 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item">단가 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">정액 / 정률 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">직원 관리</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">정액/정률 관리</h4>
+                        <h4 class="mb-1 mt-0">직원관리</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <h6 class="header-title">정액/정률 사용 설정</h6>
                                 <form>
                                     <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">설정 여부</label>
+                                        <label class="col-form-label col-lg-2">키워드 검색</label>
                                         <div class="col-lg-10">
-                                            <div class="custom-control custom-control-inline custom-radio">
-                                                <input type="radio" class="custom-control-input" name="is_flat" id="flat1">
-                                                <label class="custom-control-label" for="flat1">설정</label>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <select class="custom-select" name="field">
+                                                        <option value="fullName" <c:if test="${pageContext.request.getParameter(\"field\") == \"fullName\" }">selected</c:if> >담당자</option>
+<%--                                                        <option value="client" <c:if test="${pageContext.request.getParameter(\"field\") == \"client\" }">selected</c:if>>담당거래처</option>--%>
+                                                        <option value="username" <c:if test="${pageContext.request.getParameter(\"field\") == \"username\" }">selected</c:if>>아이디</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <input class="form-control" name="keyword" type="text" placeholder="검색어를 입력해주세요." value="${pageContext.request.getParameter("keyword")}">
+                                                </div>
+                                                <div class="col-3">
+                                                    <button class="btn btn-primary">검색</button>
+                                                </div>
                                             </div>
-                                            <div class="custom-control custom-control-inline custom-radio">
-                                                <input type="radio" class="custom-control-input" name="is_flat" id="flat2">
-                                                <label class="custom-control-label" for="flat2">비설정</label>
-                                            </div>
-                                            <span class="form-text">
-                                                * 타이를 우측의 ?를 누르면 자세한 내용을 확인하실수 있습니다.
-                                            </span>
                                         </div>
                                     </div>
                                 </form>
-                                <hr>
-                                <h6 class="header-title">단가 그룹/상품 카테고리</h6>
-                                <p>* 정률값( (매입단가/100) &times; 설정% )의 소숫점은 올림 처리하고, 나머지 원 단위는 절삭합니다.</p>
-                                <p>* 상품 카테고리별로 정액/정률을 별도 설정하시려면 <a href="/categories">상품 관리 > 카테고리 설정</a>에서 먼저 사용여부를 설정해 주세요.</p>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col">
+                                        <span>전체 ${userPage.totalElements}건</span>
+                                    </div>
+                                    <div class="col text-right">
+                                        <a href="/users/create" class="btn btn-sm btn-outline-primary"><i data-feather="plus" class="icon-xs"></i>직원 등록</a>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class="thead-light">
                                         <tr>
-                                            <th>카테고리</th>
-                                            <th>직배송 단가</th>
-                                            <th>택배배송 단가</th>
-                                            <th>기본 단가</th>
+                                            <th>#</th>
+                                            <th>생성일</th>
+                                            <th>담당자</th>
+                                            <th>담당거래처</th>
+                                            <th>아이디</th>
+                                            <th>비고</th>
+                                            <th>담당자 삭제</th>
                                         </tr>
                                         </thead>
+                                        <tbody>
+                                        <c:forEach var="user" items="${users}">
+                                            <tr>
+                                                <td><a href="/users/${user.username}">${user.id}</a></td>
+                                                <td>${localDateTimeFormat.format(user.createdAt)}</td>
+                                                <td>${user.fullName}</td>
+                                                <td></td>
+                                                <td>${user.username}</td>
+                                                <td>${user.bio}</td>
+                                                <td><c:if test="${username != user.username}"> <a href="/users/${user.username}/delete">삭제</a></c:if></td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                        <c:if test="${userPage.totalPages > 1}">
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="7">
+                                                    <nav>
+                                                        <ul class="pagination justify-content-center">
+                                                            <c:choose>
+                                                                <c:when test="${userPage.hasPrevious()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?field=${pageContext.request.getParameter("field")}&keyword=${pageContext.request.getParameter("keyword")}&page=${currentPage - 1}">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <c:forEach var="i" begin="1" end="${userPage.totalPages}">
+                                                                <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a class="page-link" href="?field=${pageContext.request.getParameter("field")}&keyword=${pageContext.request.getParameter("keyword")}&page=${i}">${i}</a></li>
+                                                            </c:forEach>
+                                                            <c:choose>
+                                                                <c:when test="${userPage.hasNext()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?field=${pageContext.request.getParameter("field")}&keyword=${pageContext.request.getParameter("keyword")}&page=${currentPage + 1}">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </ul>
+                                                    </nav>
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </c:if>
                                     </table>
                                 </div>
                             </div>

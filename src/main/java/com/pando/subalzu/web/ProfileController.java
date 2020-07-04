@@ -3,7 +3,7 @@ package com.pando.subalzu.web;
 import com.pando.subalzu.model.Company;
 import com.pando.subalzu.model.User;
 import com.pando.subalzu.repository.CompanyRepository;
-import com.pando.subalzu.service.UserService;
+import com.pando.subalzu.repository.UserRepository;
 import com.pando.subalzu.validator.CompanyValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ProfileController {
     @Autowired
-    UserService userService;
+    UserRepository userRepository;
 
     @Autowired
     CompanyRepository companyRepository;
@@ -30,7 +30,7 @@ public class ProfileController {
     public String company(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        User currentUser = userService.findByUsername(username);
+        User currentUser = userRepository.findByUsername(username);
         Company company = currentUser.getCompany();
         if (company == null) {
             company = new Company();
@@ -49,13 +49,13 @@ public class ProfileController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        User currentUser = userService.findByUsername(username);
+        User currentUser = userRepository.findByUsername(username);
         Company company = currentUser.getCompany();
         if (company == null) {
             currentUser.setCompany(companyForm);
             companyForm.setUser(currentUser);
 
-            userService.save(currentUser);
+            userRepository.save(currentUser);
         } else {
             companyForm.setUser(currentUser);
             companyRepository.save(companyForm);

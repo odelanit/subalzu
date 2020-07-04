@@ -145,7 +145,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="mm-active">
+                    <li>
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 단가 관리 </span>
@@ -266,7 +266,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i data-feather="list"></i>
                             <span> 서비스 관리 </span>
@@ -319,57 +319,142 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item">단가 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">정액 / 정률 관리</li>
+                                <li class="breadcrumb-item">직원 관리</li>
+                                <li class="breadcrumb-item active" aria-current="page">직원 등록</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">정액/정률 관리</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="header-title">정액/정률 사용 설정</h6>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">설정 여부</label>
-                                        <div class="col-lg-10">
-                                            <div class="custom-control custom-control-inline custom-radio">
-                                                <input type="radio" class="custom-control-input" name="is_flat" id="flat1">
-                                                <label class="custom-control-label" for="flat1">설정</label>
-                                            </div>
-                                            <div class="custom-control custom-control-inline custom-radio">
-                                                <input type="radio" class="custom-control-input" name="is_flat" id="flat2">
-                                                <label class="custom-control-label" for="flat2">비설정</label>
-                                            </div>
-                                            <span class="form-text">
-                                                * 타이를 우측의 ?를 누르면 자세한 내용을 확인하실수 있습니다.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <h6 class="header-title">단가 그룹/상품 카테고리</h6>
-                                <p>* 정률값( (매입단가/100) &times; 설정% )의 소숫점은 올림 처리하고, 나머지 원 단위는 절삭합니다.</p>
-                                <p>* 상품 카테고리별로 정액/정률을 별도 설정하시려면 <a href="/categories">상품 관리 > 카테고리 설정</a>에서 먼저 사용여부를 설정해 주세요.</p>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>카테고리</th>
-                                            <th>직배송 단가</th>
-                                            <th>택배배송 단가</th>
-                                            <th>기본 단가</th>
-                                        </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        <h4 class="mb-1 mt-0">직원 등록</h4>
                     </div>
                 </div>
             </div> <!-- container-fluid -->
+            <div class="row">
+                <div class="col">
+                    <c:if test="${message != null}" >
+                        <div class="alert alert-danger">
+                            <span>${message}</span>
+                        </div>
+                    </c:if>
+                    <form:form method="post" modelAttribute="userForm">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">기본 정보</h5>
+                                <div class="row">
+                                    <spring:bind path="fullName">
+                                        <div class="col-lg-6">
+                                            <div class="form-group row required">
+                                                <label class="col-form-label col-lg-4">담당자</label>
+                                                <div class="col-lg-8">
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="담당자" path="fullName" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="fullName" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                    <spring:bind path="phone">
+                                        <div class="col-lg-6">
+                                            <div class="form-group row required">
+                                                <label class="col-form-label col-lg-4">담당자 휴대폰</label>
+                                                <div class="col-lg-8">
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="숫자만 입력해주세요."  path="phone" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="phone" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </spring:bind>
+                                </div>
+                                <spring:bind path="username">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">아이디</label>
+                                        <div class="col-lg-10">
+                                            <form:input path="username" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="4자 이상 영문 또는 숫자만 사용 가능" />
+                                            <div class="invalid-feedback">
+                                                <form:errors path="username" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                                <spring:bind path="password">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">비밀번호</label>
+                                        <div class="col-lg-10">
+                                            <form:password path="password" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="6자 이상 영문 숫자 조합" />
+                                            <div class="invalid-feedback">
+                                                <form:errors path="password" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                                <spring:bind path="passwordConfirm">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">비밀번호 확인</label>
+                                        <div class="col-lg-10">
+                                            <form:password path="passwordConfirm" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="비밀번호를 다시 입력해주세요." />
+                                            <div class="invalid-feedback">
+                                                <form:errors path="passwordConfirm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                                <spring:bind path="bio">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-lg-2">비고</label>
+                                        <div class="col-lg-10">
+                                            <form:input path="bio" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="내용을 입력해주세요." />
+                                            <div class="invalid-feedback">
+                                                <form:errors path="bio" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">권한 정보</h5>
+                                <spring:bind path="roles">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">권한 유형</label>
+                                        <div class="col-lg-10">
+                                            <c:forEach var="role" items="${roles}">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <form:radiobutton id="role-${role.name}" value="${role.id}" class="custom-control-input" path="roles" />
+                                                    <label class="custom-control-label" for="role-${role.name}">${role.koName}</label>
+                                                </div>
+                                            </c:forEach>
+                                            <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                <form:errors path="roles" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                                <spring:bind path="permissions">
+                                    <div class="form-group row required">
+                                        <label class="col-form-label col-lg-2">정보조회 권한</label>
+                                        <div class="col-lg-10">
+                                            <c:forEach var="permission" items="${permissions}">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <form:radiobutton id="permission-${permission.name}" value="${permission.id}" path="permissions" class="custom-control-input" />
+                                                    <label class="custom-control-label" for="permission-${permission.name}">${permission.koName}</label>
+                                                </div>
+                                            </c:forEach>
+                                            <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                <form:errors path="permissions" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary">등록</button>
+                        </div>
+                    </form:form>
+                </div>
+            </div>
 
         </div> <!-- content -->
 
