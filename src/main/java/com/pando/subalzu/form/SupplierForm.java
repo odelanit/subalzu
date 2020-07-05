@@ -1,39 +1,27 @@
 package com.pando.subalzu.form;
 
+import com.pando.subalzu.model.Supplier;
+import com.pando.subalzu.model.User;
+
 public class SupplierForm {
-    private String name;
 
-    private String code;
+    User user;
 
-    private String ownerRegNo;
+    Supplier supplier;
 
-    private String representName;
+    public User getUser() {
+        return user;
+    }
 
-    private String representPhone;
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    private String supplyCategory;
+    public Supplier getSupplier() {
+        return supplier;
+    }
 
-    private String supplySubcategory;
-
-    private String fax;
-
-    private String email;
-
-    private String addressCode;
-
-    private String addressLine1;
-
-    private String addressLine2;
-
-    private String fullName;
-
-    private String phone;
-
-    private String username;
-
-    private String password;
-
-    private String passwordConfirm;
-
-    private String bio;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
 }

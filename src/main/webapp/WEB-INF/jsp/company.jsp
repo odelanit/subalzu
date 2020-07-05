@@ -17,7 +17,9 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
-    <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 
@@ -33,7 +35,7 @@
         <ul class="navbar-nav menu-left mb-0">
             <li class="">
                 <button class="button-menu-mobile open-left disable-btn">
-                    <i data-feather="menu" class="menu-icon"></i>
+                    <i class="fa fa-bars menu-icon"></i>
                     <i data-feather="x" class="close-icon"></i>
                 </button>
             </li>
@@ -76,26 +78,32 @@
 
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                 alt="Shreyu"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                 alt="Shreyu"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
+        <div class="side-menu-logo">
+            <a href="/">
+                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
+                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
+            </a>
         </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
+                         alt="Shreyu"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
+                         alt="Shreyu"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h6 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h6>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 주문 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -117,7 +125,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 매입 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -136,7 +144,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 상품 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -152,7 +160,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 단가 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -171,7 +179,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 재고 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -193,7 +201,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 거래처 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -221,7 +229,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 브랜드 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -234,7 +242,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 원장 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -247,7 +255,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 통계 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -260,7 +268,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 회계 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -273,14 +281,14 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 서비스 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/notifications">공지사항</a>
+                                <a href="/notices">공지사항</a>
                             </li>
                             <li>
                                 <a href="#">고객문의</a>
@@ -340,9 +348,10 @@
                         <%--@elvariable id="companyForm" type="com.pando.subalzu.model.Company"--%>
                         <form:form method="post" modelAttribute="companyForm">
                             <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">기업정보</h5>
+                                </div>
                                 <div class="card-body">
-                                    <h4 class="header-title mt-0">기업정보</h4>
-                                    <hr>
                                     <spring:bind path="id">
                                         <form:hidden path="id"/>
                                     </spring:bind>
@@ -370,14 +379,14 @@
                                             </div>
                                         </div>
                                     </spring:bind>
-                                    <spring:bind path="represent">
+                                    <spring:bind path="vendorName">
                                         <div class="form-group row">
                                             <label class="col-form-label col-lg-2">대표자</label>
                                             <div class="col-lg-10">
                                                 <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                            type="text" path="represent"/>
+                                                            type="text" path="vendorName"/>
                                                 <div class="invalid-feedback">
-                                                    <form:errors path="represent"/>
+                                                    <form:errors path="vendorName"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -385,16 +394,16 @@
                                     <div class="form-group row align-items-center">
                                         <label class="col-form-label col-lg-2">사업장 소재지</label>
                                         <div class="col-lg-10">
-                                            <spring:bind path="addressNumber">
+                                            <spring:bind path="zipCode">
                                                 <div class="input-group">
                                                     <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                path="addressNumber"/>
+                                                                path="zipCode"/>
                                                     <div class="input-group-append">
                                                         <button type="button" class="btn btn-primary">주소검색</button>
                                                     </div>
                                                 </div>
                                                 <div class="invalid-feedback">
-                                                    <form:errors path="addressNumber"/>
+                                                    <form:errors path="zipCode"/>
                                                 </div>
                                             </spring:bind>
                                             <spring:bind path="addressLine1">
@@ -417,26 +426,26 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <spring:bind path="businessTypes">
+                                            <spring:bind path="businessConditions">
                                                 <div class="form-group row">
                                                     <label class="col-form-label col-lg-4">사업종류</label>
                                                     <div class="col-lg-8">
-                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessTypes"/>
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessConditions"/>
                                                         <div class="invalid-feedback">
-                                                            <form:errors path="businessTypes"/>
+                                                            <form:errors path="businessConditions"/>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </spring:bind>
                                         </div>
                                         <div class="col-md-6">
-                                            <spring:bind path="businessType">
+                                            <spring:bind path="businessItem">
                                                 <div class="form-group row">
                                                     <label class="col-form-label col-lg-4">사업종목</label>
                                                     <div class="col-lg-8">
-                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessType"/>
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessItem"/>
                                                         <div class="invalid-feedback">
-                                                            <form:errors path="businessType"/>
+                                                            <form:errors path="businessItem"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -445,13 +454,13 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <spring:bind path="phone">
+                                            <spring:bind path="businessTel">
                                                 <div class="form-group row">
                                                     <label class="col-form-label col-lg-4">사업장 연락처</label>
                                                     <div class="col-lg-8">
-                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="phone"/>
+                                                        <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="businessTel"/>
                                                         <div class="invalid-feedback">
-                                                            <form:errors path="phone"/>
+                                                            <form:errors path="businessTel"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -487,9 +496,10 @@
                                 </div>
                             </div>
                             <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">정산계좌 정보</h5>
+                                </div>
                                 <div class="card-body">
-                                    <h4 class="header-title mt-0">정산계좌 정보</h4>
-                                    <hr>
                                     <div class="row align-items-center">
                                         <div class="col-lg-2">
                                             <label>정산계좌 정보</label>
@@ -508,12 +518,12 @@
                                                     </spring:bind>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <spring:bind path="bankNumber">
+                                                    <spring:bind path="bankAccount">
                                                         <div class="form-group">
                                                             <label>은행계좌</label>
-                                                            <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="bankNumber"/>
+                                                            <form:input cssClass="form-control ${status.error ? 'is-invalid' : ''}" path="bankAccount"/>
                                                             <div class="invalid-feedback">
-                                                                <form:errors path="bankNumber"/>
+                                                                <form:errors path="bankAccount"/>
                                                             </div>
                                                         </div>
                                                     </spring:bind>
@@ -567,8 +577,12 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
 
 </body>
 </html>

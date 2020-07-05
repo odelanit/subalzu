@@ -1,5 +1,8 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,28 +16,35 @@ public class Supplier {
 
     private String code;
 
-    private String ownerRegNo;
+    private String regNo;
 
-    private String representName;
+    private String ownerName;
 
-    private String representPhone;
+    private String businessTel;
 
-    private String supplyCategory;
+    private String businessItem;
 
-    private String supplySubcategory;
+    private String businessConditions;
 
     private String fax;
 
     private String email;
 
-    private String addressCode;
+    private String zipCode;
 
     private String addressLine1;
 
     private String addressLine2;
 
-    @OneToOne
-    private User owner;
+    @ManyToOne
+    @JoinColumn(name="company_id", nullable=false)
+    @JsonIgnore
+    private Company company;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
     public Long getId() {
         return id;
@@ -60,44 +70,44 @@ public class Supplier {
         this.code = code;
     }
 
-    public String getOwnerRegNo() {
-        return ownerRegNo;
+    public String getRegNo() {
+        return regNo;
     }
 
-    public void setOwnerRegNo(String ownerRegNo) {
-        this.ownerRegNo = ownerRegNo;
+    public void setRegNo(String ownerRegNo) {
+        this.regNo = ownerRegNo;
     }
 
-    public String getRepresentName() {
-        return representName;
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setRepresentName(String representName) {
-        this.representName = representName;
+    public void setOwnerName(String representName) {
+        this.ownerName = representName;
     }
 
-    public String getRepresentPhone() {
-        return representPhone;
+    public String getBusinessTel() {
+        return businessTel;
     }
 
-    public void setRepresentPhone(String representPhone) {
-        this.representPhone = representPhone;
+    public void setBusinessTel(String representPhone) {
+        this.businessTel = representPhone;
     }
 
-    public String getSupplyCategory() {
-        return supplyCategory;
+    public String getBusinessItem() {
+        return businessItem;
     }
 
-    public void setSupplyCategory(String supplyCategory) {
-        this.supplyCategory = supplyCategory;
+    public void setBusinessItem(String supplyCategory) {
+        this.businessItem = supplyCategory;
     }
 
-    public String getSupplySubcategory() {
-        return supplySubcategory;
+    public String getBusinessConditions() {
+        return businessConditions;
     }
 
-    public void setSupplySubcategory(String supplySubcategory) {
-        this.supplySubcategory = supplySubcategory;
+    public void setBusinessConditions(String supplySubcategory) {
+        this.businessConditions = supplySubcategory;
     }
 
     public String getFax() {
@@ -116,12 +126,12 @@ public class Supplier {
         this.email = email;
     }
 
-    public String getAddressCode() {
-        return addressCode;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setAddressCode(String addressCode) {
-        this.addressCode = addressCode;
+    public void setZipCode(String addressCode) {
+        this.zipCode = addressCode;
     }
 
     public String getAddressLine1() {
@@ -140,11 +150,19 @@ public class Supplier {
         this.addressLine2 = addressLine2;
     }
 
-    public User getOwner() {
-        return owner;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User owner) {
+        this.user = owner;
     }
 }

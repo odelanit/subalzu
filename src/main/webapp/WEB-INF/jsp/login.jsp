@@ -18,7 +18,7 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
-    <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -49,8 +49,7 @@
                     <form:form method="POST" action="${contextPath}/login">
                         <div class="form-group">
                             <label class="form-control-label">ID</label>
-                            <input name="username" type="text" class="form-control" placeholder="ID"
-                                   autofocus="true"/>
+                            <input name="username" type="text" class="form-control" placeholder="ID" autofocus />
                         </div>
                         <div class="form-group">
                             <label class="form-control-label">비밀번호</label>

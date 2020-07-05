@@ -1,5 +1,6 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,6 +28,7 @@ public class Permission {
     private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "permissions")
+    @JsonBackReference
     private Set<User> users;
 
     public Long getId() {

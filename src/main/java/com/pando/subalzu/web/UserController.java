@@ -5,6 +5,7 @@ import com.pando.subalzu.model.Role;
 import com.pando.subalzu.model.User;
 import com.pando.subalzu.repository.PermissionRepository;
 import com.pando.subalzu.repository.RoleRepository;
+import com.pando.subalzu.repository.UserDataRepository;
 import com.pando.subalzu.repository.UserRepository;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.UserSpecification;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,6 +36,9 @@ import java.util.Set;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserDataRepository userDataRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -61,37 +68,14 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public String index(Principal principal, Model model, @RequestParam Map<String, String> queryMap) {
-        String field = queryMap.get("field");
-        String keyword = queryMap.get("keyword");
-        String pageNo = queryMap.get("page");
-        Page<User> userPage;
-        int page = 1;
-        if (field != null && keyword != null && !field.isEmpty() && !keyword.isEmpty()) {
-            UserSpecification spec = new UserSpecification(new SearchCriteria(field, ":", keyword));
-            if (pageNo != null) {
-                page = Integer.parseInt(pageNo);
-            }
-            Pageable pageable = PageRequest.of(page - 1, 5);
-            userPage = userRepository.findAll(spec, pageable);
-        } else {
-            if (pageNo != null) {
-                page = Integer.parseInt(pageNo);
-            }
-            Pageable pageable = PageRequest.of(page - 1, 5);
-            userPage = userRepository.findAll(pageable);
-        }
-
-        List<User> users = userPage.getContent();
-        model.addAttribute("userPage", userPage);
-        model.addAttribute("users", users);
-        model.addAttribute("currentPage", page);
-
-        if (principal != null) {
-            model.addAttribute("username", principal.getName());
-        }
-        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    public String index() {
         return "user_list";
+    }
+
+    @RequestMapping(value = "/data/users", method = RequestMethod.POST)
+    @ResponseBody
+    public DataTablesOutput<User> dataUsers(@Valid @RequestBody DataTablesInput input) {
+        return userDataRepository.findAll(input);
     }
 
     @GetMapping("/users/create")

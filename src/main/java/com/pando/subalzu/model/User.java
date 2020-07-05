@@ -1,5 +1,9 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,6 +22,7 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
@@ -31,6 +36,7 @@ public class User {
 
     @CreationTimestamp
     @Column(updatable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -40,12 +46,19 @@ public class User {
     private String passwordConfirm;
 
     @ManyToMany
+    @JsonManagedReference
     private Set<Role> roles;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonManagedReference
     private Company company;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonBackReference
+    private Supplier supplier;
+
     @ManyToMany
+    @JsonManagedReference
     private Set<Permission> permissions;
 
     public Long getId() {
@@ -80,6 +93,7 @@ public class User {
         this.passwordConfirm = passwordConfirm;
     }
 
+    @JsonIgnore
     public Set<Role> getRoles() {
         return roles;
     }
@@ -142,5 +156,13 @@ public class User {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 }

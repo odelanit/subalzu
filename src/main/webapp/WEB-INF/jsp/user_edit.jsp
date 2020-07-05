@@ -17,7 +17,9 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
-    <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -30,7 +32,7 @@
         <ul class="navbar-nav menu-left mb-0">
             <li class="">
                 <button class="button-menu-mobile open-left disable-btn">
-                    <i data-feather="menu" class="menu-icon"></i>
+                    <i class="fa fa-bars menu-icon"></i>
                     <i data-feather="x" class="close-icon"></i>
                 </button>
             </li>
@@ -73,24 +75,30 @@
 
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
+        <div class="side-menu-logo">
+            <a href="/">
+                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
+                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
+            </a>
         </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 주문 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -112,7 +120,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 매입 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -131,7 +139,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 상품 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -147,7 +155,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 단가 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -166,7 +174,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 재고 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -188,7 +196,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 거래처 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -216,7 +224,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 브랜드 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -229,7 +237,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 원장 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -242,7 +250,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 통계 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -255,7 +263,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 회계 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -268,14 +276,14 @@
                     </li>
                     <li class="mm-active">
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 서비스 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/notifications">공지사항</a>
+                                <a href="/notices">공지사항</a>
                             </li>
                             <li>
                                 <a href="#">고객문의</a>
@@ -283,7 +291,7 @@
                             <li>
                                 <a href="#">자주하는 질문 FAQ</a>
                             </li>
-                            <li>
+                            <li class="mm-active">
                                 <a href="/users">직원 관리</a>
                             </li>
                             <li>
@@ -472,8 +480,11 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
 
 </body>
 </html>

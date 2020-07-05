@@ -13,12 +13,24 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
-    <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+          rel="stylesheet" type="text/css"/>
+
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -30,7 +42,7 @@
         <ul class="navbar-nav menu-left mb-0">
             <li class="">
                 <button class="button-menu-mobile open-left disable-btn">
-                    <i data-feather="menu" class="menu-icon"></i>
+                    <i class="fa fa-bars menu-icon"></i>
                     <i data-feather="x" class="close-icon"></i>
                 </button>
             </li>
@@ -73,24 +85,30 @@
 
     <!-- ========== Left Sidebar Start ========== -->
     <div class="left-side-menu">
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
+        <div class="side-menu-logo">
+            <a href="/">
+                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
+                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
+            </a>
         </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h6 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h6>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 주문 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -110,9 +128,9 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 매입 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -121,7 +139,7 @@
                             <li>
                                 <a href="/shipping">발주 관리</a>
                             </li>
-                            <li>
+                            <li class="mm-active">
                                 <a href="/suppliers">매입처 관리</a>
                             </li>
                             <li>
@@ -131,7 +149,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 상품 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -147,7 +165,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 단가 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -166,7 +184,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 재고 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -188,7 +206,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 거래처 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -216,7 +234,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 브랜드 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -229,7 +247,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 원장 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -242,7 +260,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 통계 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -255,7 +273,7 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 회계 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -268,14 +286,14 @@
                     </li>
                     <li>
                         <a href="javascript: void(0);">
-                            <i data-feather="list"></i>
+                            <i class="fa fa-folder"></i>
                             <span> 서비스 관리 </span>
                             <span class="menu-arrow"></span>
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/notifications">공지사항</a>
+                                <a href="/notices">공지사항</a>
                             </li>
                             <li>
                                 <a href="#">고객문의</a>
@@ -329,52 +347,20 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>매입처명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <button class="btn btn-primary">검색</button>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <div class="row">
-                                    <div class="col">
+                                <table class="table" id="suppliers">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>매입처코드</th>
+                                        <th>매입처명</th>
+                                        <th>상품수</th>
+                                        <th>삭제</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
 
-                                    </div>
-                                    <div class="col text-right">
-                                        <a class="btn btn-outline-danger" href="/suppliers/create">신규 매입처 등록</a>
-                                    </div>
-                                </div>
-                                <div class="table-responsive mt-4">
-                                    <table class="table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>매입처코드</th>
-                                            <th>매입처명</th>
-                                            <th>상품수</th>
-                                            <th>삭제</th>
-                                        </tr>
-                                        </thead>
-                                    </table>
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -406,8 +392,80 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
-<script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
 
+<script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+
+        var userTable = $('#suppliers').DataTable({
+            serverSide: true,
+            responsive: true,
+            ajax: {
+                url: '/data/suppliers',
+                contentType: 'application/json',
+                headers: {"X-CSRF-TOKEN": token},
+                type: 'POST',
+                data: function(d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {data: 'id', searchable: false},
+                {
+                    data: 'code',
+                },
+                {
+                    data: 'name',
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    orderable: false,
+                    defaultContent: '',
+                },
+                {
+                    data: null,
+                    searchable: false,
+                    orderable: false,
+                    defaultContent: '',
+                    render: function(data) {
+                        return '<a href="/suppliers/' + data.id + '/delete">삭제</a>';
+                    }
+                }
+            ],
+            dom: "<'d-flex justify-content-end mb-2'B>" +
+                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                {
+                    text: '<i class="fal fa-plus"></i>신규 매입처 등록',
+                    className: 'btn btn-sm btn-outline-primary',
+                    action: function ( e, dt, node, config ) {
+                        window.location.href = '/suppliers/create';
+                    },
+                }
+            ]
+        });
+
+        $('#suppliers tbody').on('click', 'tr', function () {
+            var data = userTable.row( this ).data();
+            window.location.href = '/suppliers/' + data.id;
+        });
+    });
+</script>
 </body>
 </html>

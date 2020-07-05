@@ -1,10 +1,14 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "companies")
@@ -17,19 +21,19 @@ public class Company {
 
     private String registeredNumber;
 
-    private String represent;
+    private String vendorName;
 
-    private String addressNumber;
+    private String zipCode;
 
     private String addressLine1;
 
     private String addressLine2;
 
-    private String businessTypes;
+    private String businessConditions;
 
-    private String businessType;
+    private String businessItem;
 
-    private String phone;
+    private String businessTel;
 
     private String email;
 
@@ -37,13 +41,22 @@ public class Company {
 
     private String bankName;
 
-    private String bankNumber;
+    private String bankAccount;
 
     private String accountHolder;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
+
+    @OneToMany(mappedBy = "company")
+    @JsonIgnore
+    private Set<Supplier> suppliers;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "company")
+    @JsonManagedReference
+    private CompanySetting companySetting;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -75,20 +88,20 @@ public class Company {
         this.registeredNumber = registeredNumber;
     }
 
-    public String getRepresent() {
-        return represent;
+    public String getVendorName() {
+        return vendorName;
     }
 
-    public void setRepresent(String represent) {
-        this.represent = represent;
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 
-    public String getAddressNumber() {
-        return addressNumber;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setAddressNumber(String addressNumber) {
-        this.addressNumber = addressNumber;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public String getAddressLine1() {
@@ -107,28 +120,28 @@ public class Company {
         this.addressLine2 = addressLine2;
     }
 
-    public String getBusinessTypes() {
-        return businessTypes;
+    public String getBusinessConditions() {
+        return businessConditions;
     }
 
-    public void setBusinessTypes(String businessTypes) {
-        this.businessTypes = businessTypes;
+    public void setBusinessConditions(String businessConditions) {
+        this.businessConditions = businessConditions;
     }
 
-    public String getBusinessType() {
-        return businessType;
+    public String getBusinessItem() {
+        return businessItem;
     }
 
-    public void setBusinessType(String businessType) {
-        this.businessType = businessType;
+    public void setBusinessItem(String businessItem) {
+        this.businessItem = businessItem;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getBusinessTel() {
+        return businessTel;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setBusinessTel(String businessTel) {
+        this.businessTel = businessTel;
     }
 
     public String getEmail() {
@@ -155,12 +168,12 @@ public class Company {
         this.bankName = bankName;
     }
 
-    public String getBankNumber() {
-        return bankNumber;
+    public String getBankAccount() {
+        return bankAccount;
     }
 
-    public void setBankNumber(String bankNumber) {
-        this.bankNumber = bankNumber;
+    public void setBankAccount(String bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
     public String getAccountHolder() {
@@ -169,6 +182,22 @@ public class Company {
 
     public void setAccountHolder(String accountHolder) {
         this.accountHolder = accountHolder;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public CompanySetting getCompanySetting() {
+        return companySetting;
+    }
+
+    public void setCompanySetting(CompanySetting companySetting) {
+        this.companySetting = companySetting;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -185,13 +214,5 @@ public class Company {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }
