@@ -18,6 +18,8 @@
 
     <!-- App css -->
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -44,7 +46,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -170,7 +172,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i class="fa fa-folder"></i>
                             <span> 재고 관리 </span>
@@ -178,7 +180,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li>
+                            <li class="mm-active">
                                 <a href="/store">입/출고 관리</a>
                             </li>
                             <li>
@@ -201,7 +203,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -423,7 +425,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
@@ -440,8 +442,12 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
 
 </body>
 </html>

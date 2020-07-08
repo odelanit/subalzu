@@ -56,7 +56,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -100,7 +100,7 @@
 
                     <div class="media-body">
                         <a href="/company">
-                            <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
+                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
                             <span class="pro-user-desc">기업정보보기</span>
                         </a>
                     </div>
@@ -213,7 +213,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -353,7 +353,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
@@ -381,8 +381,6 @@
 <script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 <script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
-
-<script src="${contextPath}/resources/datatables.net-editor/js/dataTables.editor.min.js"></script>
 
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>

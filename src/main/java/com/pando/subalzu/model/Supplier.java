@@ -1,7 +1,6 @@
 package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -35,11 +34,6 @@ public class Supplier {
     private String addressLine1;
 
     private String addressLine2;
-
-    @ManyToOne
-    @JoinColumn(name="company_id", nullable=false)
-    @JsonIgnore
-    private Company company;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -148,14 +142,6 @@ public class Supplier {
 
     public void setAddressLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 
     public User getUser() {

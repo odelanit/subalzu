@@ -46,7 +46,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -208,7 +208,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -333,10 +333,10 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
                                 <li class="breadcrumb-item">매입처 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">신규 매입처 등록</li>
+                                <li class="breadcrumb-item active" aria-current="page">${page_title}</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">신규 매입처 등록</h4>
+                        <h4 class="mb-1 mt-0">${page_title}</h4>
                     </div>
                 </div>
                 <form:form method="post" modelAttribute="supplierForm">
@@ -347,6 +347,9 @@
                                     <h5 class="mb-0">기본 정보</h5>
                                 </div>
                                 <div class="card-body">
+                                    <spring:bind path="supplier.id">
+                                        <form:hidden path="supplier.id" />
+                                    </spring:bind>
                                     <div class="row">
                                         <spring:bind path="supplier.code">
                                             <div class="col-lg-6">
@@ -512,6 +515,9 @@
                                     <h5 class="mb-0">매입처 계정 정보</h5>
                                 </div>
                                 <div class="card-body">
+                                    <spring:bind path="user.id">
+                                        <form:hidden path="user.id" />
+                                    </spring:bind>
                                     <div class="row">
                                         <spring:bind path="user.fullName">
                                             <div class="col-lg-6">
@@ -558,9 +564,9 @@
                                             <div class="col-lg-10">
                                                 <form:password path="user.password" class="form-control ${status.error ? 'is-invalid' : ''}"
                                                        placeholder="6자 이상 영문, 숫자 조합" />
-                                                <span class="form-text text-primary">매입처 최초 로그인을 위한 임시 비밀번호를 설정해 주세요.</span>
+                                                <small class="form-text text-primary">매입처 최초 로그인을 위한 임시 비밀번호를 설정해 주세요.</small>
                                                 <div class="invalid-feedback">
-                                                    <form:errors path="user.username"/>
+                                                    <form:errors path="user.password"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -640,7 +646,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>

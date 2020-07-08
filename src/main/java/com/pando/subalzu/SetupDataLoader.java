@@ -1,11 +1,7 @@
 package com.pando.subalzu;
 
-import com.pando.subalzu.model.Permission;
-import com.pando.subalzu.model.Role;
-import com.pando.subalzu.model.User;
-import com.pando.subalzu.repository.PermissionRepository;
-import com.pando.subalzu.repository.RoleRepository;
-import com.pando.subalzu.repository.UserRepository;
+import com.pando.subalzu.model.*;
+import com.pando.subalzu.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -31,6 +27,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private UserRepository userRepository;
 
     @Autowired
+    private AssigneeTypeRepository assigneeTypeRepository;
+
+    @Autowired
+    private BusinessRepository businessRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -39,8 +41,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         if (alreadySetup)
             return;
         Role adminRole = createRoleIfNotFound("admin", "관리자");
-        createRoleIfNotFound("manager", "영업");
-        createRoleIfNotFound("deliver", "배송");
+        createRoleIfNotFound("sales", "영업");
+        createRoleIfNotFound("deliverer", "배송");
         createRoleIfNotFound("accounting", "회계");
 
         Permission allPermission = createPermissionIfNotFound("all", "전체");
@@ -65,6 +67,27 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
             userRepository.save(user);
         }
+
+        createAssigneeTypeIfNotFound("유통업자");
+        createAssigneeTypeIfNotFound("소매업자");
+        createAssigneeTypeIfNotFound("손실량");
+        createAssigneeTypeIfNotFound("수출");
+
+        createBusinessIfNotFound("한식");
+        createBusinessIfNotFound("중식");
+        createBusinessIfNotFound("일식");
+        createBusinessIfNotFound("수산물");
+        createBusinessIfNotFound("분식");
+        createBusinessIfNotFound("닭/오리");
+        createBusinessIfNotFound("양식");
+        createBusinessIfNotFound("패스트푸드");
+        createBusinessIfNotFound("제빵");
+        createBusinessIfNotFound("유흥주점");
+        createBusinessIfNotFound("퓨전요리");
+        createBusinessIfNotFound("커피/음료");
+        createBusinessIfNotFound("음식배달");
+        createBusinessIfNotFound("뷔페");
+        createBusinessIfNotFound("기타");
 
         alreadySetup = true;
     }
@@ -91,5 +114,25 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             permissionRepository.save(permission);
         }
         return permission;
+    }
+
+    @Transactional
+    void createAssigneeTypeIfNotFound(String name) {
+        AssigneeType assigneeType = assigneeTypeRepository.findByName(name);
+        if (assigneeType == null) {
+            assigneeType = new AssigneeType();
+            assigneeType.setName(name);
+            assigneeTypeRepository.save(assigneeType);
+        }
+    }
+
+    @Transactional
+    void createBusinessIfNotFound(String name) {
+        Business business = businessRepository.findByName(name);
+        if (business == null) {
+            business = new Business();
+            business.setName(name);
+            businessRepository.save(business);
+        }
     }
 }

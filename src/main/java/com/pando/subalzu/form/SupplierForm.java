@@ -9,6 +9,11 @@ public class SupplierForm {
 
     Supplier supplier;
 
+    public SupplierForm(Supplier supplier, User user) {
+        this.supplier = supplier;
+        this.user = user;
+    }
+
     public User getUser() {
         return user;
     }

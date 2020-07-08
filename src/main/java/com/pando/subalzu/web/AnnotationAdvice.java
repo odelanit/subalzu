@@ -5,11 +5,11 @@ import com.pando.subalzu.model.User;
 import com.pando.subalzu.repository.CompanyRepository;
 import com.pando.subalzu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.security.Principal;
 
 @ControllerAdvice(annotations = Controller.class)
 public class AnnotationAdvice {
@@ -23,14 +23,25 @@ public class AnnotationAdvice {
     Company currentCompany;
 
     @ModelAttribute("currentUser")
-    public User getCurrentUser() {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(userDetails.getUsername());
+    public User getCurrentUser(Principal principal) {
+        User user;
+        if (principal == null) {
+            user = null;
+        } else {
+            user = userRepository.findByUsername(principal.getName());
+        }
+        return user;
     }
 
     @ModelAttribute("currentCompany")
-    public Company getCurrentCompany() {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return companyRepository.findByUserUsername(userDetails.getUsername());
+    public Company getCurrentCompany(Principal principal) {
+        Company company;
+        if (principal == null) {
+            company = null;
+        }
+        else {
+            company = companyRepository.findByUserUsername(principal.getName());
+        }
+        return company;
     }
 }

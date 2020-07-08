@@ -1,14 +1,16 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Table(name = "product_categories")
-public class ProductCategory {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,16 +19,20 @@ public class ProductCategory {
 
     private boolean usedIndividual;
 
+    @OneToMany(mappedBy = "category")
+    @JsonIgnore
+    Set<Product> products;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public ProductCategory() {
+    public Category() {
     }
 
-    public ProductCategory(String name) {
+    public Category(String name) {
         this.name = name;
     }
 

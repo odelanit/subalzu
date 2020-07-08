@@ -49,7 +49,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -93,7 +93,7 @@
 
                     <div class="media-body">
                         <a href="/company">
-                            <h6 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h6>
+                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
                             <span class="pro-user-desc">기업정보보기</span>
                         </a>
                     </div>
@@ -206,7 +206,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -412,12 +412,11 @@
                         <h5 class="header-title">주문현황</h5>
                         <div class="card">
                             <div class="card-body p-0">
-                                <h5 class="card-title header-title border-bottom p-3 mb-0">당일</h5>
+                                <h4 class="card-title header-title border-bottom p-3 mb-0">당일</h4>
                                 <!-- stat 1 -->
                                 <div class="media px-3 py-4 border-bottom">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">13건</h4>
-                                        <span class="text-muted">주문</span>
+                                        <h5 class="mt-0 mb-0">주문 &nbsp;<strong>13건</strong></h5>
                                     </div>
                                     <p class="h3 align-self-center">
                                         552,720원
@@ -427,8 +426,7 @@
                                 <!-- stat 2 -->
                                 <div class="media px-3 py-4 border-bottom">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">2건</h4>
-                                        <span class="text-muted">취소</span>
+                                        <h5 class="mt-0 mb-0">취소 &nbsp;<strong class="">2건</strong></h5>
                                     </div>
                                     <p class="h3 align-self-center">
                                         58,890원
@@ -439,12 +437,11 @@
 
                         <div class="card mt-2">
                             <div class="card-body p-0">
-                                <h5 class="card-title header-title border-bottom p-3 mb-0">한단</h5>
+                                <h4 class="card-title header-title border-bottom p-3 mb-0">한달</h4>
                                 <!-- stat 1 -->
                                 <div class="media px-3 py-4 border-bottom">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">58건</h4>
-                                        <span class="text-muted">주문</span>
+                                        <h5 class="mt-0 mb-0">주문 &nbsp;<strong>58건</strong></h5>
                                     </div>
                                     <p class="h3 align-self-center">
                                         2,836,859원
@@ -454,8 +451,7 @@
                                 <!-- stat 2 -->
                                 <div class="media px-3 py-4 border-bottom">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">10건</h4>
-                                        <span class="text-muted">취소</span>
+                                        <h5 class="mt-0 mb-0">취소 &nbsp;<strong>10건</strong></h5>
                                     </div>
                                     <p class="h3 align-self-center">
                                         271,264원
@@ -475,7 +471,20 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="notification-tab">
-                                        공지 사항 리스트
+                                        <div class="p-4">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                    <c:forEach items="${notices}" var="notice">
+                                                        <tr>
+                                                            <td>${notice.title}</td>
+                                                            <td>${notice.createdAt}</td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

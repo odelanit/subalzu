@@ -10,6 +10,10 @@ body {
     overflow-x: hidden
 }
 
+.font-size-12 {
+    font-size: 12px!important;
+}
+
 .navbar-brand {
     width: 225px;
 }
@@ -3810,4 +3814,7 @@ body.authentication-bg {
 .ck-editor__editable_inline {
     min-height: 250px;
 }
-/*# sourceMappingURL=app.css.map */
+
+.dropzone .img-preview {
+    height: 120px;
+}

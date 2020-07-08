@@ -46,7 +46,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -203,7 +203,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -328,10 +328,10 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
                                 <li class="breadcrumb-item">직원 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">직원 등록</li>
+                                <li class="breadcrumb-item active" aria-current="page">직원 정보 수정</li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">직원 등록</h4>
+                        <h4 class="mb-1 mt-0">직원 정보 수정</h4>
                     </div>
                 </div>
             </div> <!-- container-fluid -->
@@ -449,7 +449,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-primary">등록</button>
+                            <a href="/users" class="btn btn-secondary">목록으로</a>
+                            <button class="btn btn-primary">수정하기</button>
                         </div>
                     </form:form>
                 </div>
@@ -463,7 +464,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>

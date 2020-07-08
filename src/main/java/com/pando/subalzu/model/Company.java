@@ -1,14 +1,13 @@
 package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "companies")
@@ -50,15 +49,13 @@ public class Company {
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "company")
-    @JsonIgnore
-    private Set<Supplier> suppliers;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "company")
     @JsonManagedReference
     private CompanySetting companySetting;
 
     @CreationTimestamp
+    @Column(updatable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

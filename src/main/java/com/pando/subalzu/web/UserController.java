@@ -72,6 +72,16 @@ public class UserController {
         return "user_list";
     }
 
+    @ModelAttribute("roles")
+    List<Role> roles() {
+        return roleRepository.findAll();
+    }
+
+    @ModelAttribute("permissions")
+    List<Permission> permissions() {
+        return permissionRepository.findAll();
+    }
+
     @RequestMapping(value = "/data/users", method = RequestMethod.POST)
     @ResponseBody
     public DataTablesOutput<User> dataUsers(@Valid @RequestBody DataTablesInput input) {
@@ -81,10 +91,6 @@ public class UserController {
     @GetMapping("/users/create")
     public String create(Model model) {
         model.addAttribute("userForm", new User());
-        List<Role> roles = roleRepository.findAll();
-        List<Permission> permissions = permissionRepository.findAll();
-        model.addAttribute("roles", roles);
-        model.addAttribute("permissions", permissions);
         return "user_create";
     }
 
@@ -92,10 +98,6 @@ public class UserController {
     public String store(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         userValidator.validate(userForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            List<Role> roles = roleRepository.findAll();
-            List<Permission> permissions = permissionRepository.findAll();
-            model.addAttribute("roles", roles);
-            model.addAttribute("permissions", permissions);
             return "user_create";
         }
         userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
@@ -109,30 +111,38 @@ public class UserController {
         User user = userRepository.findByUsername(username);
         model.addAttribute("userForm", user);
 
-        List<Role> roles = roleRepository.findAll();
-        List<Permission> permissions = permissionRepository.findAll();
-
         List<Role> userRoles = new ArrayList<>(user.getRoles());
         List<Permission> userPermissions = new ArrayList<>(user.getPermissions());
-
-        model.addAttribute("roles", roles);
-        model.addAttribute("userRole", userRoles.get(0));
-        model.addAttribute("permissions", permissions);
-        model.addAttribute("userPermission", userPermissions.get(0));
-        return "/user_edit";
+        if (userRoles.size() == 0) {
+            model.addAttribute("userRole", null);
+        } else {
+            model.addAttribute("userRole", userRoles.get(0));
+        }
+        if (userPermissions.size() == 0) {
+            model.addAttribute("userPermission", null);
+        } else {
+            model.addAttribute("userPermission", userPermissions.get(0));
+        }
+        return "user_edit";
     }
 
     @PostMapping("/users/{username}")
     public String update(@PathVariable String username, @ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         userUpdateValidator.validate(userForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            List<Role> roles = roleRepository.findAll();
-            List<Permission> permissions = permissionRepository.findAll();
-            model.addAttribute("roles", roles);
-            model.addAttribute("permissions", permissions);
-            return "/user_edit";
+            List<Role> userRoles = new ArrayList<>(userForm.getRoles());
+            List<Permission> userPermissions = new ArrayList<>(userForm.getPermissions());
+            model.addAttribute("userRole", userRoles.get(0));
+            model.addAttribute("userPermission", userPermissions.get(0));
+            return "user_edit";
         }
-        userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
+        User dbUser = userRepository.findByUsername(username);
+        String dbPassword = dbUser.getPassword();
+        if (userForm.getPassword() != null && !userForm.getPassword().isEmpty()) {
+            userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
+        } else {
+            userForm.setPassword(dbPassword);
+        }
         userRepository.save(userForm);
         redirectAttributes.addFlashAttribute("message", "User Updated");
         return "redirect:/users";

@@ -1,6 +1,7 @@
 package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -22,6 +23,8 @@ public class Role {
     private String koName;
 
     @CreationTimestamp
+    @Column(updatable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDateTime createdAt;
 
     @LastModifiedDate

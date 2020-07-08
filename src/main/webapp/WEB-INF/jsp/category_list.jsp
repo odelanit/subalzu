@@ -46,7 +46,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -81,20 +81,19 @@
                 <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
             </a>
         </div>
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
-        </div>
         <div class="sidebar-content">
-            <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
                     <li>
                         <a href="javascript: void(0);">
@@ -203,7 +202,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -350,9 +349,9 @@
                                                 <input type="radio" class="form-check-input" name="setPopup" value="off" id="set-popup2">
                                                 <label class="form-check-label" for="set-popup2">OFF</label>
                                             </div>
-                                            <span class="form-text text-primary">
+                                            <small class="form-text text-primary">
                                                 * 상품 주문시 카테고리 팝업이 상품보다 먼저 노출
-                                            </span>
+                                            </small>
                                         </div>
                                     </div>
                                 </form>
@@ -372,8 +371,8 @@
                                             <table class="table">
                                                 <thead class="thead-light">
                                                 <tr>
-                                                    <th colspan="2" style="text-align: center;">1차 카테고리 목록<br>(상위 카테고리)</th>
-                                                    <th>단가 정액/정률 별도 사용</th>
+                                                    <th colspan="2" style="text-align: center; width: 80%;">카테고리 목록</th>
+                                                    <th width="20%">단가 정액/정률 별도 사용</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -415,7 +414,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>

@@ -19,6 +19,8 @@
     <!-- App css -->
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -44,7 +46,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -79,22 +81,22 @@
                 <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
             </a>
         </div>
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
-        </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i class="fa fa-folder"></i>
                             <span> 주문 관리 </span>
@@ -111,7 +113,7 @@
                             <li>
                                 <a href="/returns">반품 내역</a>
                             </li>
-                            <li>
+                            <li class="mm-active">
                                 <a href="/order-setting">주문 설정</a>
                             </li>
                         </ul>
@@ -201,7 +203,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -341,7 +343,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
@@ -358,8 +360,12 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
 
 </body>
 </html>

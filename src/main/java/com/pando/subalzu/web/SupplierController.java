@@ -8,6 +8,7 @@ import com.pando.subalzu.repository.CompanyRepository;
 import com.pando.subalzu.repository.SupplierDataRepository;
 import com.pando.subalzu.repository.SupplierRepository;
 import com.pando.subalzu.repository.UserRepository;
+import com.pando.subalzu.validator.SupplierFormUpdateValidator;
 import com.pando.subalzu.validator.SupplierFormValidator;
 import com.pando.subalzu.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 public class SupplierController {
@@ -35,7 +37,10 @@ public class SupplierController {
     UserRepository userRepository;
 
     @Autowired
-    SupplierFormValidator supplierValidator;
+    SupplierFormValidator supplierFormValidator;
+
+    @Autowired
+    SupplierFormUpdateValidator supplierFormUpdateValidator;
 
     @Autowired
     UserValidator userValidator;
@@ -59,13 +64,14 @@ public class SupplierController {
 
     @GetMapping("/suppliers/create")
     public String create(Model model) {
-        model.addAttribute("supplierForm", new SupplierForm());
+        model.addAttribute("supplierForm", new SupplierForm(new Supplier(), new User()));
+        model.addAttribute("page_title", "신규 매입처 등록");
         return "supplier_create";
     }
 
     @PostMapping("/suppliers/create")
     public String store(Principal principal, @ModelAttribute("supplierForm") SupplierForm supplierForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        supplierValidator.validate(supplierForm, bindingResult);
+        supplierFormValidator.validate(supplierForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "supplier_create";
         }
@@ -76,11 +82,50 @@ public class SupplierController {
 
         Supplier supplier = supplierForm.getSupplier();
         Company company = companyRepository.findByUserUsername(principal.getName());
-        supplier.setCompany(company);
         supplier.setUser(user);
         supplierRepository.save(supplier);
-        
+
         redirectAttributes.addFlashAttribute("message", "Supplier Created");
+        return "redirect:/suppliers";
+    }
+
+    @GetMapping("/suppliers/{id}")
+    public String edit(Model model, @PathVariable long id) {
+        Optional<Supplier> supplierOptional = supplierRepository.findById(id);
+        if (supplierOptional.isPresent()) {
+            Supplier supplier = supplierOptional.get();
+            User user = supplier.getUser();
+            model.addAttribute("supplierForm", new SupplierForm(supplier, user));
+            model.addAttribute("page_title", "매입처 수정");
+            return "supplier_create";
+        } else {
+            return "redirect:/suppliers";
+        }
+    }
+
+    @PostMapping("/suppliers/{id}")
+    public String update(@ModelAttribute("supplierForm") SupplierForm supplierForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model, @PathVariable long id, Principal principal) {
+        supplierFormUpdateValidator.validate(supplierForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "supplier_create";
+        }
+
+        User user = supplierForm.getUser();
+        Optional<User> optionalUser = userRepository.findById(user.getId());
+        User dbUser = optionalUser.get();
+        String dbPassword = dbUser.getPassword();
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        } else {
+            user.setPassword(dbPassword);
+        }
+        user = userRepository.save(user);
+
+        Supplier supplier = supplierForm.getSupplier();
+        supplier.setUser(user);
+        supplierRepository.save(supplier);
+
+        redirectAttributes.addFlashAttribute("message", "Supplier Updated");
         return "redirect:/suppliers";
     }
 }

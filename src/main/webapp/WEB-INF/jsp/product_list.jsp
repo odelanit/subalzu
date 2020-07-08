@@ -12,13 +12,24 @@
     <meta content="" name="description"/>
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+          rel="stylesheet" type="text/css"/>
+
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -44,7 +55,7 @@
                 <a href="/products/create" class="nav-link">상품 등록</a>
             </li>
             <li class="nav-item">
-                <a href="/clients/create" class="nav-link">거래처 등록</a>
+                <a href="/shops/create" class="nav-link">거래처 등록</a>
             </li>
         </ul>
 
@@ -79,20 +90,20 @@
                 <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
             </a>
         </div>
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
-        </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
                     <li>
                         <a href="javascript: void(0);">
@@ -135,7 +146,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i class="fa fa-folder"></i>
                             <span> 상품 관리 </span>
@@ -143,7 +154,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li>
+                            <li class="mm-active">
                                 <a href="/products">상품 관리</a>
                             </li>
                             <li>
@@ -201,7 +212,7 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/clients">거래처 목록</a>
+                                <a href="/shops">거래처 목록</a>
                             </li>
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
@@ -333,81 +344,18 @@
                 </div>
                 <div class="row">
                     <div class="col">
+                        <c:if test="${message != null}">
+                            <div class="alert alert-success">
+                                ${message}
+                            </div>
+                        </c:if>
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>상품명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-primary">검색</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>판매상태</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>배송유형</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>1차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>2차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>브랜드</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <button type="button" class="btn btn-outline-primary">상품 일괄 수정</button>
-                                        <button type="button" class="btn btn-outline-primary">상품 대량 등록</button>
-                                    </div>
-                                    <div class="col-lg-6 text-lg-right">
-                                        <a href="/products/create" type="button" class="btn btn-outline-primary">마켓봄 상품등록</a>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="table-responsive">
-                                    <table class="table">
+                                <div>
+                                    <table class="table" id="products">
                                         <thead class="thead-light">
                                         <tr>
-                                            <th><input type="checkbox"></th>
+<%--                                            <th><input type="checkbox"></th>--%>
                                             <th>#</th>
                                             <th>상품코드</th>
                                             <th>썸네일</th>
@@ -439,7 +387,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        2019 &copy; Pando. All Rights Reserved.
+                        2020 &copy; Pando. All Rights Reserved.
                     </div>
                 </div>
             </div>
@@ -456,8 +404,89 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
-<script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 
+<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
+
+<script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $(document).ready(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        var table = $('#products').DataTable({
+            serverSide: true,
+            responsive: true,
+            lengthChange: true,
+            ajax: {
+                url: '/data/products',
+                contentType: 'application/json',
+                headers: {"X-CSRF-TOKEN": token},
+                type: 'POST',
+                data: function(d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {data: 'id', searchable: false},
+                {data: 'erpCode'},
+                {
+                    data: 'imageUrl',
+                    searchable: false,
+                    orderable: false,
+                    render: function(imageUrl) {
+                        if (imageUrl) {
+                            return '<img class="img-thumbnail" src="' + imageUrl + '" />';
+                        } else {
+                            return '';
+                        }
+                    }
+                },
+                {data: 'name'},
+                {data: null, searchable: false, orderable: false, defaultContent: ''},
+                {data: 'unit'},
+                {data: 'country'},
+                {
+                    data: 'deliveryTypes',
+                    searchable: false,
+                    orderable: false,
+                    render: function (types) {
+                        return types;
+                    }
+                },
+                {data: 'buyPrice'},
+                {data: 'directPrice'},
+                {data: 'parcelPrice'},
+                {data: null, searchable: false, orderable: false, defaultContent: ''},
+                {data: null, searchable: false, orderable: false, defaultContent: ''},
+            ],
+            dom: "<'d-flex justify-content-end mb-2'B>" +
+                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                {
+                    text: '<i class="fal fa-plus"></i>상품 등록',
+                    className: 'btn btn-sm btn-outline-primary',
+                    action: function ( e, dt, node, config ) {
+                        window.location.href = '/products/create';
+                    },
+                }
+            ]
+        });
+
+        $('#products tbody').on('click', 'tr', function () {
+            var data = table.row( this ).data();
+            window.location.href = '/products/' + data.id;
+        });
+    });
+</script>
 </body>
 </html>
