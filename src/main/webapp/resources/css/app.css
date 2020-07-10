@@ -43,6 +43,10 @@ body {
     background: none!important;
 }
 
+.w-40 {
+    width: 40%!important;
+}
+
 #wrapper {
     height: 100%;
     overflow: hidden;

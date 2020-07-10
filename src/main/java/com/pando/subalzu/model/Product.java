@@ -58,6 +58,8 @@ public class Product {
 
     int buyPrice = 0;
 
+    Long sellPrice;
+
     int directPrice = 0;
 
     int parcelPrice = 0;
@@ -199,6 +201,14 @@ public class Product {
 
     public void setBuyPrice(int buyPrice) {
         this.buyPrice = buyPrice;
+    }
+
+    public Long getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(Long sellPrice) {
+        this.sellPrice = sellPrice;
     }
 
     public int getDirectPrice() {

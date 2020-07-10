@@ -113,9 +113,6 @@
                             <li>
                                 <a href="/returns">반품 내역</a>
                             </li>
-                            <li>
-                                <a href="/order-setting">주문 설정</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
@@ -189,9 +186,6 @@
                             <li>
                                 <a href="/store-status">재고 현황</a>
                             </li>
-                            <li>
-                                <a href="#">구역 관리</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
@@ -208,70 +202,7 @@
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
                             </li>
-                            <li>
-                                <a href="/payment-methods">결제수단 관리</a>
-                            </li>
-                            <li>
-                                <a href="/credit-limit">외상잔액 한도 관리</a>
-                            </li>
-                            <li>
-                                <a href="/estimate-sheets">견적서 관리</a>
-                            </li>
-                            <li>
-                                <a href="#">간편 가입 신청 목록</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 브랜드 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
 
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 원장 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 통계 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 회계 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
                         </ul>
                     </li>
                     <li class="mm-active">
@@ -285,20 +216,8 @@
                             <li>
                                 <a href="/notices">공지사항</a>
                             </li>
-                            <li>
-                                <a href="#">고객문의</a>
-                            </li>
-                            <li>
-                                <a href="#">자주하는 질문 FAQ</a>
-                            </li>
                             <li class="mm-active">
                                 <a href="/users">직원 관리</a>
-                            </li>
-                            <li>
-                                <a href="#">문자 관리</a>
-                            </li>
-                            <li>
-                                <a href="#">문자 발송 내역</a>
                             </li>
                         </ul>
                     </li>

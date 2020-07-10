@@ -121,9 +121,6 @@
                             <li>
                                 <a href="/returns">반품 내역</a>
                             </li>
-                            <li>
-                                <a href="/order-setting">주문 설정</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
@@ -197,9 +194,6 @@
                             <li>
                                 <a href="/store-status">재고 현황</a>
                             </li>
-                            <li>
-                                <a href="#">구역 관리</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
@@ -216,70 +210,7 @@
                             <li>
                                 <a href="/credits">외상잔액/예치금 관리</a>
                             </li>
-                            <li>
-                                <a href="/payment-methods">결제수단 관리</a>
-                            </li>
-                            <li>
-                                <a href="/credit-limit">외상잔액 한도 관리</a>
-                            </li>
-                            <li>
-                                <a href="/estimate-sheets">견적서 관리</a>
-                            </li>
-                            <li>
-                                <a href="#">간편 가입 신청 목록</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 브랜드 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
 
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 원장 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 통계 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 회계 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="#">Inbox</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
@@ -294,19 +225,7 @@
                                 <a href="/notices">공지사항</a>
                             </li>
                             <li>
-                                <a href="#">고객문의</a>
-                            </li>
-                            <li>
-                                <a href="#">자주하는 질문 FAQ</a>
-                            </li>
-                            <li>
                                 <a href="/users">직원 관리</a>
-                            </li>
-                            <li>
-                                <a href="#">문자 관리</a>
-                            </li>
-                            <li>
-                                <a href="#">문자 발송 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -636,61 +555,6 @@
                                             </div>
                                         </div>
                                     </spring:bind>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">기본 단가</label>
-                                        <div class="col-lg-10">
-                                            <div class="input-group">
-                                                <input type="number" class="form-control" placeholder="기본단가">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">원</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">a</label>
-                                        <div class="col-lg-10">
-                                            <div class="input-group">
-                                                <input type="number" class="form-control" placeholder="a">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">원</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">b</label>
-                                        <div class="col-lg-10">
-                                            <div class="input-group">
-                                                <input type="number" class="form-control" placeholder="b">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">원</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">c</label>
-                                        <div class="col-lg-10">
-                                            <div class="input-group">
-                                                <input type="number" class="form-control" placeholder="c">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">원</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">기타</label>
-                                        <div class="col-lg-10">
-                                            <div class="input-group">
-                                                <input type="number" class="form-control" placeholder="기타">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">원</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="form-group row">
                                         <div class="col-lg-10 offset-lg-2">
                                             <a href="/products" class="btn btn-outline-secondary">목록으로</a>
