@@ -3844,3 +3844,13 @@ body.authentication-bg {
 .table.table-hover tr:hover {
     cursor: pointer;
 }
+
+.btn.btn-check {
+    border-radius: 50%;
+}
+
+.btn.btn-check.checked {
+    color: #fff;
+    background-color: #00a1b7;
+    border-color: #00a1b7;
+}

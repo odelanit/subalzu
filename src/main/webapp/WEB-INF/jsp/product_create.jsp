@@ -264,33 +264,35 @@
                     <div class="row">
                         <div class="col">
                             <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">기본 정보</h5>
-                                </div>
                                 <div class="card-body">
-                                    <spring:bind path="erpCode">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">상품 코드</label>
-                                            <div class="col-lg-10">
-                                                <form:input path="erpCode" class="form-control ${status.error ? 'is-invalid': ''}" placeholder="상품코드를 입력하세요." />
-                                                <small class="form-text">기존에 쓰시는 ERP 상품 코드(단축코드)를 입력하세요. 없으면 입력하지 않아도 됩니다.</small>
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="erpCode" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="name">
-                                        <div class="form-group row required">
-                                            <label class="col-form-label col-lg-2">상품명</label>
-                                            <div class="col-lg-10">
-                                                <form:input path="name" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="상품명을 입력하세요." />
-                                               <div class="invalid-feedback">
-                                                   <form:errors path="name" />
-                                               </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
+                                    <h5 class="card-title">기본 정보</h5>
+                                    <table class="table table-bordered form-table">
+                                        <tbody class="thead-light">
+                                        <spring:bind path="erpCode">
+                                            <tr>
+                                                <th>상품 코드</th>
+                                                <td>
+                                                    <form:input path="erpCode" class="form-control ${status.error ? 'is-invalid': ''}" placeholder="상품코드를 입력하세요." />
+                                                    <small class="form-text">기존에 쓰시는 ERP 상품 코드(단축코드)를 입력하세요. 없으면 입력하지 않아도 됩니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="erpCode" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        <spring:bind path="name">
+                                            <tr>
+                                                <th class="required"><span>상품명</span></th>
+                                                <td>
+                                                    <form:input path="name" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="상품명을 입력하세요." />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="name" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        </tbody>
+                                    </table>
                                     <spring:bind path="category">
                                         <div class="form-group row">
                                             <label class="col-form-label col-lg-2">카테고리</label>

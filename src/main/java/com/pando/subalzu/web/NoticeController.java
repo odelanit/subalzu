@@ -73,6 +73,7 @@ public class NoticeController {
     public String create(Model model) {
         model.addAttribute("noticeForm", new Notice());
         model.addAttribute("shopSearchForm", new ShopSearchForm());
+        model.addAttribute("register", true);
         return "notice_edit";
     }
 
@@ -82,6 +83,7 @@ public class NoticeController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("shopSearchForm", new ShopSearchForm());
+            model.addAttribute("register", true);
             return "notice_edit";
         }
 
@@ -97,6 +99,7 @@ public class NoticeController {
             Notice notice = optionalNotice.get();
             model.addAttribute("shopSearchForm", new ShopSearchForm());
             model.addAttribute("noticeForm", notice);
+            model.addAttribute("register", false);
             return "notice_edit";
         } else {
             return "redirect:/notices";
@@ -108,6 +111,7 @@ public class NoticeController {
         noticeValidator.validate(noticeForm, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("shopSearchForm", new ShopSearchForm());
+            model.addAttribute("register", false);
             return "notice_edit";
         }
         noticeRepository.save(noticeForm);

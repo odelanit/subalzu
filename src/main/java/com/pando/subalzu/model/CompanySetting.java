@@ -13,6 +13,8 @@ public class CompanySetting {
 
     boolean fixedPriceRate = false;
 
+    boolean categoryPopup = true;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     @JsonBackReference
@@ -40,5 +42,13 @@ public class CompanySetting {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public boolean getCategoryPopup() {
+        return categoryPopup;
+    }
+
+    public void setCategoryPopup(boolean categoryPopup) {
+        this.categoryPopup = categoryPopup;
     }
 }

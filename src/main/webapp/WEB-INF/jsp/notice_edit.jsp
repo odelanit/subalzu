@@ -247,10 +247,10 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
                                 <li class="breadcrumb-item">서비스 관리</li>
-                                <li class="breadcrumb-item active" aria-current="page">공지사항 등록</li>
+                                <li class="breadcrumb-item active" aria-current="page">공지사항 <c:choose><c:when test="${register == true}">등록</c:when><c:otherwise>수정</c:otherwise></c:choose></li>
                             </ol>
                         </nav>
-                        <h4 class="mb-1 mt-0">공지사항 등록</h4>
+                        <h4 class="mb-1 mt-0">공지사항 <c:choose><c:when test="${register == true}">등록</c:when><c:otherwise>수정</c:otherwise></c:choose></h4>
                     </div>
                 </div>
                 <div class="row">
@@ -360,7 +360,7 @@
                                     <div class="form-group row">
                                         <div class="col-lg-10 offset-lg-2">
                                             <a href="/notices" class="btn btn-secondary">목록으로</a>
-                                            <button class="btn btn-primary">등록하기</button>
+                                            <button class="btn btn-primary"><c:choose><c:when test="${register == true}">등록</c:when><c:otherwise>수정</c:otherwise></c:choose>하기</button>
                                         </div>
                                     </div>
                                 </form:form>
