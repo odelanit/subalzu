@@ -56,7 +56,7 @@
                             <input name="password" type="password" class="form-control" placeholder="비밀번호"/>
                         </div>
                         <div class="form-group mb-0">
-                            <button class="btn btn-primary btn-block" type="submit">가입</button>
+                            <button class="btn btn-primary btn-block" type="submit">로그인</button>
                         </div>
                     </form:form>
                 </div>

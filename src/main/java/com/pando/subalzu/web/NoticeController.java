@@ -1,24 +1,29 @@
 package com.pando.subalzu.web;
 
+import com.google.common.base.Strings;
+import com.pando.subalzu.form.NoticeSearchForm;
+import com.pando.subalzu.form.ShopSearchForm;
 import com.pando.subalzu.model.Notice;
-import com.pando.subalzu.model.Permission;
-import com.pando.subalzu.model.Role;
-import com.pando.subalzu.model.User;
-import com.pando.subalzu.repository.NoticeDataRepository;
 import com.pando.subalzu.repository.NoticeRepository;
+import com.pando.subalzu.repository.ShopRepository;
+import com.pando.subalzu.specification.NoticeSpecification;
+import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.validator.NoticeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -27,33 +32,56 @@ public class NoticeController {
     NoticeRepository noticeRepository;
 
     @Autowired
-    NoticeDataRepository noticeDataRepository;
-
-    @Autowired
     NoticeValidator noticeValidator;
 
-    @GetMapping("/notices")
-    public String index(Model model) {
-        return "notice_list";
-    }
+    @Autowired
+    private ShopRepository shopRepository;
 
-    @RequestMapping(value = "/data/notices", method = RequestMethod.POST)
-    @ResponseBody
-    public DataTablesOutput<Notice> dataUsers(@Valid @RequestBody DataTablesInput input) {
-        return noticeDataRepository.findAll(input);
+    @GetMapping("/notices")
+    public String index(@ModelAttribute("form") NoticeSearchForm form, Model model) {
+        String isPopup = form.getPopup();
+        String type = form.getType();
+        int page = form.getPage();
+        Page<Notice> noticePage;
+        if (!Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(isPopup)) {
+            NoticeSpecification spec1 = new NoticeSpecification(new SearchCriteria("type", ":", type));
+            NoticeSpecification spec2 = new NoticeSpecification(new SearchCriteria("popup", ":", isPopup));
+            Pageable pageable = PageRequest.of(page - 1, 5);
+            noticePage = noticeRepository.findAll(Specification.where(spec1).and(spec2), pageable);
+        } else if (!Strings.isNullOrEmpty(type) && Strings.isNullOrEmpty(isPopup)) {
+            NoticeSpecification spec1 = new NoticeSpecification(new SearchCriteria("type", ":", type));
+            Pageable pageable = PageRequest.of(page - 1, 5);
+            noticePage = noticeRepository.findAll(spec1, pageable);
+        } else if (Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(isPopup)) {
+            NoticeSpecification spec2 = new NoticeSpecification(new SearchCriteria("popup", ":", isPopup));
+            Pageable pageable = PageRequest.of(page - 1, 5);
+            noticePage = noticeRepository.findAll(spec2, pageable);
+        } else {
+            Pageable pageable = PageRequest.of(page - 1, 5);
+            noticePage = noticeRepository.findAll(pageable);
+        }
+
+        List<Notice> notices = noticePage.getContent();
+        model.addAttribute("noticePage", noticePage);
+        model.addAttribute("notices", notices);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return "notice_list";
     }
 
     @GetMapping("/notices/create")
     public String create(Model model) {
         model.addAttribute("noticeForm", new Notice());
+        model.addAttribute("shopSearchForm", new ShopSearchForm());
         return "notice_edit";
     }
 
     @PostMapping("/notices/create")
-    public String store(@ModelAttribute("noticeForm") Notice noticeForm, BindingResult bindingResult) {
+    public String store(@ModelAttribute("noticeForm") Notice noticeForm, BindingResult bindingResult, Model model) {
         noticeValidator.validate(noticeForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("shopSearchForm", new ShopSearchForm());
             return "notice_edit";
         }
 
@@ -67,6 +95,7 @@ public class NoticeController {
         Optional<Notice> optionalNotice = noticeRepository.findById(id);
         if (optionalNotice.isPresent()) {
             Notice notice = optionalNotice.get();
+            model.addAttribute("shopSearchForm", new ShopSearchForm());
             model.addAttribute("noticeForm", notice);
             return "notice_edit";
         } else {
@@ -75,9 +104,10 @@ public class NoticeController {
     }
 
     @PostMapping("/notices/{id}")
-    public String update(@ModelAttribute("noticeForm") Notice noticeForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String update(@ModelAttribute("noticeForm") Notice noticeForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         noticeValidator.validate(noticeForm, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("shopSearchForm", new ShopSearchForm());
             return "notice_edit";
         }
         noticeRepository.save(noticeForm);
@@ -89,5 +119,17 @@ public class NoticeController {
     public String delete(@PathVariable(value = "id") long id) {
         noticeRepository.deleteById(id);
         return "redirect:/notices";
+    }
+
+    @PostMapping("/notices/shop_list")
+    @ResponseBody
+    public Map<String, Object> getShopList(@ModelAttribute("shopSearchForm") ShopSearchForm form) {
+        String type = form.getType();
+        String keyword = form.getKeyword();
+        List<Object> shops = shopRepository.getShopsIdAndNameByName(keyword);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("rc", shops.size());
+        resultMap.put("data", shops);
+        return resultMap;
     }
 }

@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "shops")
@@ -18,7 +19,7 @@ public class Shop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     String name;
 
     String erpCode;
@@ -61,6 +62,10 @@ public class Shop {
     @JoinColumn(name="sales_man_id")
     User salesMan;
 
+    @OneToOne
+    @JoinColumn(name="owner_id")
+    User owner;
+
     @ManyToOne
     @JoinColumn(name="price_group_id")
     PriceGroup priceGroup;
@@ -92,6 +97,9 @@ public class Shop {
     @UpdateTimestamp
     @JsonIgnore
     private LocalDateTime updatedAt;
+
+    @ManyToMany(mappedBy = "shops")
+    private Set<Notice> notices;
 
     public Long getId() {
         return id;
@@ -213,6 +221,14 @@ public class Shop {
         this.salesMan = salesMan;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
     public PriceGroup getPriceGroup() {
         return priceGroup;
     }
@@ -291,5 +307,13 @@ public class Shop {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Notice> getNotices() {
+        return notices;
+    }
+
+    public void setNotices(Set<Notice> notices) {
+        this.notices = notices;
     }
 }

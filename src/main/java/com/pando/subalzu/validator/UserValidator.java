@@ -42,17 +42,31 @@ public class UserValidator implements Validator {
             errors.rejectValue("phone", "Numeric");
         }
 
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            errors.rejectValue("username", "Duplicate.userForm.username");
+        if (user.getId() == null) {
+            if (userRepository.findByUsername(user.getUsername()) != null) {
+                errors.rejectValue("username", "Duplicate.userForm.username");
+            }
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
-        if (user.getPassword().length() < 6) {
-            errors.rejectValue("password", "Size.userForm.password");
-        }
+        if (user.getId() != null) {
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                if (user.getPassword().length() < 6) {
+                    errors.rejectValue("password", "Size.userForm.password");
+                }
 
-        if (!user.getPasswordConfirm().equals(user.getPassword())) {
-            errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
+                if (!user.getPasswordConfirm().equals(user.getPassword())) {
+                    errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
+                }
+            }
+        } else {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
+            if (user.getPassword().length() < 6) {
+                errors.rejectValue("password", "Size.userForm.password");
+            }
+
+            if (!user.getPasswordConfirm().equals(user.getPassword())) {
+                errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
+            }
         }
     }
 }

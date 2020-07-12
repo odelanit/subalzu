@@ -1,44 +1,38 @@
 package com.pando.subalzu.web;
 
+import com.pando.subalzu.form.UserSearchForm;
 import com.pando.subalzu.model.Permission;
 import com.pando.subalzu.model.Role;
 import com.pando.subalzu.model.User;
 import com.pando.subalzu.repository.PermissionRepository;
 import com.pando.subalzu.repository.RoleRepository;
-import com.pando.subalzu.repository.UserDataRepository;
 import com.pando.subalzu.repository.UserRepository;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.UserSpecification;
-import com.pando.subalzu.validator.UserUpdateValidator;
 import com.pando.subalzu.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class UserController {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserDataRepository userDataRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -48,9 +42,6 @@ public class UserController {
 
     @Autowired
     private UserValidator userValidator;
-
-    @Autowired
-    private UserUpdateValidator userUpdateValidator;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -68,7 +59,25 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public String index() {
+    public String index(@ModelAttribute("form") UserSearchForm form, Model model) {
+        String field = form.getField();
+        String keyword = form.getKeyword();
+        int page = form.getPage();
+        Page<User> userPage;
+        if (field != null && keyword != null) {
+            UserSpecification spec = new UserSpecification(new SearchCriteria(field, ":", keyword));
+            Pageable pageable = PageRequest.of(page - 1, 5);
+            userPage = userRepository.findAll(spec, pageable);
+        } else {
+            Pageable pageable = PageRequest.of(page - 1, 5);
+            userPage = userRepository.findAll(pageable);
+        }
+        List<User> users = userPage.getContent();
+
+        model.addAttribute("userPage", userPage);
+        model.addAttribute("users", users);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return "user_list";
     }
 
@@ -80,12 +89,6 @@ public class UserController {
     @ModelAttribute("permissions")
     List<Permission> permissions() {
         return permissionRepository.findAll();
-    }
-
-    @RequestMapping(value = "/data/users", method = RequestMethod.POST)
-    @ResponseBody
-    public DataTablesOutput<User> dataUsers(@Valid @RequestBody DataTablesInput input) {
-        return userDataRepository.findAll(input);
     }
 
     @GetMapping("/users/create")
@@ -128,7 +131,7 @@ public class UserController {
 
     @PostMapping("/users/{username}")
     public String update(@PathVariable String username, @ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-        userUpdateValidator.validate(userForm, bindingResult);
+        userValidator.validate(userForm, bindingResult);
         if (bindingResult.hasErrors()) {
             List<Role> userRoles = new ArrayList<>(userForm.getRoles());
             List<Permission> userPermissions = new ArrayList<>(userForm.getPermissions());

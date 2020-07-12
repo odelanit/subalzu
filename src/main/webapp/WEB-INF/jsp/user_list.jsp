@@ -23,12 +23,6 @@
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-          rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -269,8 +263,40 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
+                                <div class="mb-5">
+                                    <table class="table table-sm table-bordered form-table">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th class="text-center">키워드 검색</th>
+                                            <td>
+                                                <form:form class="form-inline" id="search-form" modelAttribute="form" method="get">
+                                                    <form:select class="form-control w-25 form-control-sm ml-1 mr-2" path="field">
+                                                        <form:option value="fullName" >담당자</form:option>
+                                                        <form:option value="shopName">담당 거래처</form:option>
+                                                    </form:select>
+                                                    <form:input path="keyword" class="form-control w-50 form-control-sm" placeholder="검색어를 입력해주세요." />
+                                                    <form:hidden path="page" id="page_number" />
+                                                </form:form>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary" form="search-form">검색</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <div>
-                                    <table class="table display" id="user-table">
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-lg-6">
+                                            <span class="h6">전체 ${userPage.totalElements}건</span>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <a class="btn btn-primary btn-sm" href="/users/create">
+                                                <i class="fa fa-plus"></i> 직원 등록
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <table class="table table-sm text-center table-hover" id="user-table">
                                         <thead class="thead-light">
                                         <tr>
                                             <th>#</th>
@@ -279,11 +305,77 @@
                                             <th>담당거래처</th>
                                             <th>아이디</th>
                                             <th>비고</th>
-                                            <th>담당자 삭제</th>
+                                            <th style="width: 100px;">담당자 삭제</th>
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        <c:forEach var="user" items="${users}">
+                                            <tr>
+                                                <th><a href="/users/${user.username}">${user.id}</a></th>
+                                                <td><a href="/users/${user.username}">${user.createdAt.format(localDateTimeFormat)}</a></td>
+                                                <td><a href="/users/${user.username}">${user.fullName}</a></td>
+                                                <td>
+                                                    <c:if test="${user.ownShop != null}">
+                                                        <a href="/users/${user.username}">${user.ownShop.name}</a>
+                                                    </c:if>
+                                                </td>
+                                                <td><a href="/users/${user.username}">${user.username}</a></td>
+                                                <td><a href="/users/${user.username}">${user.bio}</a></td>
+                                                <td>
+                                                    <a href="/users/${user.username}/delete" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fa fa-trash"></i> 삭제
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                         </tbody>
+                                        <c:if test="${userPage.totalPages > 1}">
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="7">
+                                                    <nav>
+                                                        <ul class="pagination justify-content-center">
+                                                            <c:choose>
+                                                                <c:when test="${userPage.hasPrevious()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <c:forEach var="i" begin="1" end="${userPage.totalPages}">
+                                                                <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                            </c:forEach>
+                                                            <c:choose>
+                                                                <c:when test="${userPage.hasNext()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </ul>
+                                                    </nav>
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </c:if>
                                     </table>
                                 </div>
                             </div>
@@ -318,69 +410,21 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
-    $(document).ready(function () {
-        var token = $("meta[name='_csrf']").attr("content");
-        var userTable = $('#user-table').DataTable({
-            serverSide: true,
-            responsive: true,
-            lengthChange: true,
-            ajax: {
-                url: '/data/users',
-                contentType: 'application/json',
-                headers: {"X-CSRF-TOKEN": token},
-                type: 'POST',
-                data: function(d) {
-                    return JSON.stringify(d);
-                },
-            },
-            columns: [
-                {data: 'id', searchable: false},
-                {data: 'createdAt', searchable: false},
-                {data: 'fullName'},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {data: 'username'},
-                {data: 'bio', orderable: false, searchable: false},
-                {
-                    data: null,
-                    searchable: false,
-                    orderable: false,
-                    defaultContent: '',
-                    render: function(data) {
-                        return '<a href="/users/' + data.username + '/delete">삭제</a>';
-                    }
-                }
-            ],
-            dom: "<'d-flex justify-content-end mb-2'B>" +
-                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            buttons: [
-                {
-                    text: '<i class="fal fa-plus"></i>직원 등록',
-                    className: 'btn btn-sm btn-outline-primary',
-                    action: function ( e, dt, node, config ) {
-                        window.location.href = '/users/create';
-                    },
-                }
-            ]
-        });
-
-        $('#user-table tbody').on('click', 'tr', function () {
-            var data = userTable.row( this ).data();
-            window.location.href = '/users/' + data.username;
-        });
-    });
+    $(document).ready(function() {
+        $(document).on('click', '.page-link', function () {
+            var pageNo = $(this).data('page');
+            if (pageNo) {
+                $('#page_number').val(pageNo);
+                $('#search-form').submit();
+            }
+        })
+    })
 </script>
 </body>
 </html>

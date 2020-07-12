@@ -52,10 +52,12 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                        value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
+                <a href="javascript:;" class="nav-link"
+                   onclick="document.getElementById('logout-form').submit();">로그아웃</a>
             </li>
             <li class="d-none d-sm-block">
                 <div class="app-search">
@@ -77,16 +79,19 @@
     <div class="left-side-menu">
         <div class="side-menu-logo">
             <a href="/">
-                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
-                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
+                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon"/>
+                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40"
+                     class="logo-full"/>
             </a>
         </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
+                         alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
+                         alt="Pando"/>
 
                     <div class="media-body">
                         <a href="/company">
@@ -256,7 +261,7 @@
             </div> <!-- container-fluid -->
             <div class="row">
                 <div class="col">
-                    <c:if test="${message != null}" >
+                    <c:if test="${message != null}">
                         <div class="alert alert-danger">
                             <span>${message}</span>
                         </div>
@@ -265,115 +270,130 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">기본 정보</h5>
-                                <div class="row">
-                                    <spring:bind path="fullName">
-                                        <div class="col-lg-6">
-                                            <div class="form-group row required">
-                                                <label class="col-form-label col-lg-4">담당자</label>
-                                                <div class="col-lg-8">
-                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="담당자" path="fullName" />
-                                                    <div class="invalid-feedback">
-                                                        <form:errors path="fullName" />
-                                                    </div>
+                                <table class="table table-bordered form-table mb-0">
+                                    <tbody class="thead-light">
+                                    <tr>
+                                        <spring:bind path="fullName">
+                                            <th class="required"><span>담당자</span></th>
+                                            <td>
+                                                <form:input cssClass="form-control w-75 ${status.error ? 'is-invalid' : ''}"
+                                                            placeholder="담당자" path="fullName"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="fullName"/>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="phone">
-                                        <div class="col-lg-6">
-                                            <div class="form-group row required">
-                                                <label class="col-form-label col-lg-4">담당자 휴대폰</label>
-                                                <div class="col-lg-8">
-                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="숫자만 입력해주세요."  path="phone" />
-                                                    <div class="invalid-feedback">
-                                                        <form:errors path="phone" />
-                                                    </div>
+                                            </td>
+                                        </spring:bind>
+                                        <spring:bind path="phone">
+                                            <th class="required"><span>담당자 휴대폰</span></th>
+                                            <td>
+                                                <form:input cssClass="w-75 form-control ${status.error ? 'is-invalid' : ''}"
+                                                            placeholder="숫자만 입력해주세요." path="phone"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="phone"/>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                                <spring:bind path="username">
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-lg-2">아이디</label>
-                                        <div class="col-lg-10">
-                                            <form:input path="username" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="4자 이상 영문 또는 숫자만 사용 가능" />
-                                            <div class="invalid-feedback">
-                                                <form:errors path="username" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </spring:bind>
-                                <spring:bind path="password">
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-lg-2">비밀번호</label>
-                                        <div class="col-lg-10">
-                                            <form:password path="password" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="6자 이상 영문 숫자 조합" />
-                                            <div class="invalid-feedback">
-                                                <form:errors path="password" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </spring:bind>
-                                <spring:bind path="passwordConfirm">
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-lg-2">비밀번호 확인</label>
-                                        <div class="col-lg-10">
-                                            <form:password path="passwordConfirm" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="비밀번호를 다시 입력해주세요." />
-                                            <div class="invalid-feedback">
-                                                <form:errors path="passwordConfirm" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </spring:bind>
-                                <spring:bind path="bio">
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">비고</label>
-                                        <div class="col-lg-10">
-                                            <form:input path="bio" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="내용을 입력해주세요." />
-                                            <div class="invalid-feedback">
-                                                <form:errors path="bio" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </spring:bind>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    <tr>
+                                        <spring:bind path="username">
+                                            <th><span>아이디</span></th>
+                                            <td colspan="3">
+                                                <form:input path="username"
+                                                            cssClass="w-75 form-control ${status.error ? 'is-invalid' : ''}"
+                                                            placeholder="4자 이상 영문 또는 숫자만 사용 가능"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="username"/>
+                                                </div>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    <tr>
+                                        <spring:bind path="password">
+                                            <th class="required"><label>비밀번호</label></th>
+                                            <td colspan="3">
+                                                <form:password path="password"
+                                                               cssClass="w-75 form-control ${status.error ? 'is-invalid' : ''}"
+                                                               placeholder="6자 이상 영문 숫자 조합"/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="password"/>
+                                                </div>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    <tr>
+                                        <spring:bind path="passwordConfirm">
+                                            <th class="required"><span>비밀번호 확인</span></th>
+                                            <td colspan="3">
+                                                <form:password path="passwordConfirm"
+                                                               cssClass="w-75 form-control ${status.error ? 'is-invalid' : ''}"
+                                                               placeholder="비밀번호를 다시 입력해주세요."/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="passwordConfirm"/>
+                                                </div>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    <tr>
+                                        <spring:bind path="bio">
+                                            <th><span>비고</span></th>
+                                            <td colspan="3">
+                                                <form:input path="bio"
+                                                            cssClass="w-75 form-control ${status.error ? 'is-invalid' : ''}"
+                                                            placeholder="내용을 입력해주세요."/>
+                                                <div class="invalid-feedback">
+                                                    <form:errors path="bio"/>
+                                                </div>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">권한 정보</h5>
-                                <spring:bind path="roles">
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-lg-2">권한 유형</label>
-                                        <div class="col-lg-10">
-                                            <c:forEach var="role" items="${roles}">
-                                                <div class="custom-control custom-radio custom-control-inline">
-                                                    <form:radiobutton id="role-${role.name}" value="${role.id}" class="custom-control-input" path="roles" />
-                                                    <label class="custom-control-label" for="role-${role.name}">${role.koName}</label>
+                                <table class="table table-bordered form-table">
+                                    <tbody class="thead-light">
+                                    <tr>
+                                        <spring:bind path="roles">
+                                            <th class="required"><span>권한 유형</span></th>
+                                            <td>
+                                                <c:forEach var="role" items="${roles}">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <form:radiobutton id="role-${role.name}" value="${role.id}"
+                                                                          class="custom-control-input" path="roles"/>
+                                                        <label class="custom-control-label"
+                                                               for="role-${role.name}">${role.koName}</label>
+                                                    </div>
+                                                </c:forEach>
+                                                <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                    <form:errors path="roles"/>
                                                 </div>
-                                            </c:forEach>
-                                            <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                <form:errors path="roles" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </spring:bind>
-                                <spring:bind path="permissions">
-                                    <div class="form-group row required">
-                                        <label class="col-form-label col-lg-2">정보조회 권한</label>
-                                        <div class="col-lg-10">
-                                            <c:forEach var="permission" items="${permissions}">
-                                                <div class="custom-control custom-radio custom-control-inline">
-                                                    <form:radiobutton id="permission-${permission.name}" value="${permission.id}" path="permissions" class="custom-control-input" />
-                                                    <label class="custom-control-label" for="permission-${permission.name}">${permission.koName}</label>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    <tr>
+                                        <spring:bind path="permissions">
+                                            <th class="required"><span>정보조회 권한</span></th>
+                                            <td>
+                                                <c:forEach var="permission" items="${permissions}">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <form:radiobutton id="permission-${permission.name}"
+                                                                          value="${permission.id}" path="permissions"
+                                                                          class="custom-control-input"/>
+                                                        <label class="custom-control-label"
+                                                               for="permission-${permission.name}">${permission.koName}</label>
+                                                    </div>
+                                                </c:forEach>
+                                                <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                    <form:errors path="permissions"/>
                                                 </div>
-                                            </c:forEach>
-                                            <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                <form:errors path="permissions" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </spring:bind>
+                                            </td>
+                                        </spring:bind>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="form-group">
@@ -409,6 +429,7 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>

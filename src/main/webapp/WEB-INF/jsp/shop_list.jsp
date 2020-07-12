@@ -336,7 +336,6 @@
         var token = $("meta[name='_csrf']").attr("content");
         var table = $('#shops').DataTable({
             serverSide: true,
-            responsive: true,
             lengthChange: true,
             ajax: {
                 url: '/data/shops',

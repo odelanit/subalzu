@@ -336,7 +336,6 @@
 
         var userTable = $('#suppliers').DataTable({
             serverSide: true,
-            responsive: true,
             ajax: {
                 url: '/data/suppliers',
                 contentType: 'application/json',

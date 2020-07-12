@@ -49,6 +49,12 @@ public class ShopController {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private RoleRepository rolesRepository;
+
+    @Autowired
+    private PermissionRepository permissionsRepository;
+
     @ModelAttribute("businesses")
     List<Business> businessList() {
         return businessRepository.findAll();
@@ -103,14 +109,18 @@ public class ShopController {
             return "shop_create";
         }
 
+        Role adminRole = rolesRepository.findByName("admin");
+        Permission chargePermission = permissionsRepository.findByName("in_charge");
         String username = shopForm.getShopTel();
         User user = new User();
         user.setFullName(username);
         user.setUsername(username);
         user.setPhone(username);
         user.setPassword(bCryptPasswordEncoder.encode(username));
-        userRepository.save(user);
-
+        user.setRole(adminRole);
+        user.setPermission(chargePermission);
+        User savedUser = userRepository.save(user);
+        shopForm.setOwner(savedUser);
         shopRepository.save(shopForm);
         redirectAttributes.addFlashAttribute("message", "Shop Created");
         return "redirect:/shops";

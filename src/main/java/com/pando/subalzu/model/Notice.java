@@ -15,7 +15,7 @@ public class Notice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int type = 0;
+    private int type = 0; // 0 : 전체, 1 : 거래처별
 
     private boolean popup;
 
@@ -35,6 +35,9 @@ public class Notice {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @ManyToMany
+    private Set<Shop> shops;
 
     public Long getId() {
         return id;
@@ -98,5 +101,13 @@ public class Notice {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Shop> getShops() {
+        return shops;
+    }
+
+    public void setShops(Set<Shop> shops) {
+        this.shops = shops;
     }
 }
