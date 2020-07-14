@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "suppliers")
-public class Supplier {
+public class Supplier { // 매입처
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

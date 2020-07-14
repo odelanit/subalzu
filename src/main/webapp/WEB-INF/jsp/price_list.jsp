@@ -257,49 +257,41 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>상품명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-primary">검색</button>
-                                                    </div>
+                                <form:form method="get" modelAttribute="form">
+                                    <table class="table table-bordered mb-5">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select path="field" class="form-control form-control-sm mr-2 w-25">
+                                                        <form:option value="name">상품 명</form:option>
+                                                        <form:option value="erpCode">상품 코드</form:option>
+                                                    </form:select>
+                                                    <form:input class="form-control form-control-sm w-50" path="keyword" placeholder="검색어를 입력해주세요" />
+                                                    <form:hidden path="page" />
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>1차 카테고리</option>
-                                                    </select>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm">검색</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-inline">
+                                                    <form:select class="form-control form-control-sm mr-2 w-25" path="category">
+                                                        <option value="">1차 카테고리</option>
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm w-25" path="subcategory">
+                                                        <option value="">2차 카테고리</option>
+                                                    </form:select>
                                                 </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>2차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form:form>
                                 <div class="row">
                                     <div class="col-lg-6">
 
@@ -313,8 +305,8 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="table-responsive mt-3">
-                                    <table class="table">
+                                <div class="mt-3">
+                                    <table class="table table-sm text-center">
                                         <thead class="thead-light">
                                         <tr>
                                             <th>#</th>

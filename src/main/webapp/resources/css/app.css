@@ -38,6 +38,8 @@ body {
 
 .card {
     margin-bottom: 1rem;
+    -webkit-box-shadow: 0.2rem 0.2rem 0.2rem rgba(75,75,90,.075);
+    box-shadow: 0.2rem 0.2rem 0.2rem rgba(75,75,90,.075);
 }
 
 .custom-select {
@@ -3829,14 +3831,6 @@ body.authentication-bg {
     vertical-align: middle;
 }
 
-.table a:not(.btn) {
-    color: #212529;
-}
-
-.table a:not(.btn):hover {
-    text-decoration: none;
-}
-
 .table.form-table th {
     width: 150px;
 }
@@ -3853,4 +3847,8 @@ body.authentication-bg {
     color: #fff;
     background-color: #00a1b7;
     border-color: #00a1b7;
+}
+
+.dropzone .dz-preview {
+    display: none;
 }

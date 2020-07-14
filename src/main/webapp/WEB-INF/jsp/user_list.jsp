@@ -310,17 +310,17 @@
                                         </thead>
                                         <tbody>
                                         <c:forEach var="user" items="${users}">
-                                            <tr>
-                                                <th><a href="/users/${user.username}">${user.id}</a></th>
-                                                <td><a href="/users/${user.username}">${user.createdAt.format(localDateTimeFormat)}</a></td>
-                                                <td><a href="/users/${user.username}">${user.fullName}</a></td>
+                                            <tr onclick="window.location.href='/users/${user.username}'">
+                                                <th>${user.id}</th>
+                                                <td>${user.createdAt.format(localDateTimeFormat)}</td>
+                                                <td>${user.fullName}</td>
                                                 <td>
                                                     <c:if test="${user.ownShop != null}">
-                                                        <a href="/users/${user.username}">${user.ownShop.name}</a>
+                                                        ${user.ownShop.name}
                                                     </c:if>
                                                 </td>
-                                                <td><a href="/users/${user.username}">${user.username}</a></td>
-                                                <td><a href="/users/${user.username}">${user.bio}</a></td>
+                                                <td>${user.username}</td>
+                                                <td>${user.bio}</td>
                                                 <td>
                                                     <a href="/users/${user.username}/delete" class="btn btn-sm btn-outline-danger">
                                                         <i class="fa fa-trash"></i> 삭제

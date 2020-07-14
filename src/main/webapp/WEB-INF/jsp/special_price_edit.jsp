@@ -18,6 +18,8 @@
 
     <!-- App css -->
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -79,20 +81,20 @@
                 <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
             </a>
         </div>
-        <div class="media user-profile mt-2 mb-2">
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-            <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
-            <div class="media-body">
-                <a href="/company">
-                    <h6 class="pro-user-name mt-0 mb-0">Nik Patel</h6>
-                    <span class="pro-user-desc">기업정보보기</span>
-                </a>
-            </div>
-        </div>
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
+                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
+
+                    <div class="media-body">
+                        <a href="/company">
+                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
+                            <span class="pro-user-desc">기업정보보기</span>
+                        </a>
+                    </div>
+                </div>
                 <ul class="metismenu" id="menu-bar">
                     <li>
                         <a href="javascript: void(0);">
@@ -159,7 +161,7 @@
                             <li>
                                 <a href="/price-groups">단가 그룹 관리</a>
                             </li>
-                            <li>
+                            <li class="mm-active">
                                 <a href="/special-prices">특 단가 관리</a>
                             </li>
                             <li>
@@ -255,70 +257,62 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>상품 명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-primary">검색</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>1차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>2차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <h5 class="text-center">루이비통 거래처입니다.</h5>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
+                                <form:form method="get" modelAttribute="form">
+                                    <table class="table table-bordered mb-5">
+                                        <tbody class="thead-light">
                                         <tr>
-                                            <th>#</th>
-                                            <th>상품코드</th>
-                                            <th>썸네일</th>
-                                            <th>상품명</th>
-                                            <th>카테고리</th>
-                                            <th>규격(단위)</th>
-                                            <th>제조사(원산지)</th>
-                                            <th>직배송 단가</th>
-                                            <th>택배배송 단가</th>
-                                            <th>특 단가</th>
-                                            <th>적용 상태</th>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select path="field" class="form-control form-control-sm mr-2 w-25">
+                                                        <form:option value="name">상품 명</form:option>
+                                                        <form:option value="erpCode">상품 코드</form:option>
+                                                    </form:select>
+                                                    <form:input class="form-control form-control-sm w-50" path="keyword" placeholder="검색어를 입력해주세요" />
+                                                    <form:hidden path="page" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm">검색</button>
+                                            </td>
                                         </tr>
-                                        </thead>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-inline">
+                                                    <form:select class="form-control form-control-sm mr-2 w-25" path="category">
+                                                        <option value="">1차 카테고리</option>
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm w-25" path="subcategory">
+                                                        <option value="">2차 카테고리</option>
+                                                    </form:select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
                                     </table>
+                                </form:form>
+                                <h5 class="text-center mb-5"><span class="h3">${shop.name}</span> 거래처<c:if test="${shop.priceGroup != null}">(단가 속성 = ${shop.priceGroup.name})</c:if>입니다.</h5>
+                                <table class="table table-sm text-center">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>상품코드</th>
+                                        <th>썸네일</th>
+                                        <th>상품명</th>
+                                        <th>카테고리</th>
+                                        <th>규격(단위)</th>
+                                        <th>제조사(원산지)</th>
+                                        <th>직배송 단가</th>
+                                        <th>택배배송 단가</th>
+                                        <th>특 단가</th>
+                                        <th>적용 상태</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                                <div class="form-group text-center">
+                                    <a class="btn btn-outline-secondary" href="/special-prices">목록으로</a>
                                 </div>
-                                <a class="btn btn-outline-secondary" href="/special-prices">목록으로</a>
                             </div>
                         </div>
                     </div>
@@ -350,8 +344,13 @@
 </div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
 
 </body>
 </html>

@@ -25,16 +25,13 @@ public class ShopGrade {
     private int percentage = 0;
 
     @OneToMany(mappedBy = "shopGrade")
-    @JsonManagedReference
     Set<Shop> shops;
 
     @CreationTimestamp
     @Column(updatable = false)
-    @JsonIgnore
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Long getId() {
@@ -83,5 +80,13 @@ public class ShopGrade {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Shop> getShops() {
+        return shops;
+    }
+
+    public void setShops(Set<Shop> shops) {
+        this.shops = shops;
     }
 }

@@ -6,6 +6,7 @@ import com.pando.subalzu.model.Supplier;
 import com.pando.subalzu.repository.*;
 import com.pando.subalzu.validator.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
@@ -41,7 +42,7 @@ public class ProductController {
 
     @ModelAttribute("categories")
     List<Category> categories() {
-        return categoryRepository.findAll();
+        return categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level"));
     }
 
     @ModelAttribute("suppliers")

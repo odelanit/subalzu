@@ -23,14 +23,6 @@
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
-
-    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-          rel="stylesheet" type="text/css"/>
-
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -266,14 +258,74 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
+                                <form:form modelAttribute="form" method="get">
+                                    <table class="table table-bordered form-table mb-4">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select path="field" cssClass="form-control form-control-sm mr-2 w-25">
+                                                        <form:option value="name" label="거래처명" />
+                                                    </form:select>
+                                                    <form:input path="keyword" cssClass="form-control form-control-sm w-50" />
+                                                    <form:hidden path="page" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-primary">검색</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-inline">
+                                                    <form:select path="deliveryType" cssClass="form-control form-control-sm mr-2">
+                                                        <form:option value="" label="배송 유형" />
+                                                        <form:option value="direct" label="직배송" />
+                                                        <form:option value="parcel" label="택배배송" />
+                                                    </form:select>
+                                                    <form:select path="deliverer" cssClass="form-control form-control-sm mr-2">
+                                                        <form:option value="" label="배송 담당자" />
+                                                        <form:options items="${deliverers}" itemValue="id" itemLabel="fullName" />
+                                                    </form:select>
+                                                    <form:select path="salesman" cssClass="form-control form-control-sm mr-2">
+                                                        <form:option value="" label="영업 담당자" />
+                                                        <form:options items="${salesMans}" itemValue="id" itemLabel="fullName" />
+                                                    </form:select>
+                                                    <form:select path="dealStatus" cssClass="form-control form-control-sm mr-2">
+                                                        <form:option value="" label="거래 상태" />
+                                                        <form:option value="true" label="거래중" />
+                                                        <form:option value="false" label="거래중지" />
+                                                    </form:select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form:form>
                                 <div>
-                                    <table class="table" id="shops">
+                                    <div class="row mb-3 align-items-center">
+                                        <div class="col-lg-6 text-lg-left text-center">
+                                            <span>전체 ${shopPage.totalElements}건</span>
+                                            <button class="btn btn-sm btn-outline-warning"><i class="fa fa-times"></i>거래 중지</button>
+                                            <button class="btn btn-sm btn-outline-success"><i class="fa fa-check"></i>거래 재개</button>
+                                        </div>
+                                        <div class="col-lg-6 text-center text-lg-right">
+                                            <a class="btn btn-outline-secondary btn-sm" href="/shop_grades"><i class="fal fa-badge-percent"></i>할인/할증 등급 관리</a>
+<%--                                            <button class="btn btn-outline-secondary btn-sm"><i class="fa fa-file-excel"></i>거래처 일괄 수정</button>--%>
+                                            <a href="/shops/create" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>거래처 등록</a>
+                                        </div>
+                                    </div>
+                                    <table class="table table-sm text-center table-hover" id="shops">
                                         <thead class="thead-light">
                                         <tr>
+                                            <th>
+                                                <input type="checkbox" data-toggle="tooltip" data-title="선택" id="allchk" name="allchk" />
+                                            </th>
                                             <th>#</th>
                                             <th>등록일</th>
                                             <th>거래처</th>
-                                            <th>브랜드</th>
                                             <th>배송 유형</th>
                                             <th>할인/할증 등급</th>
                                             <th>총 매출</th>
@@ -282,7 +334,35 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-
+                                        <c:forEach items="${shops}" var="shop">
+                                            <tr onclick="window.location.href='/shops/${shop.id}/edit'">
+                                                <td><input type="checkbox" /></td>
+                                                <td>${shop.id}</td>
+                                                <td>${shop.createdAt.format(localDateTimeFormat)}</td>
+                                                <td>${shop.name}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${shop.deliveryTypes.size() == 2}">
+                                                            전체
+                                                        </c:when>
+                                                        <c:when test="${shop.deliveryTypes[0] == 'direct'}">
+                                                            직배송
+                                                        </c:when>
+                                                        <c:when test="${shop.deliveryTypes[0] == 'parcel'}">
+                                                            택배 배송
+                                                        </c:when>
+                                                    </c:choose>
+                                                </td>
+                                                <td>${shop.shopGrade == null ? '없음' : shop.shopGrade.name}</td>
+                                                <td></td>
+                                                <td>
+                                                    <a href="/shops/${shop.id}">보기</a>
+                                                </td>
+                                                <td>
+                                                    ${shop.dealStatus == true ? '거래중' : '거래중지'}
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>
@@ -321,78 +401,7 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-
-<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
-
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
-<script>
-    $(document).ready(function () {
-        var token = $("meta[name='_csrf']").attr("content");
-        var table = $('#shops').DataTable({
-            serverSide: true,
-            lengthChange: true,
-            ajax: {
-                url: '/data/shops',
-                contentType: 'application/json',
-                headers: {"X-CSRF-TOKEN": token},
-                type: 'POST',
-                data: function(d) {
-                    return JSON.stringify(d);
-                },
-            },
-            columns: [
-                {
-                    data: 'id',
-                    searchable: false
-                },
-                {data: 'createdAt', searchable: false},
-                {data: 'name'},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {data: 'deliveryTypes'},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {
-                    data: null, searchable: false, orderable: false,
-                    render: function(data) {
-                        return '<a href="/shops/' + data.id + '">보기</a>'
-                    }
-
-                },
-                {data: null, searchable: false, orderable: false, defaultContent: '거래중'},
-            ],
-            dom: "<'d-flex justify-content-end mb-2'B>" +
-                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            buttons: [
-                {
-                    text: '<i class="fal fa-tags"></i>할인/할증 등급 관리',
-                    className: 'btn btn-sm btn-outline-warning mr-2',
-                    action: function ( e, dt, node, config ) {
-                        window.location.href = '/shop_grades';
-                    },
-                },
-                {
-                    text: '<i class="fal fa-plus"></i>거래처등록',
-                    className: 'btn btn-sm btn-outline-primary',
-                    action: function ( e, dt, node, config ) {
-                        window.location.href = '/shops/create';
-                    },
-                }
-            ]
-        });
-
-        $('#shops tbody').on('click', 'tr', function () {
-            var data = table.row( this ).data();
-            window.location.href = '/shops/' + data.id + '/edit';
-        });
-    })
-</script>
 </body>
 </html>

@@ -18,16 +18,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class UserController {
@@ -66,10 +63,10 @@ public class UserController {
         Page<User> userPage;
         if (field != null && keyword != null) {
             UserSpecification spec = new UserSpecification(new SearchCriteria(field, ":", keyword));
-            Pageable pageable = PageRequest.of(page - 1, 5);
+            Pageable pageable = PageRequest.of(page - 1, 50);
             userPage = userRepository.findAll(spec, pageable);
         } else {
-            Pageable pageable = PageRequest.of(page - 1, 5);
+            Pageable pageable = PageRequest.of(page - 1, 50);
             userPage = userRepository.findAll(pageable);
         }
         List<User> users = userPage.getContent();
@@ -111,22 +108,27 @@ public class UserController {
 
     @GetMapping("/users/{username}")
     public String edit(Model model, @PathVariable String username) {
-        User user = userRepository.findByUsername(username);
-        model.addAttribute("userForm", user);
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            model.addAttribute("userForm", user);
 
-        List<Role> userRoles = new ArrayList<>(user.getRoles());
-        List<Permission> userPermissions = new ArrayList<>(user.getPermissions());
-        if (userRoles.size() == 0) {
-            model.addAttribute("userRole", null);
+            List<Role> userRoles = new ArrayList<>(user.getRoles());
+            List<Permission> userPermissions = new ArrayList<>(user.getPermissions());
+            if (userRoles.size() == 0) {
+                model.addAttribute("userRole", null);
+            } else {
+                model.addAttribute("userRole", userRoles.get(0));
+            }
+            if (userPermissions.size() == 0) {
+                model.addAttribute("userPermission", null);
+            } else {
+                model.addAttribute("userPermission", userPermissions.get(0));
+            }
+            return "user_edit";
         } else {
-            model.addAttribute("userRole", userRoles.get(0));
+            return "redirect:/users";
         }
-        if (userPermissions.size() == 0) {
-            model.addAttribute("userPermission", null);
-        } else {
-            model.addAttribute("userPermission", userPermissions.get(0));
-        }
-        return "user_edit";
     }
 
     @PostMapping("/users/{username}")
@@ -139,15 +141,18 @@ public class UserController {
             model.addAttribute("userPermission", userPermissions.get(0));
             return "user_edit";
         }
-        User dbUser = userRepository.findByUsername(username);
-        String dbPassword = dbUser.getPassword();
-        if (userForm.getPassword() != null && !userForm.getPassword().isEmpty()) {
-            userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
-        } else {
-            userForm.setPassword(dbPassword);
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String dbPassword = user.getPassword();
+            if (userForm.getPassword() != null && !userForm.getPassword().isEmpty()) {
+                userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
+            } else {
+                userForm.setPassword(dbPassword);
+            }
+            userRepository.save(userForm);
+            redirectAttributes.addFlashAttribute("message", "User Updated");
         }
-        userRepository.save(userForm);
-        redirectAttributes.addFlashAttribute("message", "User Updated");
         return "redirect:/users";
     }
 
@@ -155,9 +160,23 @@ public class UserController {
     public String delete(Principal principal, @PathVariable String username) {
         String currentUsername = principal.getName();
         if (!currentUsername.equals(username)) {
-            User user = userRepository.findByUsername(username);
-            userRepository.delete(user);
+            Optional<User> optionalUser = userRepository.findByUsername(username);
+            optionalUser.ifPresent(user -> userRepository.delete(user));
         }
         return "redirect:/users";
+    }
+
+    @PostMapping("/users/check_username")
+    @ResponseBody
+    public Map<String, String> checkUsername(@RequestParam("username") String username, HttpServletResponse response) {
+        Optional<User> optionalUser =  userRepository.findByUsername(username);
+        Map<String, String> resultMap = new HashMap<>();
+        if (optionalUser.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            resultMap.put("message", "User present");
+        } else {
+            resultMap.put("message", "Success");
+        }
+        return resultMap;
     }
 }

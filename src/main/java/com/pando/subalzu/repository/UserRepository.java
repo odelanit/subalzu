@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    User findByUsername(String username);
+
+    Optional<User> findByUsername(String username);
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name=:roleName")
     List<User> findByRoleName(String roleName);

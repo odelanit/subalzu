@@ -8,6 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Component
@@ -43,7 +44,8 @@ public class UserValidator implements Validator {
         }
 
         if (user.getId() == null) {
-            if (userRepository.findByUsername(user.getUsername()) != null) {
+            Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
+            if (optionalUser.isPresent()) {
                 errors.rejectValue("username", "Duplicate.userForm.username");
             }
         }

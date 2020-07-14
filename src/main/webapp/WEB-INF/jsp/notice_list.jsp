@@ -86,7 +86,7 @@
         <div class="sidebar-content">
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
-                <div class="media user-profile">
+                <div class="media user-profile mt-2 mb-2">
                     <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Shreyu"/>
                     <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Shreyu"/>
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 public class CompanyController {
@@ -34,12 +35,15 @@ public class CompanyController {
 
     @GetMapping("/company")
     public String company(Principal principal, Model model) {
-        User currentUser = userRepository.findByUsername(principal.getName());
-        Company company = currentUser.getCompany();
-        if (company == null) {
-            company = new Company();
+        Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+        if (optionalUser.isPresent()) {
+            User currentUser = optionalUser.get();
+            Company company = currentUser.getCompany();
+            if (company == null) {
+                company = new Company();
+            }
+            model.addAttribute("companyForm", company);
         }
-        model.addAttribute("companyForm", company);
         return "company";
     }
 
@@ -51,14 +55,24 @@ public class CompanyController {
             return "company";
         }
 
-        User currentUser = userRepository.findByUsername(principal.getName());
-        companyForm.setUser(currentUser);
-        Company company = companyRepository.save(companyForm);
-        CompanySetting companySetting = company.getCompanySetting();
-        if (companySetting == null) {
-            companySetting = new CompanySetting();
-            companySetting.setCompany(company);
-            companySettingRepository.save(companySetting);
+        if (companyForm.getId() == null) {
+            Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+            if (optionalUser.isPresent()) {
+                User currentUser = optionalUser.get();
+                CompanySetting companySetting = new CompanySetting();
+                companyForm.setUser(currentUser);
+                Company savedCompany = companyRepository.save(companyForm);
+                companySetting.setCompany(savedCompany);
+                companySettingRepository.save(companySetting);
+            }
+        } else {
+            companyRepository.save(companyForm);
+            Optional<CompanySetting> optionalCompanySetting = companySettingRepository.findByCompany_Id(companyForm.getId());
+            if (!optionalCompanySetting.isPresent()) {
+                CompanySetting companySetting = new CompanySetting();
+                companySetting.setCompany(companyForm);
+                companySettingRepository.save(companySetting);
+            }
         }
 
         model.addAttribute("message", "Successfully updated.");

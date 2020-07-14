@@ -24,13 +24,6 @@
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
 
-    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-          rel="stylesheet" type="text/css"/>
-
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -273,7 +266,27 @@
                         <div class="card">
                             <div class="card-body">
                                 <div>
-                                    <table class="table" id="shop_grades">
+                                    <div class="row align-items-center mb-4">
+                                        <div class="col-lg-6">
+                                            전체 ${shopGrades.size()}건
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteAllModal"><i class="fa fa-trash"></i>전체 삭제</button>
+                                            <button class="btn btn-primary btn-sm" id="add_shop_grade_button">
+                                                <i class="fa fa-plus"></i>할인/할증율 등록
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <table class="table table-sm text-center">
+                                        <colgroup>
+                                            <col style="width: 5%">
+                                            <col style="width: 8%">
+                                            <col>
+                                            <col style="width: 12%">
+                                            <col style="width: 14%">
+                                            <col style="width: 12%">
+                                            <col style="width: 12%">
+                                        </colgroup>
                                         <thead class="thead-light">
                                         <tr>
                                             <th>#</th>
@@ -283,9 +296,32 @@
                                             <th>적용된 거래처 수</th>
                                             <th>수정</th>
                                             <th>삭제</th>
-                                            <th>순서변경</th>
                                         </tr>
                                         </thead>
+                                        <tbody>
+                                        <c:forEach items="${shopGrades}" var="shopGrade">
+                                            <tr>
+                                                <td>${shopGrade.id}</td>
+                                                <td>${shopGrade.saleType == 'discount' ? '할인' : '할증'}</td>
+                                                <td>${shopGrade.name}</td>
+                                                <td>${shopGrade.percentage}%</td>
+                                                <td>${shopGrade.shops.size()}</td>
+                                                <td>
+                                                    <button class="btn btn-warning btn-sm edit"
+                                                            data-id="${shopGrade.id}"
+                                                            data-type="${shopGrade.saleType}"
+                                                            data-name="${shopGrade.name}"
+                                                            data-percentage="${shopGrade.percentage}"
+                                                    >
+                                                        <i class="fa fa-pencil"></i>수정
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-danger btn-sm delete" href="/shop_grades/${shopGrade.id}"><i class="fa fa-trash"></i>삭제</a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -320,8 +356,8 @@
 <div class="modal fade" id="add_grade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">할인/할증율 등급 등록</h5>
+            <div class="modal-header bg-primary">
+                <h6 class="modal-title text-white">할인/할증율 등급 등록</h6>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -362,8 +398,26 @@
                 </form:form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
-                <button class="btn btn-outline-primary" form="add_grade_form">등록</button>
+                <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> 취소</button>
+                <button class="btn btn-primary" form="add_grade_form"><i class="fa fa-save"></i> 등록</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteAllModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h6 class="modal-title text-white">전체 삭제</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                등록된 등급을 모두 삭제하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> 취소</button>
+                <button class="btn btn-danger" id="delete_all_button"><i class="fa fa-trash"></i> 확인</button>
             </div>
         </div>
     </div>
@@ -373,98 +427,17 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-
-<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
-
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
     $(document).ready(function () {
-        var token = $("meta[name='_csrf']").attr("content");
-        var table = $('#shop_grades').DataTable({
-            serverSide: true,
-            lengthChange: true,
-            ajax: {
-                url: '/data/shop_grades',
-                contentType: 'application/json',
-                headers: {"X-CSRF-TOKEN": token},
-                type: 'POST',
-                data: function (d) {
-                    return JSON.stringify(d);
-                },
-            },
-            columns: [
-                {
-                    data: 'id',
-                    searchable: false
-                },
-                {
-                    data: 'saleType',
-                    render: function (data) {
-                        switch (data) {
-                            case 'discount':
-                                return '할인';
-                            case 'extra_charge':
-                                return '할증';
-                            default:
-                                return '';
-                        }
-                    }
-                },
-                {data: 'name'},
-                {data: 'percentage'},
-                {
-                    data: 'shops',
-                    orderable: false,
-                    render: function (data) {
-                        return data.length;
-                    }
-                },
-                {
-                    data: null,
-                    searchable: false,
-                    orderable: false,
-                    render: function (data) {
-                        return '<button data-id="' + data.id + '" class="btn btn-sm btn-outline-primary edit">수정</button>';
-                    }
-                },
-                {
-                    data: null,
-                    searchable: false,
-                    orderable: false,
-                    render: function (data) {
-                        return '<a class="btn btn-outline-danger btn-sm delete" href="/shop_grades/' + data.id + '">삭제</a>'
-                    }
-                },
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-            ],
-            dom: "<'d-flex justify-content-end mb-2'B>" +
-                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            buttons: [
-                {
-                    text: '<i class="fal fa-plus"></i> 할인/할증율 등록',
-                    className: 'btn btn-sm btn-outline-primary',
-                    action: function (e, dt, node, config) {
-                        $('#add_grade').modal();
-                        $('#add_grade_form').attr('action', '/shop_grades/store');
-                        document.getElementById('add_grade_form').reset();
-                        $('#add_grade_form input[name="id"]').val('');
-                    },
-                }
-            ]
-        });
 
-        // $('#shop_grades tbody').on('click', 'tr', function () {
-        //     var data = table.row( this ).data();
-        //     window.location.href = '/shop_grades/' + data.id;
-        // });
+        $('#add_shop_grade_button').click(function () {
+            $('#add_grade').modal();
+            $('#add_grade_form').attr('action', '/shop_grades/store');
+            document.getElementById('add_grade_form').reset();
+            $('#add_grade_form input[name="id"]').val('');
+        })
 
         $('#add_grade_form').submit(function (e) {
             e.preventDefault();
@@ -476,7 +449,7 @@
                 success: function (data) {
                     $('#add_grade_form input').removeClass('is-invalid');
                     $('#add_grade').modal('toggle');
-                    table.draw();
+                    window.location.reload();
                 },
                 error: function (xhr) {
                     var error = xhr.responseJSON.error;
@@ -487,25 +460,39 @@
             })
         });
 
-        $('#shop_grades').on('click', 'tbody .btn.edit', function () {
-            var dataRow = table.row($(this).closest('tr')).data();
+        $('.btn.edit').on('click', function () {
             $('#add_grade_form').attr('action', '/shop_grades/' + $(this).data('id'));
             $('#add_grade_form input[name="id"]').val($(this).data('id'));
             document.getElementById('add_grade_form').reset();
-            Object.keys(dataRow).forEach(function (k) {
-                $('#add_grade_form input[name="' + k + '"]').attr('type') === 'radio'
-                    ? ($('#add_grade_form input[value="' + dataRow[k] + '"]').prop("checked", true))
-                    : ($('#add_grade_form input[name="' + k + '"]').val(dataRow[k]));
-            })
+            $('#add_grade_form input[name="name"]').val($(this).data('name'));
+            $('#add_grade_form input[name="percentage"]').val($(this).data('percentage'));
+            if ($('#add_grade_form input[name="saleType"]').attr('type') === 'radio') {
+                $('#add_grade_form input[value="' + $(this).data('saleType') + '"]').prop("checked", true)
+            }
             $('#add_grade').modal();
         });
 
-        $('#shop_grades').on('click', 'tbody .btn.delete', function (e) {
+        $('.btn.delete').on('click', function (e) {
             e.preventDefault();
             $.ajax({
                 url: $(this).attr('href'),
                 success: function () {
-                    table.draw();
+                    window.location.reload();
+                }
+            })
+        });
+
+        $('#delete_all_button').click(function() {
+            var token = $("meta[name='_csrf']").attr("content");
+            $.ajax({
+                type: 'POST',
+                url: '/shop_grades/delete_all',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                },
+                success: function(data) {
+                    window.location.reload();
+                    $('#deleteAllModal').modal();
                 }
             })
         })

@@ -19,9 +19,10 @@ public class ShopValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "zipCode", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLine1", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLine2", "NotEmpty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shopTel", "NotEmpty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactName", "NotEmpty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactPhone", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ownerUsername", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ownerFullname", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ownerPhone", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliverer", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryTypes", "NotEmpty");
     }
 }

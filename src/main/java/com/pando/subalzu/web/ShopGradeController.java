@@ -27,24 +27,21 @@ import java.util.stream.Collectors;
 public class ShopGradeController {
 
     @Autowired
-    ShopGradeDataRepository shopGradeDataRepository;
-
-    @Autowired
     ShopGradeRepository shopGradeRepository;
 
     @Autowired
     ShopGradeValidator validator;
 
-    @GetMapping("/shop_grades")
-    public String index(Model model) {
-        model.addAttribute("shopGradeForm", new ShopGrade());
-        return "shop_grade_list";
+    @ModelAttribute("shopGradeForm")
+    ShopGrade shopGradeForm() {
+        return new ShopGrade();
     }
 
-    @PostMapping("/data/shop_grades")
-    @ResponseBody
-    public DataTablesOutput<ShopGrade> getShopGradeData(@Valid @RequestBody DataTablesInput input) {
-        return shopGradeDataRepository.findAll(input);
+    @GetMapping("/shop_grades")
+    public String index(Model model) {
+        List<ShopGrade> shopGrades = shopGradeRepository.findAll();
+        model.addAttribute("shopGrades", shopGrades);
+        return "shop_grade_list";
     }
 
     private Map<String, Object> storeOrUpdate(ShopGrade shopGrade, BindingResult bindingResult, HttpServletResponse response) {
@@ -92,5 +89,14 @@ public class ShopGradeController {
             resultMap.put("error", "Not Found");
             return resultMap;
         }
+    }
+
+    @PostMapping("/shop_grades/delete_all")
+    @ResponseBody
+    public Map<String, String> deleteAll() {
+        shopGradeRepository.deleteAll();
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
     }
 }

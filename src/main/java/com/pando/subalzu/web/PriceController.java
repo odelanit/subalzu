@@ -1,5 +1,6 @@
 package com.pando.subalzu.web;
 
+import com.pando.subalzu.form.ProductSearchForm;
 import com.pando.subalzu.model.Company;
 import com.pando.subalzu.model.CompanySetting;
 import com.pando.subalzu.model.User;
@@ -28,7 +29,8 @@ public class PriceController {
     CompanySettingRepository companySettingRepository;
 
     @GetMapping("/prices")
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("form", new ProductSearchForm());
         return "price_list";
     }
 

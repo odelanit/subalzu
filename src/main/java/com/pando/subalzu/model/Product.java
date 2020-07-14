@@ -26,6 +26,10 @@ public class Product {
     @JoinColumn(name="category_id")
     Category category;
 
+    @ManyToOne
+    @JoinColumn(name="subcategory_id")
+    Category subCategory;
+
     String makerName;
 
     String country;
@@ -257,5 +261,13 @@ public class Product {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Category getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(Category subCategory) {
+        this.subCategory = subCategory;
     }
 }

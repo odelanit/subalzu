@@ -264,7 +264,12 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <table class="table">
+                                <table class="table table-sm text-center">
+                                    <colgroup>
+                                        <col style="width: 90px;">
+                                        <col>
+                                        <col style="width: 140px;">
+                                    </colgroup>
                                     <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
@@ -280,12 +285,12 @@
                                                 <td>
                                                     <input type="hidden" name="${_csrf.parameterName}"
                                                            value="${_csrf.token}"/>
-                                                    <input class="form-control" required name="name"
+                                                    <input class="form-control form-control-sm" required name="name"
                                                            value="${priceGroup.name}">
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-outline-warning">수정</button>
-                                                    <a class="btn btn-outline-danger"
+                                                    <button class="btn btn-outline-warning btn-sm">수정</button>
+                                                    <a class="btn btn-outline-danger btn-sm"
                                                        href="/price-groups/${priceGroup.id}/delete">삭제</a>
                                                 </td>
                                             </form>
@@ -298,12 +303,12 @@
                                             <td></td>
                                             <td>
                                                 <spring:bind path="name">
-                                                    <form:input id="new-group-name" cssClass="form-control"
+                                                    <form:input id="new-group-name" cssClass="form-control form-control-sm"
                                                                 path="name" required="true"/>
                                                 </spring:bind>
                                             </td>
                                             <td>
-                                                <button class="btn btn-outline-primary">추가</button>
+                                                <button class="btn btn-outline-primary btn-sm">추가</button>
                                             </td>
                                         </form:form>
                                     </tr>

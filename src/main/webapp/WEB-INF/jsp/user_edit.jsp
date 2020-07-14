@@ -263,7 +263,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">기본 정보</h5>
-                                <table class="table table-bordered form-table mb-0">
+                                <table class="table table-bordered form-table">
                                     <tbody class="thead-light">
                                     <tr>
                                         <spring:bind path="fullName">
@@ -342,10 +342,6 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
                                 <h5 class="card-title">권한 정보</h5>
                                 <table class="table table-bordered form-table">
                                     <tbody class="thead-light">
@@ -354,13 +350,15 @@
                                             <th class="required"><span>권한 유형</span></th>
                                             <td>
                                                 <c:forEach var="role" items="${roles}">
-                                                    <div class="custom-control custom-radio custom-control-inline">
-                                                        <form:radiobutton id="role-${role.name}" value="${role.id}"
-                                                                          checked="${userRole.id == role.id ? 'checked' : '' }"
-                                                                          class="custom-control-input" path="roles"/>
-                                                        <label class="custom-control-label"
-                                                               for="role-${role.name}">${role.koName}</label>
-                                                    </div>
+                                                    <c:if test="${!role.name.equalsIgnoreCase(\"customer\")}">
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <form:radiobutton id="role-${role.name}" value="${role.id}"
+                                                                              checked="${userRole.id == role.id ? 'checked' : '' }"
+                                                                              class="custom-control-input" path="roles"/>
+                                                            <label class="custom-control-label"
+                                                                   for="role-${role.name}">${role.koName}</label>
+                                                        </div>
+                                                    </c:if>
                                                 </c:forEach>
                                                 <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
                                                     <form:errors path="roles"/>
@@ -391,11 +389,11 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                <div class="form-group text-center">
+                                    <a href="/users" class="btn btn-secondary">목록으로</a>
+                                    <button class="btn btn-primary">수정하기</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <a href="/users" class="btn btn-secondary">목록으로</a>
-                            <button class="btn btn-primary">수정하기</button>
                         </div>
                     </form:form>
                 </div>

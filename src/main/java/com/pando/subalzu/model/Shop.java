@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "shops")
-public class Shop {
+public class Shop { // 거래처
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,28 +39,28 @@ public class Shop {
     String addressLine2;
 
     @ElementCollection
-    List<String> deliveryTypes;
+    List<String> deliveryTypes; // direct: 직배송, parcel: 택배배송
 
     String fax;
 
     String email;
 
-    @Column(nullable = false)
-    String shopTel;
+    @Transient
+    String ownerUsername;
 
-    @Column(nullable = false)
-    String contactName;
+    @Transient
+    String ownerFullname;
 
-    @Column(nullable = false)
-    String contactPhone;
+    @Transient
+    String ownerPhone;
 
     @ManyToOne
     @JoinColumn(name="deliverer_id", nullable = false)
     User deliverer;
 
     @ManyToOne
-    @JoinColumn(name="sales_man_id")
-    User salesMan;
+    @JoinColumn(name="salesman_id")
+    User salesman;
 
     @OneToOne
     @JoinColumn(name="owner_id")
@@ -85,6 +85,9 @@ public class Shop {
 
     boolean dealStatus = true;
 
+    @Column(columnDefinition = "TEXT")
+    String memo;
+
     @ManyToOne
     @JoinColumn(name="assignee_type_id")
     AssigneeType assigneeType;
@@ -97,6 +100,8 @@ public class Shop {
     @UpdateTimestamp
     @JsonIgnore
     private LocalDateTime updatedAt;
+
+    private LocalDateTime stoppedAt;
 
     @ManyToMany(mappedBy = "shops")
     private Set<Notice> notices;
@@ -181,28 +186,28 @@ public class Shop {
         this.email = email;
     }
 
-    public String getShopTel() {
-        return shopTel;
+    public String getOwnerUsername() {
+        return ownerUsername;
     }
 
-    public void setShopTel(String shopTel) {
-        this.shopTel = shopTel;
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
     }
 
-    public String getContactName() {
-        return contactName;
+    public String getOwnerFullname() {
+        return ownerFullname;
     }
 
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
+    public void setOwnerFullname(String ownerFullname) {
+        this.ownerFullname = ownerFullname;
     }
 
-    public String getContactPhone() {
-        return contactPhone;
+    public String getOwnerPhone() {
+        return ownerPhone;
     }
 
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
     }
 
     public User getDeliverer() {
@@ -213,12 +218,12 @@ public class Shop {
         this.deliverer = deliverer;
     }
 
-    public User getSalesMan() {
-        return salesMan;
+    public User getSalesman() {
+        return salesman;
     }
 
-    public void setSalesMan(User salesMan) {
-        this.salesMan = salesMan;
+    public void setSalesman(User salesMan) {
+        this.salesman = salesMan;
     }
 
     public User getOwner() {
@@ -315,5 +320,21 @@ public class Shop {
 
     public void setNotices(Set<Notice> notices) {
         this.notices = notices;
+    }
+
+    public LocalDateTime getStoppedAt() {
+        return stoppedAt;
+    }
+
+    public void setStoppedAt(LocalDateTime stopedAt) {
+        this.stoppedAt = stopedAt;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }

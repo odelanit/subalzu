@@ -51,7 +51,7 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private Supplier supplier;
 
-    @OneToMany(mappedBy = "salesMan")
+    @OneToMany(mappedBy = "salesman")
     private Set<Shop> salesShops;
 
     @OneToMany(mappedBy = "deliverer")

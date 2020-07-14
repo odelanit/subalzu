@@ -246,7 +246,7 @@
                         <nav aria-label="breadcrumb" class="float-right mt-1">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/">홈</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Blank</li>
+                                <li class="breadcrumb-item active" aria-current="page">마이페이지</li>
                             </ol>
                         </nav>
                         <h4 class="mb-1 mt-0">마이페이지</h4>

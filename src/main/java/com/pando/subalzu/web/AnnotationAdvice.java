@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @ControllerAdvice(annotations = Controller.class)
 public class AnnotationAdvice {
@@ -24,13 +25,12 @@ public class AnnotationAdvice {
 
     @ModelAttribute("currentUser")
     public User getCurrentUser(Principal principal) {
-        User user;
         if (principal == null) {
-            user = null;
+            return null;
         } else {
-            user = userRepository.findByUsername(principal.getName());
+            Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+            return optionalUser.orElse(null);
         }
-        return user;
     }
 
     @ModelAttribute("currentCompany")

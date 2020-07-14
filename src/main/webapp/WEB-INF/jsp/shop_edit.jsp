@@ -13,6 +13,8 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -20,6 +22,7 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -261,441 +264,438 @@
                             <spring:bind path="id">
                                 <form:hidden path="id" />
                             </spring:bind>
+                            <spring:bind path="owner">
+                                <form:hidden path="owner" />
+                            </spring:bind>
                             <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">
                                         거래처 정보
                                         <span class="font-size-12 float-right"><span class="text-danger">*</span>필수 입력사항입니다.</span>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="dealStatus">
-                                        <div class="form-group row align-items-center">
-                                            <label class="col-form-label col-lg-2">거래상태</label>
-                                            <div class="col-lg-10">
-                                                <div class="custom-control custom-control-inline custom-radio">
-                                                    <form:radiobutton class="custom-control-input" path="dealStatus" value="true" id="dealStatus1" />
-                                                    <label class="custom-control-label" for="dealStatus1">개래중</label>
+                                    <table class="table table-bordered form-table mb-5">
+                                        <colgroup>
+                                            <col style="width: 15%;">
+                                            <col style="width: 35%;">
+                                            <col style="width: 15%;">
+                                            <col style="width: 35%;">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th>거래상태</th>
+                                            <td colspan="3">
+                                                <div>
+                                                    <c:choose>
+                                                        <c:when test="${shopForm.dealStatus == true}">
+                                                            거래중
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="text-danger">거래중지</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <c:choose>
+                                                        <c:when test="${shopForm.dealStatus == true}">
+                                                            <button class="btn btn-outline-warning btn-sm change-status" data-id="${shopForm.id}" data-action="stop" type="button"><i class="fa fa-times"></i>거래중지</button>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <button class="btn btn-outline-info btn-sm change-status" data-id="${shopForm.id}" data-action="start" type="button"><i class="fa fa-check"></i>거래재개</button>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
-                                                <div class="custom-control custom-control-inline custom-radio">
-                                                    <form:radiobutton class="custom-control-input" path="dealStatus" value="false" id="dealStatus2" />
-                                                    <label class="custom-control-label" for="dealStatus2">거래중지</label>
-                                                </div>
-                                                <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                    <form:errors path="dealStatus" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="erpCode">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">거래처 코드</label>
-                                            <div class="col-lg-10">
-                                                <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="erpCode" placeholder="거래처 코드를 입력하세요." />
-                                                <small class="form-text">기존에 쓰시는 ERP거래처 코드(단축코드)를 입력하세요. 없으면 입력하지 않아도 됩니다.</small>
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="erpCode" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <div class="row">
-                                        <spring:bind path="name">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row required">
-                                                    <label class="col-form-label col-lg-4">거래처명</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="name" placeholder="거래처명" />
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="name" />
-                                                        </div>
+                                                <c:choose>
+                                                    <c:when test="${shopForm.dealStatus == false}">
+                                                        <span>${shopForm.stoppedAt}</span>
+                                                    </c:when>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                        <spring:bind path="erpCode">
+                                            <tr>
+                                                <th>거래처 코드</th>
+                                                <td colspan="3">
+                                                    <form:input class="form-control w-75 ${status.error ? 'is-invalid' : ''}" path="erpCode" placeholder="거래처 코드를 입력하세요." />
+                                                    <small class="form-text">기존에 쓰시는 ERP거래처 코드(단축코드)를 입력하세요. 없으면 입력하지 않아도 됩니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="erpCode" />
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </td>
+                                            </tr>
                                         </spring:bind>
-                                        <spring:bind path="business">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row required">
-                                                    <label class="col-form-label col-lg-2">거래처 업종</label>
-                                                    <div class="col-lg-10">
-                                                        <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="business">
-                                                            <option value="">--선택--</option>
-                                                            <form:options items="${businesses}" itemValue="id" itemLabel="name" />
-                                                        </form:select>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="business" />
-                                                        </div>
+                                        <tr>
+                                            <spring:bind path="name">
+                                                <th class="required"><span>거래처명</span></th>
+                                                <td>
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="name" placeholder="거래처명" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="name" />
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="form-group row required align-items-center">
-                                        <label class="col-form-label col-lg-2">배송지</label>
-                                        <div class="col-lg-10">
-                                            <spring:bind path="zipCode">
-                                                <div class="input-group">
-                                                    <form:input path="zipCode" class="form-control ${status.error ? 'is-invalid' : ''}" />
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-outline-primary">주소 검색</button>
-                                                    </div>
-                                                </div>
+                                                </td>
                                             </spring:bind>
-                                            <spring:bind path="addressLine1">
-                                                <form:input path="addressLine1" class="form-control ${status.error ? 'is-invalid' : ''} mt-2" placeholder="주소를 입력해주세요." />
+                                            <spring:bind path="business">
+                                                <th class="required"><span>거래처 업종</span></th>
+                                                <td>
+                                                    <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="business">
+                                                        <option value="">--선택--</option>
+                                                        <form:options items="${businesses}" itemValue="id" itemLabel="name" />
+                                                    </form:select>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="business" />
+                                                    </div>
+                                                </td>
                                             </spring:bind>
-                                            <spring:bind path="addressLine2">
-                                                <form:input path="addressLine2" class="form-control ${status.error ? 'is-invalid' : ''} mt-2" placeholder="상세주소를 입력해주세요." />
+                                        </tr>
+                                        <tr>
+                                            <th class="required"><span>배송지</span></th>
+                                            <td colspan="3">
+                                                <spring:bind path="zipCode">
+                                                    <div class="input-group w-75">
+                                                        <form:input path="zipCode" id="business_addr_zip" readonly="true" class="form-control ${status.error ? 'is-invalid' : ''}" />
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-outline-primary" id="zip_search">주소 검색</button>
+                                                        </div>
+                                                    </div>
+                                                </spring:bind>
+                                                <spring:bind path="addressLine1">
+                                                    <form:input path="addressLine1" id="business_address1" readonly="true" class="form-control w-75 ${status.error ? 'is-invalid' : ''} mt-2" placeholder="주소를 입력해주세요." />
+                                                </spring:bind>
+                                                <spring:bind path="addressLine2">
+                                                    <form:input path="addressLine2" id="business_address2" class="form-control w-75 ${status.error ? 'is-invalid' : ''} mt-2" placeholder="상세주소를 입력해주세요." />
+                                                </spring:bind>
+                                            </td>
+                                        </tr>
+                                        <spring:bind path="deliveryTypes">
+                                            <tr>
+                                                <th class="required"><span>배송 유형</span></th>
+                                                <td colspan="3">
+                                                    <div class="custom-control custom-control-inline custom-checkbox">
+                                                        <form:checkbox class="custom-control-input" path="deliveryTypes" value="direct" id="delivery_type2" />
+                                                        <label class="custom-control-label" for="delivery_type2">직배송</label>
+                                                    </div>
+                                                    <div class="custom-control custom-control-inline custom-checkbox">
+                                                        <form:checkbox class="custom-control-input" path="deliveryTypes" value="parcel" id="delivery_type3" />
+                                                        <label class="custom-control-label" for="delivery_type3">택배배송</label>
+                                                    </div>
+                                                    <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                        <form:errors path="deliveryTypes" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        <tr>
+                                            <spring:bind path="fax">
+                                                <th>FAX 번호</th>
+                                                <td>
+                                                    <form:input path="fax" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="FAX번호를 입력해주세요." />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="fax" />
+                                                    </div>
+                                                </td>
                                             </spring:bind>
-                                        </div>
-                                    </div>
-                                    <spring:bind path="deliveryTypes">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">배송 유형</label>
-                                            <div class="col-lg-10">
-                                                <div class="custom-control custom-control-inline custom-checkbox">
-                                                    <form:checkbox class="custom-control-input" path="deliveryTypes" value="direct" id="delivery_type2" />
-                                                    <label class="custom-control-label" for="delivery_type2">직배송</label>
+                                            <spring:bind path="email">
+                                                <th>이메일</th>
+                                                <td>
+                                                    <form:input path="email" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="abc@naver.com" />
+                                                    <small class="form-text">거래처의 이메일 정보를 입력해두시면, 이메일로 거래명세표 등을 발송할수 있습니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="email" />
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="ownerUsername">
+                                                <th class="required"><span>거래처 연락처(아이디)</span></th>
+                                                <td>
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="ownerUsername" placeholder="전화번호 또는 휴대폰 번호" readonly="true" />
+                                                    <small class="form-text">거래처 연락처(아이디) 변경은 거래처에서만 가능합니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="ownerUsername" />
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                            <th>비밀번호 초기화</th>
+                                            <td>
+                                                <div class="form-group">
+                                                    <a href="javascript:;" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#resetPasswordConfirm">비밀번호 초기화</a>
                                                 </div>
-                                                <div class="custom-control custom-control-inline custom-checkbox">
-                                                    <form:checkbox class="custom-control-input" path="deliveryTypes" value="parcel" id="delivery_type3" />
-                                                    <label class="custom-control-label" for="delivery_type3">택배배송</label>
-                                                </div>
-                                                <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                    <form:errors path="deliveryTypes" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <div class="row">
-                                        <spring:bind path="fax">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">FAX 번호</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="fax" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="FAX번호를 입력해주세요." />
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="fax" />
+                                                <small class="text-primary">비밀번호 초기화를 누르시면 거래처 담당자 휴대전화 번호로 임시비밀번호가 발송됩니다.</small>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="required"><span>거래처 담당자/휴대전화 번호</span></th>
+                                            <td>
+                                                <spring:bind path="ownerFullname">
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label text-right px-0 col-4">담당자 명</label>
+                                                        <div class="col-8">
+                                                            <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="ownerFullname" placeholder="담당자명을 입력해 주세요." />
+                                                            <div class="invalid-feedback">
+                                                                <form:errors path="ownerFullname" />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="email">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">이메일</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="email" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="abc@naver.com" />
-                                                        <small class="form-text">거래처의 이메일 정보를 입력해두시면, 이메일로 거래명세표 등을 발송할수 있습니다.</small>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="email" />
+                                                </spring:bind>
+                                                <spring:bind path="ownerPhone">
+                                                    <div class="form-group row">
+                                                        <label class="col-form-label px-0 text-right col-4">휴대전화 번호</label>
+                                                        <div class="col-8">
+                                                            <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="ownerPhone" placeholder="숫자만 입력해주세요." />
+                                                            <small class="form-text">
+                                                                휴대폰번호는 거래처 비밀번호 찾기 시 사용됩니다.
+                                                                거래처 담당자가 변경되면 정보를 반드시 수정해 주세요.</small>
+                                                            <div class="invalid-feedback">
+                                                                <form:errors path="ownerPhone" />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="shopTel">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row required">
-                                                    <label class="col-form-label col-lg-4">거래처 연락처(아이디)</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="shopTel" placeholder="전화번호 또는 휴대폰 번호" />
-                                                        <small class="form-text">거래처 연락처가 아이디로 생성됩니다.</small>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="shopTel" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <div class="col-lg-6">
-                                            <div class="form-group row required">
-                                                <label class="col-form-label col-lg-4">거래처 아이디/비밀번호</label>
-                                                <div class="col-lg-8">
-                                                    <div class="d-flex">
-                                                        <label style="width: 150px;">아이디</label>
-                                                        <input class="form-control" type="text" readonly>
-                                                    </div>
-                                                    <div class="d-flex mt-2">
-                                                        <label style="width: 150px;">임시 비밀번호</label>
-                                                        <input class="form-control" type="password" readonly>
-                                                    </div>
-                                                    <div class="d-flex">
-                                                        <label style="width: 150px;"></label>
-                                                        <small class="form-text">최초 로그인을 위한 임시 비밀번호입니다.</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group row required">
-                                                <label class="col-form-label col-lg-4">거래처 담당자/휴대전화 번호</label>
-                                                <div class="col-lg-8">
-                                                    <spring:bind path="contactName">
-                                                        <div class="d-flex">
-                                                            <label style="width: 150px;">담당자 명</label>
-                                                            <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="contactName" placeholder="담당자명을 입력해 주세요." />
-                                                        </div>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="contactName" />
-                                                        </div>
-                                                    </spring:bind>
-                                                    <spring:bind path="contactPhone">
-                                                        <div class="d-flex mt-2">
-                                                            <label style="width: 150px;">휴대전화 번호</label>
-                                                            <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="contactPhone" placeholder="숫자만 입력해주세요." />
-                                                        </div>
-                                                        <small class="form-text">거래처 담당자 휴대전화 번호로 아이디와 비밀번호가 자동 발송됩니다.</small>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="contactPhone" />
-                                                        </div>
-                                                    </spring:bind>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                                </spring:bind>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th>비고</th>
+                                            <td colspan="3">
+                                                <form:textarea cssClass="form-control w-75" path="memo" rows="3" />
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <h5 class="card-title">
                                         배송/영업 담당자 정보
                                         <span class="font-size-12 float-right"><span class="text-danger">*</span>필수 입력사항입니다.</span>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <spring:bind path="deliverer">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row required">
-                                                    <label class="col-form-label col-lg-4">배송 담당자</label>
-                                                    <div class="col-lg-8">
-                                                        <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="deliverer">
-                                                            <option value="">-- 선택 --</option>
-                                                            <form:options items="${deliverers}" itemValue="id" itemLabel="fullName" />
-                                                        </form:select>
-                                                        <small class="form-text">선택한 담당자에게 배송관련 문자를 전송합니다.</small>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="deliverer" />
-                                                        </div>
+                                    <table class="table table-bordered form-table mb-5">
+                                        <colgroup>
+                                            <col style="width: 15%;">
+                                            <col style="width: 35%;">
+                                            <col style="width: 15%;">
+                                            <col style="width: 35%;">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <spring:bind path="deliverer">
+                                                <th class="required"><span>배송 담당자</span></th>
+                                                <td>
+                                                    <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="deliverer" id="select_deliverer">
+                                                        <option value="">-- 선택 --</option>
+                                                        <c:forEach items="${deliverers}" var="deliverer">
+                                                            <option value="${deliverer.id}" data-phone="${deliverer.phone}" <c:if test="${shopForm.deliverer.id == deliverer.id}">selected</c:if>>${deliverer.fullName}</option>
+                                                        </c:forEach>
+                                                    </form:select>
+                                                    <small class="form-text">선택한 담당자에게 배송관련 문자를 전송합니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="deliverer" />
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <div class="col-lg-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-lg-4">휴대전화 번호</label>
-                                                <div class="col-lg-8">
-                                                    <input type="tel" class="form-control" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="salesMan">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">영업 담당자</label>
-                                                    <div class="col-lg-8">
-                                                        <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="salesMan">
-                                                            <option value="">-- 선택 --</option>
-                                                            <form:options items="${salesMans}" itemValue="id" itemLabel="fullName" />
-                                                        </form:select>
-                                                        <small class="form-text">선택한 담당자에게 배송관련 문자를 전송합니다.</small>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="salesMan" />
-                                                        </div>
+                                                </td>
+                                            </spring:bind>
+                                            <th>휴대전화 번호</th>
+                                            <td>
+                                                <input id="delivery_phone" type="tel" class="form-control" value="${shopForm.deliverer.phone}" readonly>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="salesman">
+                                                <th>영업 담당자</th>
+                                                <td>
+                                                    <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="salesman" id="select_salesman">
+                                                        <option value="">-- 선택 --</option>
+                                                        <c:forEach items="${salesMans}" var="salesman">
+                                                            <option value="${salesman.id}" data-phone="${salesman.phone}" <c:if test="${shopForm.salesman.id == salesman.id}">selected</c:if>>${salesman.fullName}</option>
+                                                        </c:forEach>
+                                                    </form:select>
+                                                    <small class="form-text">선택한 담당자에게 배송관련 문자를 전송합니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="salesman" />
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <div class="col-lg-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-lg-4">휴대전화 번호</label>
-                                                <div class="col-lg-8">
-                                                    <input type="tel" class="form-control" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                                </td>
+                                            </spring:bind>
+                                            <th>휴대전화 번호</th>
+                                            <td>
+                                                <input id="salesman_phone" type="tel" class="form-control" readonly value="${shopForm.salesman.phone}">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <h5 class="card-title">
                                         단가 그룹
                                         <span class="font-size-12 float-right">거래처에서 선택된 단가속성의 금액으로 물건을 주문할수 있습니다.</span>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="priceGroup">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">단가 그룹 선택</label>
-                                            <div class="col-lg-10">
-                                                <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="priceGroup">
-                                                    <option value="">-- 선택 --</option>
-                                                    <form:options items="${priceGroups}" itemValue="id" itemLabel="name" />
-                                                </form:select>
-                                                <small class="form-text">* 단가 그룹은 단가 관리 > [단가 그룹 관리]에서 등록할수 있습니다.</small>
-                                                <small class="form-text">* 단가 그룹의 금액은 상품관리 페이지에서 상품별로 입력해주셔야 합니다.</small>
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="priceGroup" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                    <table class="table table-bordered form-table">
+                                        <colgroup>
+                                            <col style="width: 15%;">
+                                            <col style="width: 85%;">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <spring:bind path="priceGroup">
+                                            <tr>
+                                                <th>단가 그룹 선택</th>
+                                                <td>
+                                                    <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="priceGroup">
+                                                        <option value="">-- 선택 --</option>
+                                                        <form:options items="${priceGroups}" itemValue="id" itemLabel="name" />
+                                                    </form:select>
+                                                    <small class="form-text">* 단가 그룹은 단가 관리 > [단가 그룹 관리]에서 등록할수 있습니다.</small>
+                                                    <small class="form-text">* 단가 그룹의 금액은 상품관리 페이지에서 상품별로 입력해주셔야 합니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="priceGroup" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        </tbody>
+                                    </table>
+                                    <h5 class="card-title">
                                         할인/할증율 등급
                                         <span class="font-size-12 float-right">거래처에서 등급별 할인된 가격으로 상품 구매가 가능합니다.</span>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="shopGrade">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">할인/할증율 등급 선택</label>
-                                            <div class="col-lg-10">
-                                                <form:select class="form-control" path="shopGrade">
-                                                    <option value="">-- 선택 --</option>
-                                                    <form:options items="${shopGrades}" itemValue="id" itemLabel="name" />
-                                                </form:select>
-                                                <small class="form-text">* 등록 거래처 목록 > [할인율 등급 관리]에서 할인율 등급을 등록할수 있습니다.</small>
-                                                <small class="form-text">* 단가 그룹을 선택한 경우 단가 그룹 금액에 할인/할증율이 적용됩니다.</small>
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="shopGrade" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                    <table class="table table-bordered form-table mb-5">
+                                        <colgroup>
+                                            <col style="width: 15%;">
+                                            <col style="width: 85%;">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <spring:bind path="shopGrade">
+                                            <tr>
+                                                <th>할인/할증율 등급 선택</th>
+                                                <td>
+                                                    <form:select class="form-control" path="shopGrade">
+                                                        <option value="">-- 선택 --</option>
+                                                        <form:options items="${shopGrades}" itemValue="id" itemLabel="name" />
+                                                    </form:select>
+                                                    <small class="form-text">* 등록 거래처 목록 > [할인율 등급 관리]에서 할인율 등급을 등록할수 있습니다.</small>
+                                                    <small class="form-text">* 단가 그룹을 선택한 경우 단가 그룹 금액에 할인/할증율이 적용됩니다.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="shopGrade" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        </tbody>
+                                    </table>
+                                    <h5 class="card-title">
                                         결제수단 설정
                                         <span class="font-size-12 float-right">거래처에서 주문시, 설정된 결제수단으로 결제할수 있습니다.</span>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="paymentMethod">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">결제수단</label>
-                                            <div class="col-lg-10">
-                                                <div class="custom-control custom-control-inline custom-radio">
-                                                    <form:radiobutton class="custom-control-input" value="credit" path="paymentMethod" id="payment_method1" />
-                                                    <label class="custom-control-label" for="payment_method1">외상 거래</label>
-                                                </div>
-                                                <div class="custom-control custom-control-inline custom-radio">
-                                                    <form:radiobutton class="custom-control-input" value="prepaid" path="paymentMethod" id="payment_method2" />
-                                                    <label class="custom-control-label" for="payment_method2">예치금</label>
-                                                </div>
-                                                <small class="form-text">
-                                                    * '외상거래'와 '예치금'은 둘 중 하나만 사용 선택 가능합니다. (신용카드는 중복 선택 가능)
-                                                </small>
-                                                <small class="form-text">
-                                                    * 외상거래의 잔액 결제, 예치금 충전은 거래처가 가상계좌 또는 신용카드로 결제후 청산됩니다.
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
-                                        외상잔액 한도 설정
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="isCreditBalanceLimit">
-                                        <div class="form-group row align-items-center">
-                                            <label class="col-form-label col-lg-2">외상잔액 한도 설정 여부</label>
-                                            <div class="col-lg-10">
-                                                <div class="custom-control custom-control-inline custom-radio">
-                                                    <form:radiobutton class="custom-control-input" path="isCreditBalanceLimit" value="false" id="limit_setting1" />
-                                                    <label class="custom-control-label" for="limit_setting1">비설정</label>
-                                                </div>
-                                                <div class="custom-control custom-control-inline custom-radio">
-                                                    <form:radiobutton class="custom-control-input" path="isCreditBalanceLimit" value="true" id="limit_setting2" />
-                                                    <label class="custom-control-label" for="limit_setting2">설정</label>
-                                                </div>
-                                                <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                    <form:errors path="isCreditBalanceLimit" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="creditBalanceLimit">
-                                        <div class="form-group row d-none" id="credit_balance_form_group">
-                                            <label class="col-form-label col-lg-2">외상잔액 한도 금액</label>
-                                            <div class="col-lg-10">
-                                                <div class="input-group">
-                                                    <form:input type="number" class="form-control ${status.error ? 'is-invalid' : ''}" path="creditBalanceLimit" />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">원</span>
+                                    <table class="table table-bordered form-table mb-5">
+                                        <colgroup>
+                                            <col style="width: 15%;">
+                                            <col style="width: 85%;">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <spring:bind path="paymentMethod">
+                                            <tr>
+                                                <th>결제수단</th>
+                                                <td>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" value="credit" path="paymentMethod" id="payment_method1" />
+                                                        <label class="custom-control-label" for="payment_method1">외상 거래</label>
                                                     </div>
-                                                </div>
-                                                <small class="form-text">거래처에서 외상잔액 한도 초과시, 더 이상 주문이 불가능합니다.</small>
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="creditBalanceLimit" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" value="prepaid" path="paymentMethod" id="payment_method2" />
+                                                        <label class="custom-control-label" for="payment_method2">예치금</label>
+                                                    </div>
+                                                    <small class="form-text">
+                                                        * '외상거래'와 '예치금'은 둘 중 하나만 사용 선택 가능합니다.
+                                                    </small>
+                                                    <small class="form-text">
+                                                        * 외상거래의 잔액 결제, 예치금 충전은 거래처가 가상계좌 또는 신용카드로 결제후 청산됩니다.
+                                                    </small>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        </tbody>
+                                    </table>
+                                    <div class="collapse ${shopForm.paymentMethod == 'credit' ? 'show' : ''}" id="credit_setting">
+                                        <h5 class="card-title">
+                                            외상잔액 한도 설정
+                                        </h5>
+                                        <table class="table table-bordered form-table mb-5">
+                                            <colgroup>
+                                                <col style="width: 15%;">
+                                                <col style="width: 85%;">
+                                            </colgroup>
+                                            <tbody class="thead-light">
+                                            <spring:bind path="isCreditBalanceLimit">
+                                                <tr>
+                                                    <th>외상잔액 한도 설정 여부</th>
+                                                    <td>
+                                                        <div class="custom-control custom-control-inline custom-radio">
+                                                            <form:radiobutton class="custom-control-input" path="isCreditBalanceLimit" value="false" id="limit_setting1" />
+                                                            <label class="custom-control-label" for="limit_setting1">비설정</label>
+                                                        </div>
+                                                        <div class="custom-control custom-control-inline custom-radio">
+                                                            <form:radiobutton class="custom-control-input" path="isCreditBalanceLimit" value="true" id="limit_setting2" />
+                                                            <label class="custom-control-label" for="limit_setting2">설정</label>
+                                                        </div>
+                                                        <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                            <form:errors path="isCreditBalanceLimit" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </spring:bind>
+                                            <spring:bind path="creditBalanceLimit">
+                                                <tr class="d-none" id="credit_balance_form_group">
+                                                    <th>외상잔액 한도 금액</th>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <form:input type="number" class="form-control ${status.error ? 'is-invalid' : ''}" path="creditBalanceLimit" />
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">원</span>
+                                                            </div>
+                                                        </div>
+                                                        <small class="form-text">거래처에서 외상잔액 한도 초과시, 더 이상 주문이 불가능합니다.</small>
+                                                        <div class="invalid-feedback">
+                                                            <form:errors path="creditBalanceLimit" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </spring:bind>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <h5 class="card-title">
                                         수입물품 유통이력 정보
                                         <span class="font-size-12 float-right"></span>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <spring:bind path="businessLicense">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">사업자 등록증 보유 유무</label>
-                                                    <div class="col-lg-8">
-                                                        <div class="custom-control custom-control-inline custom-radio">
-                                                            <form:radiobutton class="custom-control-input" path="businessLicense" value="true" id="certificate1" />
-                                                            <label class="custom-control-label" for="certificate1">유</label>
-                                                        </div>
-                                                        <div class="custom-control custom-control-inline custom-radio">
-                                                            <form:radiobutton class="custom-control-input" path="businessLicense" value="false" id="certificate2" />
-                                                            <label class="custom-control-label" for="certificate2">무</label>
-                                                        </div>
+                                    <table class="table table-bordered form-table mb-5">
+                                        <colgroup>
+                                            <col style="width: 15%;">
+                                            <col style="width: 35%;">
+                                            <col style="width: 15%;">
+                                            <col style="width: 35%;">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <spring:bind path="businessLicense">
+                                                <th>사업자 등록증 보유 유무</th>
+                                                <td>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="businessLicense" value="true" id="certificate1" />
+                                                        <label class="custom-control-label" for="certificate1">유</label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="assigneeType">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">양수자 유형</label>
-                                                    <div class="col-lg-8">
-                                                        <form:select class="form-control" path="assigneeType">
-                                                            <form:options items="${assigneeTypes}" itemValue="id" itemLabel="name" />
-                                                        </form:select>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="businessLicense" value="false" id="certificate2" />
+                                                        <label class="custom-control-label" for="certificate2">무</label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
+                                                </td>
+                                            </spring:bind>
+                                            <spring:bind path="assigneeType">
+                                                <th>양수자 유형</th>
+                                                <td>
+                                                    <form:select class="form-control" path="assigneeType">
+                                                        <form:options items="${assigneeTypes}" itemValue="id" itemLabel="name" />
+                                                    </form:select>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="form-group text-center">
+                                        <a href="/shops" class="btn btn-secondary">목록으로</a>
+                                        <button class="btn btn-primary">수정하기</button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <a href="/shops" class="btn btn-secondary">목록으로</a>
-                                <button class="btn btn-primary">등록하기</button>
                             </div>
                         </form:form>
                     </div>
@@ -725,22 +725,164 @@
 
 
 </div>
+<div class="modal fade" id="resetPasswordConfirm">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">비밀번호 초기와</h6>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                비밀번호를 초기화하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
+                <button class="btn btn-primary" id="reset_owner_password" data-shop="${shopForm.id}">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
 <script>
+    $("#zip_search, #zip_search2").click(function(e){
+
+        var zipcode = "business_addr_zip";
+        var addr1 = "business_address1";
+        var addr2 = "business_address2";
+
+        //본점 소재지의 경우
+        // if($(this).attr("addr_type") == "2"){
+        //     zipcode = "hq_addr_zip";
+        //     addr1 = "hq_address1";
+        //     addr2 = "hq_address2";
+        // }
+
+        var width = 500;	//팝업의 너비
+        var height = 600;	//팝업의 높이
+
+        new daum.Postcode({
+            width: width,
+            height: height,
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+                // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var fullAddr = data.address; // 최종 주소 변수
+                var extraAddr = ''; // 조합형 주소 변수
+
+                // 기본 주소가 도로명 타입일때 조합한다.
+                if(data.addressType === 'R'){
+                    //법정동명이 있을 경우 추가한다.
+                    if(data.bname !== ''){
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있을 경우 추가한다.
+                    if(data.buildingName !== ''){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+                    fullAddr += (extraAddr !== '' ? ' ('+ extraAddr +')' : '');
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                if(data.postcode1 == ""){
+                    document.getElementById(zipcode).value = data.zonecode;
+                }
+                else{
+                    document.getElementById(zipcode).value = data.postcode1+"-"+data.postcode2;
+                }
+
+                if(data.userSelectedType == "R"){
+                    document.getElementById(addr1).value = fullAddr;
+                }
+                else{
+                    document.getElementById(addr1).value = data.jibunAddress;
+                }
+            }
+        }).open({
+            left: (window.screen.width / 2) - (width / 2),
+            top: (window.screen.height / 2) - (height / 2)
+        });
+    });
+
     $('input[name="isCreditBalanceLimit"]').on('change', function() {
         if ($(this).val() === 'true') {
             $('#credit_balance_form_group').removeClass('d-none');
         } else {
             $('#credit_balance_form_group').addClass('d-none');
         }
+    });
+
+    $('input[name="paymentMethod"]').change(function () {
+        if ($(this).val() === 'credit') {
+            $('#credit_setting').collapse('show');
+        } else {
+            $('#credit_setting').collapse('hide');
+        }
     })
+
+    $('.change-status').click(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        var action = $(this).data('action');
+        var id = $(this).data('id');
+        $.ajax({
+            type: 'POST',
+            url: '/shops/update_status',
+            headers: {
+                'X-CSRF-TOKEN': token
+            },
+            data: {
+                id: id,
+                action: action,
+            },
+            success: function (data) {
+                window.location.reload();
+            }
+        })
+    });
+
+    $('#select_deliverer').change(function () {
+        var phone = $(this).find(':selected').data('phone');
+        $('#delivery_phone').val(phone);
+    });
+
+    $('#select_salesman').change(function () {
+        var phone = $(this).find(':selected').data('phone');
+        $('#salesman_phone').val(phone);
+    });
+
+    $('#reset_owner_password').click(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        $.ajax({
+            type: 'POST',
+            url: '/shops/reset_owner_password',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                id: $(this).data('shop')
+            },
+            success: function(data) {
+                toastr.success('비밀번호 초기화가 완료되었습니다.');
+                $('#resetPasswordConfirm').modal('hide');
+            },
+            error: function (xhr, statusCode, error) {
+                $('#resetPasswordConfirm').modal('hide');
+                toastr.error('거래처 담당자 휴대전화 번호가 정상적이지 않습니다.\n휴대전화 번호를 확인 및 \'수정하기\' 후에\n다시 비밀번호 초기화를 시도해주세요.')
+            }
+        })
+    });
 </script>
 </body>
 </html>

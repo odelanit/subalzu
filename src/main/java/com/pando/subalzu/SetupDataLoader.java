@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -44,13 +45,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound("sales", "영업");
         createRoleIfNotFound("deliverer", "배송");
         createRoleIfNotFound("accounting", "회계");
+        createRoleIfNotFound("customer", "거래자");
 
         Permission allPermission = createPermissionIfNotFound("all", "전체");
         createPermissionIfNotFound("in_charge", "담당 거래처");
 
-        User testAdmin = userRepository.findByUsername("testadmin");
-
-        if (testAdmin == null) {
+        Optional<User> optionalUser = userRepository.findByUsername("testadmin");
+        if (!optionalUser.isPresent()) {
             User user = new User();
             user.setUsername("testadmin");
             user.setFullName("testadmin");

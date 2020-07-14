@@ -270,7 +270,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">기본 정보</h5>
-                                <table class="table table-bordered form-table mb-0">
+                                <table class="table table-bordered form-table">
                                     <tbody class="thead-light">
                                     <tr>
                                         <spring:bind path="fullName">
@@ -296,7 +296,7 @@
                                     </tr>
                                     <tr>
                                         <spring:bind path="username">
-                                            <th><span>아이디</span></th>
+                                            <th class="required"><span>아이디</span></th>
                                             <td colspan="3">
                                                 <form:input path="username"
                                                             cssClass="w-75 form-control ${status.error ? 'is-invalid' : ''}"
@@ -348,10 +348,6 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
                                 <h5 class="card-title">권한 정보</h5>
                                 <table class="table table-bordered form-table">
                                     <tbody class="thead-light">
@@ -360,12 +356,14 @@
                                             <th class="required"><span>권한 유형</span></th>
                                             <td>
                                                 <c:forEach var="role" items="${roles}">
-                                                    <div class="custom-control custom-radio custom-control-inline">
-                                                        <form:radiobutton id="role-${role.name}" value="${role.id}"
-                                                                          class="custom-control-input" path="roles"/>
-                                                        <label class="custom-control-label"
-                                                               for="role-${role.name}">${role.koName}</label>
-                                                    </div>
+                                                    <c:if test="${!role.name.equalsIgnoreCase(\"customer\")}">
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <form:radiobutton id="role-${role.name}" value="${role.id}"
+                                                                              class="custom-control-input" path="roles"/>
+                                                            <label class="custom-control-label"
+                                                                   for="role-${role.name}">${role.koName}</label>
+                                                        </div>
+                                                    </c:if>
                                                 </c:forEach>
                                                 <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
                                                     <form:errors path="roles"/>
@@ -394,10 +392,11 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                <div class="form-group text-center">
+                                    <a class="btn btn-secondary" href="/users">목록으로</a>
+                                    <button class="btn btn-primary">등록하기</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary">등록</button>
                         </div>
                     </form:form>
                 </div>

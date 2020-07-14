@@ -13,6 +13,8 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -257,31 +259,38 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>거래처 명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-primary">검색</button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                <table class="table table-bordered form-table mb-5">
+                                    <tbody class="thead-light">
+                                    <tr>
+                                        <th>키워드 검색</th>
+                                        <td>
+                                            <form:form class="form-inline" id="search-form" modelAttribute="form" method="get">
+                                                <form:select path="field" class="form-control form-control-sm mr-2 w-25">
+                                                    <form:option value="name">거래처 명</form:option>
+                                                </form:select>
+                                                <form:input path="keyword" class="form-control form-control-sm w-50" placeholder="검색어를 입력해주세요" />
+                                                <form:hidden path="page" id="page_number" />
+                                            </form:form>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" form="search-form">검색</button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            전체 건
                                         </div>
                                     </div>
-                                </form>
-                                <hr>
-                                <div class="table-responsive">
-                                    <table class="table">
+                                    <table class="table table-sm text-center">
+                                        <colgroup>
+                                            <col style="width: 8%;">
+                                            <col>
+                                            <col style="width: 20%;">
+                                            <col style="width: 20%;">
+                                        </colgroup>
                                         <thead class="thead-light">
                                         <tr>
                                             <th>#</th>
@@ -291,12 +300,23 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td>38</td>
-                                            <td>이호테스트</td>
-                                            <td>미설정</td>
-                                            <td><a href="/special-prices/38">설정</a></td>
-                                        </tr>
+                                        <c:forEach items="${shops}" var="shop">
+                                            <tr style="align-items: center;">
+                                                <td>${shop.id}</td>
+                                                <td>${shop.name}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${shop.priceGroup == null}">미설정</c:when>
+                                                        <c:otherwise>
+                                                            ${shop.priceGroup.name}
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-outline-primary" href="/special-prices/${shop.id}">설정</a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>
