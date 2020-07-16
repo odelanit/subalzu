@@ -107,12 +107,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li class="mm-active">
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li class="mm-active">--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -257,10 +257,11 @@
                         <div class="card">
                             <div class="card-body">
                                 <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간 구분</label>
-                                            <div class="col-lg-9 align-self-center">
+                                    <table class="table table-bordered form-table">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th>기간 구분</th>
+                                            <td>
                                                 <div class="custom-control custom-radio custom-control-inline">
                                                     <input type="radio" id="customRadioInline1" class="custom-control-input">
                                                     <label class="custom-control-label" for="customRadioInline1">주문 일시</label>
@@ -269,14 +270,17 @@
                                                     <input type="radio" id="customRadioInline2" class="custom-control-input">
                                                     <label class="custom-control-label" for="customRadioInline2">배송 요정일</label>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간</label>
-                                            <div class="col-lg-9">
+                                            </td>
+                                            <td rowspan="3">
+                                                <button class="btn btn-primary">검색</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>기간</th>
+                                            <td>
                                                 <div class="form-row">
                                                     <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                        <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
                                                             <label class="btn btn-outline-primary active">
                                                                 <input type="radio" name="options" id="option1" checked> 전체
                                                             </label>
@@ -292,68 +296,71 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
+                                                        <input type="text" id="range-datepicker" class="form-control form-control-sm" placeholder="2019-01-01 to 2019-12-31">
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <input class="form-control" type="text" placeholder="검색어를 입력해주세요.">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>거래처 검색</th>
+                                            <td>
+                                                <input class="form-control form-control-sm" type="text" placeholder="검색어를 입력해주세요.">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>키워드 검색</th>
+                                            <td colspan="2">
                                                 <div class="form-row">
                                                     <div class="col-auto">
-                                                        <select class="form-control">
+                                                        <select class="form-control form-control-sm">
                                                             <option>상품명</option>
                                                         </select>
                                                     </div>
                                                     <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
+                                                        <input class="form-control form-control-sm" type="text" placeholder="검색어를 입력해주세요">
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 align-self-center text-right">
-                                        <button class="btn btn-primary">검색</button>
-                                    </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-row">
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option>배송유형</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option>주문상태</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option>1차 카테고리</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option>2차 카테고리</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </form>
                                 <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>배송유형</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>주문상태</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>1차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>2차 카테고리</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <span>전체 0건</span>
                                     </div>
-                                </form>
-                                <hr>
+                                    <div class="col-6">
+
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class="thead-light">

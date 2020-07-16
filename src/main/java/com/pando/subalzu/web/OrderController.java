@@ -1,25 +1,42 @@
 package com.pando.subalzu.web;
 
+import com.google.common.base.Strings;
+import com.pando.subalzu.form.OrderSearchForm;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
+import com.pando.subalzu.specification.OrderSpecification;
+import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.validator.OrderValidator;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.FieldError;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.text.ParseException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.Principal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class OrderController {
+
+    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     @Autowired
     ShopRepository shopRepository;
@@ -31,10 +48,10 @@ public class OrderController {
     ProductRepository productRepository;
 
     @Autowired
-    OrderRepository orderRepository;
+    CartItemRepository cartItemRepository;
 
     @Autowired
-    OrderDataRepository orderDataRepository;
+    OrderRepository orderRepository;
 
     @Autowired
     OrderProductRepository orderProductRepository;
@@ -65,8 +82,46 @@ public class OrderController {
         return priceGroupRepository.findAll();
     }
 
+    @ModelAttribute("products")
+    List<Product> products() {
+        return productRepository.findAll();
+    }
+
     @GetMapping("/orders")
-    public String index() {
+    public String index(@ModelAttribute("form")OrderSearchForm form, Model model) {
+        String field = form.getField();
+        String keyword = form.getKeyword();
+        int page = form.getPage();
+        Page<Order> orderPage;
+        Specification<Order> spec = new OrderSpecification(new SearchCriteria(field, ":", keyword));
+        String deliveryType = form.getDeliveryType();
+        if (!Strings.isNullOrEmpty(deliveryType)) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliveryType", ":", deliveryType)));
+        }
+        String orderStatus = form.getOrderStatus();
+        if (!Strings.isNullOrEmpty(orderStatus)) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("orderStatus", ":", orderStatus)));
+        }
+        String releaseStatus = form.getReleaseStatus();
+        if (!Strings.isNullOrEmpty(releaseStatus)) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("releaseStatus", ":", releaseStatus)));
+        }
+        User deliverer = form.getDeliverer();
+        if (deliverer != null) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliverer", ":", deliverer)));
+        }
+        User salesman = form.getSalesman();
+        if (salesman != null) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("salesMan", ":", salesman)));
+        }
+        Pageable pageable = PageRequest.of(page - 1, 50);
+        orderPage = orderRepository.findAll(spec, pageable);
+        List<Order> orders = orderPage.getContent();
+
+        model.addAttribute("orderPage", orderPage);
+        model.addAttribute("orders", orders);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return "order_list";
     }
 
@@ -76,92 +131,55 @@ public class OrderController {
         return "order_create";
     }
 
-    @RequestMapping(value = "/data/orders", method = RequestMethod.POST)
-    @ResponseBody
-    public DataTablesOutput<Order> dataOrders(@Valid @RequestBody DataTablesInput input) {
-        return orderDataRepository.findAll(input);
+    public String randomAlphaNumeric(int count) {
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+        }
+        return builder.toString();
     }
 
     @PostMapping(value = "/orders/create")
-    @ResponseBody
-    public Map<String, Object> store(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> resultMap = new HashMap<>();
-        Map<String, String[]> requestMap = request.getParameterMap();
-
-        Long shopId = Long.valueOf(requestMap.get("shop")[0]);
-        String deliveryType = requestMap.get("deliveryType")[0];
-        String sRequestDate = requestMap.get("requestDate")[0];
-        Long delivererId = Long.valueOf(requestMap.get("deliverer")[0]);
-        Long salesManId = Long.valueOf(requestMap.get("salesMan")[0]);
-        String requestMemo = requestMap.get("requestMemo")[0];
-        String memo = requestMap.get("memo")[0];
-        String[] productIds = requestMap.get("productIds[]");
-        String[] productCounts = requestMap.get("productCounts[]");
-        String[] priceGroups = requestMap.get("priceGroups[]");
-        String[] productBuyPrices = requestMap.get("productBuyPrices[]");
-
-        Order order = new Order();
-
-        Optional<Shop> optionalShop = shopRepository.findById(shopId);
-        if (optionalShop.isPresent()) {
-            order.setShop(optionalShop.get());
-        } else {
-            Map<String, String> messageMap = new HashMap<>();
-            messageMap.put("shop", "필수 입력사항입니다.");
-            resultMap.put("error", messageMap);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return resultMap;
+    public String store(@ModelAttribute("orderForm") Order order, BindingResult bindingResult, Principal principal) {
+        orderValidator.validate(order, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "order_create";
         }
-        order.setDeliveryType(deliveryType);
-        try {
-            Date requestDate = new SimpleDateFormat("yyyy-MM-dd").parse(sRequestDate);
-            order.setRequestDate(requestDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        order.setOrderCode(randomAlphaNumeric(10));
+        order = orderRepository.save(order);
+        Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+        if (optionalUser.isPresent()) {
+            User currentUser = optionalUser.get();
+            List<CartItem> items = cartItemRepository.findByUser(currentUser);
+            long totalAmount = 0L;
+            for (CartItem item: items) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrder(order);
+                orderProduct.setProduct(item.getProduct());
+                orderProduct.setPrice(item.getPrice());
+                orderProduct.setQty(item.getQty());
+                long subTotal = item.getPrice() * item.getQty();
+                orderProduct.setTotalAmount(subTotal);
+                orderProductRepository.save(orderProduct);
+                totalAmount += subTotal;
+            }
+            order.setTotalAmount(totalAmount);
+            orderRepository.save(order);
+            cartItemRepository.deleteAll(items);
         }
-        Optional<User> optionalDeliverer = userRepository.findById(delivererId);
-        if (optionalDeliverer.isPresent()) {
-            order.setDeliverer(optionalDeliverer.get());
-        } else {
-            Map<String, String> messageMap = new HashMap<>();
-            messageMap.put("deliverer", "필수 입력사항입니다.");
-            resultMap.put("error", messageMap);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return resultMap;
-        }
-        Optional<User> optionalSalesMan = userRepository.findById(salesManId);
-        optionalSalesMan.ifPresent(order::setSalesMan);
-        order.setRequestMemo(requestMemo);
-        order.setMemo(memo);
-
-        Order savedOrder = orderRepository.save(order);
-
-        if (productIds.length == 0) {
-            Map<String, String> messageMap = new HashMap<>();
-            messageMap.put("productIds[]", "필수 입력사항입니다.");
-            resultMap.put("error", messageMap);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return resultMap;
-        }
-        for (int i = 0; i < productIds.length; i++) {
-            OrderProduct orderProduct = new OrderProduct();
-
-            Optional<Product> optionalProduct = productRepository.findById(Long.valueOf(productIds[i]));
-            optionalProduct.ifPresent(orderProduct::setProduct);
-            Optional<PriceGroup> optionalPriceGroup = priceGroupRepository.findById(Long.valueOf(priceGroups[i]));
-            optionalPriceGroup.ifPresent(orderProduct::setPriceGroup);
-            orderProduct.setPrice(Long.valueOf(productBuyPrices[i]));
-            orderProduct.setProductCount(Integer.parseInt(productCounts[i]));
-            orderProduct.setOrder(savedOrder);
-            orderProductRepository.save(orderProduct);
-        }
-        resultMap.put("message", "Success");
-        return resultMap;
+        return "redirect:/orders";
     }
 
     @GetMapping("/orders/{id}")
-    public String show(@PathVariable String id) {
-        return "/order_show";
+    public String show(@PathVariable Long id, Model model) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            model.addAttribute("order", order);
+            return "order_show";
+        }
+        return "redirect:/orders";
     }
 
     @GetMapping("/orders/transaction-details")
@@ -184,8 +202,171 @@ public class OrderController {
         return "returned_orders";
     }
 
-    @GetMapping("/order-setting")
-    public String setting() {
-        return "order_setting";
+    ByteArrayInputStream orderListToExcelFile(List<Order> orders) {
+        try(Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("orders");
+
+            Row row = sheet.createRow(0);
+            CellStyle headerCellStyle = workbook.createCellStyle();
+            headerCellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+            headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            // Creating header
+            Cell cell = row.createCell(0);
+            cell.setCellValue("#");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(1);
+            cell.setCellValue("주문일시");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(2);
+            cell.setCellValue("배송요청일");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(3);
+            cell.setCellValue("주문번호");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(4);
+            cell.setCellValue("거래처");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(5);
+            cell.setCellValue("배송유형");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(6);
+            cell.setCellValue("총 주문수량");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(7);
+            cell.setCellValue("결제수단");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(8);
+            cell.setCellValue("주문금액");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(9);
+            cell.setCellValue("주문상태");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(10);
+            cell.setCellValue("출고상태");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(11);
+            cell.setCellValue("영업담당자");
+            cell.setCellStyle(headerCellStyle);
+
+            cell = row.createCell(12);
+            cell.setCellValue("배송담당자");
+            cell.setCellStyle(headerCellStyle);
+
+            // Creating data rows for each customer
+            for(int i = 0; i < orders.size(); i++) {
+                Row dataRow = sheet.createRow(i + 1);
+                dataRow.createCell(0).setCellValue(i + 1);
+                dataRow.createCell(1).setCellValue(orders.get(i).getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd hh:mm:ss")));
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String strRequestDate = dateFormat.format(orders.get(i).getRequestDate());
+                dataRow.createCell(2).setCellValue(strRequestDate);
+                dataRow.createCell(3).setCellValue(orders.get(i).getOrderCode());
+                dataRow.createCell(4).setCellValue(orders.get(i).getShop().getName());
+                if (orders.get(i).getDeliveryType().equalsIgnoreCase("direct")) {
+                    dataRow.createCell(5).setCellValue("직배송");
+                } else {
+                    dataRow.createCell(5).setCellValue("택배배송");
+                }
+                dataRow.createCell(6).setCellValue(orders.get(i).getOrderProducts().size());
+                if (orders.get(i).getShop().getPaymentMethod().equalsIgnoreCase("credit")) {
+                    dataRow.createCell(7).setCellValue("외상거래");
+                } else {
+                    dataRow.createCell(7).setCellValue("예치금");
+                }
+                dataRow.createCell(8).setCellValue(orders.get(i).getTotalAmount());
+                String orderStatus = orders.get(i).getOrderStatus();
+                if (orderStatus.equalsIgnoreCase("completed")) {
+                    dataRow.createCell(9).setCellValue("주문완료");
+                } else if (orderStatus.equalsIgnoreCase("modified")){
+                    dataRow.createCell(9).setCellValue("주문변경");
+                } else if (orderStatus.equalsIgnoreCase("canceled")){
+                    dataRow.createCell(9).setCellValue("주문취소");
+                } else {
+                    dataRow.createCell(9).setCellValue("");
+                }
+                String releaseStatus = orders.get(i).getReleaseStatus();
+                if (releaseStatus.equalsIgnoreCase("completed")) {
+                    dataRow.createCell(10).setCellValue("출고완료");
+                } else if (releaseStatus.equalsIgnoreCase("progress")){
+                    dataRow.createCell(10).setCellValue("출고전");
+                } else if (releaseStatus.equalsIgnoreCase("rejected")){
+                    dataRow.createCell(10).setCellValue("출고거절");
+                } else {
+                    dataRow.createCell(10).setCellValue("");
+                }
+                if (orders.get(i).getSalesMan() != null) {
+                    dataRow.createCell(11).setCellValue(orders.get(i).getSalesMan().getFullName());
+                }
+                dataRow.createCell(12).setCellValue(orders.get(i).getDeliverer().getFullName());
+            }
+
+            // Making size of column auto resize to fit with data
+//            sheet.autoSizeColumn(0);
+//            sheet.autoSizeColumn(1);
+//            sheet.autoSizeColumn(2);
+//            sheet.autoSizeColumn(3);
+//            sheet.autoSizeColumn(4);
+//            sheet.autoSizeColumn(5);
+//            sheet.autoSizeColumn(6);
+//            sheet.autoSizeColumn(7);
+//            sheet.autoSizeColumn(8);
+//            sheet.autoSizeColumn(9);
+//            sheet.autoSizeColumn(10);
+//            sheet.autoSizeColumn(11);
+//            sheet.autoSizeColumn(12);
+
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            return new ByteArrayInputStream(outputStream.toByteArray());
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping("/orders/download/orders.xlsx")
+    public void excelOrderReport(HttpServletResponse response) throws IOException {
+        List<Order> orders = orderRepository.findAll();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment;filename=orders.xlsx");
+        ByteArrayInputStream stream = orderListToExcelFile(orders);
+        IOUtils.copy(stream, response.getOutputStream());
+    }
+
+    @GetMapping("/orders/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        optionalOrder.ifPresent(order -> {
+            orderProductRepository.deleteAll(order.getOrderProducts());
+            orderRepository.delete(order);
+        });
+        return "redirect:/orders";
+    }
+
+    @PostMapping("/orders/change_status")
+    @ResponseBody
+    public Map<String, String> changeStatus(@RequestParam("id")Long id, @RequestParam("action")String action, @RequestParam("status")String status) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        optionalOrder.ifPresent(order -> {
+            if (action.equalsIgnoreCase("release")) {
+                order.setReleaseStatus(status);
+                orderRepository.save(order);
+            }
+        });
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
     }
 }

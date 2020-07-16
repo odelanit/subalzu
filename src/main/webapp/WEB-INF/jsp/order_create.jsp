@@ -23,12 +23,7 @@
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-          rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -120,12 +115,12 @@
                             <li class="mm-active">
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -270,143 +265,160 @@
                     <div class="col-md-12">
                         <form:form method="post" modelAttribute="orderForm" id="order_form">
                             <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">주문 정보</h5>
-                                </div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <spring:bind path="shop">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row required">
-                                                    <label class="col-form-label col-lg-4">거래처 선택</label>
-                                                    <div class="col-lg-8">
-                                                        <form:select path="shop" class="form-control ${status.error ? 'is-invalid' : ''}">
-                                                            <option value="0">거래처명을 입력해주세요.</option>
-                                                            <form:options items="${shops}" itemValue="id" itemLabel="name" />
-                                                        </form:select>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="shop" />
+                                    <h5 class="card-title">주문 정보</h5>
+                                    <table class="table form-table table-bordered mb-5">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <spring:bind path="shop">
+                                                <th class="required"><span>거래처 선택</span></th>
+                                                <td colspan="3">
+                                                    <div class="input-group w-50">
+                                                        <input id="shop_name" type="text" value="${orderForm.shop.name}"
+                                                               class="form-control ${status.error ? 'is-invalid' : ''}"/>
+                                                        <div class="input-group-append">
+                                                            <button type="button" id="shop_select"
+                                                                    class="btn btn-outline-primary">거래처 선택
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="deliveryType">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row align-items-center">
-                                                    <label class="col-form-label col-lg-4">배송유형</label>
-                                                    <div class="col-lg-8">
-                                                        <div class="custom-control custom-radio custom-control-inline">
-                                                            <form:radiobutton id="customRadioInline1" path="deliveryType" value="direct"
-                                                                              class="custom-control-input" />
-                                                            <label class="custom-control-label"
-                                                                   for="customRadioInline1">직배송</label>
-                                                        </div>
-                                                        <div class="custom-control custom-radio custom-control-inline">
-                                                            <form:radiobutton id="customRadioInline2" path="deliveryType" value="parcel"
-                                                                              class="custom-control-input" />
-                                                            <label class="custom-control-label" for="customRadioInline2">택배
-                                                                배송</label>
-                                                        </div>
-                                                        <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                            <form:errors path="deliveryType" />
-                                                        </div>
+                                                    <form:hidden path="shop"/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="shop"/>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="requestDate">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">배송요청일</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="requestDate" id="request-date" />
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="requestDate" />
-                                                        </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="deliveryType">
+                                                <th>배송유형</th>
+                                                <td>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <form:radiobutton id="customRadioInline1" path="deliveryType"
+                                                                          value="direct"
+                                                                          class="custom-control-input"/>
+                                                        <label class="custom-control-label"
+                                                               for="customRadioInline1">직배송</label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="deliverer">
-                                            <div class="col-md-6">
-                                                <div class="form-group required row">
-                                                    <label class="col-form-label col-md-4">배송 담당자</label>
-                                                    <div class="col-md-8 align-self-center">
-                                                        <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="deliverer">
-                                                            <option value="0">-- 선택 --</option>
-                                                            <form:options items="${deliverers}" itemValue="id" itemLabel="fullName" />
-                                                        </form:select>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="deliverer" />
-                                                        </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <form:radiobutton id="customRadioInline2" path="deliveryType"
+                                                                          value="parcel"
+                                                                          class="custom-control-input"/>
+                                                        <label class="custom-control-label" for="customRadioInline2">택배
+                                                            배송</label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="salesMan">
-                                            <div class="col-md-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-md-4">영업 담당자</label>
-                                                    <div class="col-md-8">
-                                                        <form:select class="form-control ${status.error ? 'is-invalid' : ''}" path="salesMan">
-                                                            <option value="0">-- 선택 --</option>
-                                                            <form:options items="${salesMans}" itemValue="id" itemLabel="fullName" />
-                                                        </form:select>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="salesMan" />
-                                                        </div>
+                                                    <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
+                                                        <form:errors path="deliveryType"/>
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </td>
+                                            </spring:bind>
+                                            <spring:bind path="requestDate">
+                                                <th>배송요청일</th>
+                                                <td>
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                path="requestDate" id="request-date"/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="requestDate"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="deliverer">
+                                                <th class="required"><span>배송 담당자</span></th>
+                                                <td>
+                                                    <form:select
+                                                            class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                            path="deliverer">
+                                                        <option value="0">-- 선택 --</option>
+                                                        <form:options items="${deliverers}" itemValue="id"
+                                                                      itemLabel="fullName"/>
+                                                    </form:select>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="deliverer"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                            <spring:bind path="salesMan">
+                                                <th>영업 담당자</th>
+                                                <td>
+                                                    <form:select
+                                                            class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                            path="salesMan">
+                                                        <option value="0">-- 선택 --</option>
+                                                        <form:options items="${salesMans}" itemValue="id"
+                                                                      itemLabel="fullName"/>
+                                                    </form:select>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="salesMan"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <spring:bind path="requestMemo">
+                                            <tr>
+                                                <th>요청사항</th>
+                                                <td colspan="3">
+                                                    <form:textarea path="requestMemo"
+                                                                   class="form-control w-75 ${status.error ? 'is-invalid' : ''}"
+                                                                   rows="3"/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="requestMemo"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         </spring:bind>
-                                    </div>
-                                    <spring:bind path="requestMemo">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-2">요청사항</label>
-                                            <div class="col-md-10">
-                                                <form:textarea path="requestMemo" class="form-control ${status.error ? 'is-invalid' : ''}" rows="3" />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="requestMemo" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="memo">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-2">메모</label>
-                                            <div class="col-md-10">
-                                                <form:textarea path="memo" class="form-control" rows="3" />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="memo" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
+                                        <spring:bind path="memo">
+                                            <tr>
+                                                <th>메모</th>
+                                                <td colspan="3">
+                                                    <form:textarea path="memo" class="form-control w-75" rows="3"/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="memo"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        </tbody>
+                                    </table>
+                                    <h5 class="card-title">
                                         상품 목록
-                                        <button data-toggle="modal" data-target="#selectProductsModal" type="button" class="btn btn-sm btn-outline-primary float-right">상품추가</button>
                                     </h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="orderProducts">
-                                        <c:if test="${status.error}">
-                                            <div class="alert alert-danger">
-                                                <form:errors path="orderProducts" />
-                                            </div>
-                                        </c:if>
-                                    </spring:bind>
-                                    <div id="productList">
-
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <span class="sub_table_title" id="ok_total">
+                                                전체 0건
+                                            </span>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <button type="button" id="add_products"
+                                                    class="btn btn-sm btn-outline-primary float-right">상품추가
+                                            </button>
+                                        </div>
                                     </div>
+                                    <table id="cartTable" class="table table-sm text-center table-hover mb-5">
+                                        <colgroup>
+                                            <col width="5%">
+                                            <col width="">
+                                            <col width="">
+                                            <col width="">
+                                            <col width="10%">
+                                            <col width="10%">
+                                            <col width="8%">
+                                        </colgroup>
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col">no</th>
+                                            <th scope="col">상품명</th>
+                                            <th scope="col">규격<br>(단위)</th>
+                                            <th scope="col">제조사<br>(원산지)</th>
+                                            <th scope="col">수량</th>
+                                            <th scope="col">단가(원)</th>
+                                            <th scope="col">합계금액</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                     <div class="form-group text-center">
                                         <a href="/orders" class="btn btn-dark">목록으로</a>
                                         <button class="btn btn-outline-primary">등록하기</button>
@@ -441,12 +453,58 @@
 
 
 </div>
+<div class="modal fade" id="shopSelectModal">
+    <div class="modal-dialog-centered modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light">거래처 검색</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="shopFrm">
+                    <div class="form-group row">
+                        <label class="col-form-label text-right col-3 font-weight-bold">검색</label>
+                        <div class="col-9">
+                            <input id="tit01" name="search_text" type="text" value="" title="검색어 입력"
+                                   class="form-control form-control-sm" placeholder="검색어를 입력해주세요.">
+                            <small class="form-text">* 거래처명, 거래처 연락처, 배송 담당자명을 입력하면 자동으로 검색됩니다.</small>
+                        </div>
+                    </div>
+                </form>
+                <div style="height: 430px;">
+                    <table class="table table-sm text-center table-hover" id="shopTable">
+                        <colgroup>
+                            <col width="10%">
+                            <col width="">
+                            <col width="20%">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="15%">
+                        </colgroup>
+                        <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>거래처명</th>
+                            <th>거래처 연락처</th>
+                            <th>배송 담당자</th>
+                            <th>거래처 선택</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="selectProductsModal">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">
-                    직배송 상품 검색 및 선택
+                    상품 검색 및 선택
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -455,9 +513,20 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-7">
-                        <p class="text-primary">* 해당 거래처에서 자주 주문한 상품 순입니다.</p>
-                        <div>
-                            <table class="table" id="products">
+                        <div class="row mb-3">
+                            <div class="col-6 text-primary">
+                                <small>*해당 거래처에서 자주 주문한 상품 순입니다.</small>
+                            </div>
+                            <div class="col-6 text-right">전체 ${products.size()}건</div>
+                        </div>
+                        <div class="list-wrap" style="height:460px; overflow: auto;">
+                            <table id="goodsTable" class="table table-hover text-center table-sm">
+                                <colgroup>
+                                    <col width="*">
+                                    <col width="10%">
+                                    <col width="15%">
+                                    <col width="15%">
+                                </colgroup>
                                 <thead class="thead-light">
                                 <tr>
                                     <th>상품명</th>
@@ -467,13 +536,35 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <c:forEach items="${products}" var="product">
+                                    <tr data-id="${product.id}">
+                                        <td>${product.name}</td>
+                                        <td>${product.qty}</td>
+                                        <td>${product.buyPrice}</td>
+                                        <td>${product.sellPrice}</td>
+                                    </tr>
+                                </c:forEach>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="col-lg-5">
-                        <div id="cart_form">
+                        <div class="row mb-3">
+                            <div class="col-6">선택상품 목록<span class="cor_primary" id="goodsSelectCountText">(전체 0건)</span></div>
+                            <div class="col-6 text-right"><a class="btn btn-sm btn-outline-primary" role="button">초기화</a></div>
+                        </div>
+                        <div id="goods_select_wrap">
+                            <div style="height:420px; overflow: auto;">
+                                <ul class="list-group" id="shopping_cart">
 
+                                </ul>
+                            </div>
+                            <div class="bg-light p-4">
+                                <div id="goods_sum" class="row">
+                                    <div id="pop_goods_sum_tit" class="col-6">합계금액</div>
+                                    <div id="totalResult" class="col-6">0원</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -492,98 +583,300 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
-<template id="cartItem">
-    <div>
-        <div>
-            <h5 class="title"></h5>
-            <span class="unit"></span> / <span class="country"></span>
-        </div>
-        <div class="d-flex pb-2 mb-2 border-bottom">
-            <input type="hidden" class="product-id" name="productIds[]" />
-            <select class="form-control form-control-sm w-50" name="priceGroups[]">
-                <option value="0">--단가 그룹 선택--</option>
-                <c:forEach items="${priceGroups}" var="priceGroup">
-                    <option value="${priceGroup.id}">${priceGroup.name}</option>
-                </c:forEach>
-            </select>
-            <input class="form-control form-control-sm w-25" type="number" value="0" name="productCounts[]" />
-            <input class="form-control form-control-sm w-25" type="number" value="0" name="productBuyPrices[]" />
-        </div>
-    </div>
-</template>
 <script>
+    var token = $("meta[name='_csrf']").attr("content");
     $('#request-date').datepicker({
         dateFormat: 'yy-mm-dd'
     });
-    $(document).ready(function () {
-        var token = $("meta[name='_csrf']").attr("content");
 
-        var productTable = $('#products').DataTable({
-            serverSide: true,
-            ajax: {
-                url: '/data/products',
-                contentType: 'application/json',
-                headers: {"X-CSRF-TOKEN": token},
-                type: 'POST',
-                data: function(d) {
-                    return JSON.stringify(d);
-                },
+    function setShopName(shop_id, shop_name) {
+        $('#shop_name').val(shop_name);
+        $('#shop').val(shop_id);
+        $('#shopSelectModal').modal('hide');
+    }
+
+    //거래처 목록 검색
+    function getShopList() {
+        var brand_count = parseInt($("#joinForm").find("input[name='brand_count']").val());
+
+        var search_text = $("#shopFrm").find("input[name='search_text']");
+        var formData = "search_text=" + search_text.val();
+
+
+        $.ajax({
+            type: 'POST',
+            url: '/shops/get_shops',
+            headers: {
+                'X-CSRF-TOKEN': token,
             },
-            columns: [
-                {data: 'name'},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {data: 'buyPrice'},
-                {data: 'sellPrice'},
-            ]
-        });
+            data: {
+                'keyword': search_text.val()
+            },
+            success: function (data) {
+                var add_data = "";
 
-        $(document).on('shown.bs.modal', '#selectProductsModal', function () {
-            productTable.columns.adjust();
-        });
+                if (data.shops != null) {
+                    $.each(data.shops, function (key, shop) {
+                        var shop_id = decodeURIComponent(shop.id).replace(/\+/g, " ");
+                        var shop_name = decodeURIComponent(shop.name).replace(/\+/g, " ");
+                        var shop_tel = decodeURIComponent(shop.owner.phone).replace(/\+/g, " ").trim();
+                        var delivery_vendor_user_name = decodeURIComponent(shop.deliverer.fullName).replace(/\+/g, " ").trim();
+                        // var shop_type = decodeURIComponent(shop["shop_type"]).replace(/\+/g, " ").trim();
 
-        $('#products tbody').on('click', 'tr', function () {
-            var data = productTable.row( this ).data();
-            console.log(data);
+                        var tr_class = "";
 
-            var template = document.querySelector('#cartItem');
+                        add_data += "<tr " + tr_class + " onclick=\"javascript:setShopName(" + shop_id + ",'" + shop_name + "')\">"
+                            + "<td>" + shop_id + "</td> "
+                            + "<td>" + shop_name + "</td> "
+                            + "<td>" + shop_tel + "</td> "
+                            + "<td>" + delivery_vendor_user_name + "</td> "
+                            + "<td class='text-center'><a class='btn btn-sm text-success strong' href='#'>선택</a></td> "
+                            + "</tr> ";
 
-            var clone = template.content.cloneNode(true);
-            clone.querySelector('.product-id').value = data.id;
-            clone.querySelector('.title').textContent = data.name;
-            clone.querySelector('.unit').textContent = data.unit;
-            clone.querySelector('.country').textContent = data.country;
-            var cartForm = document.querySelector('#cart_form');
-            cartForm.appendChild(clone);
-        });
+                    });
 
-        $('#cartItemsSave').on('click', function () {
-            var cartItems = $('#cart_form');
-            $('#selectProductsModal').modal('toggle');
-            cartItems.appendTo('#productList');
-        });
-
-        $('#order_form').on('submit', function (e) {
-            e.preventDefault();
-            var form = $(this);
-            $.ajax({
-                type: 'POST',
-                url: '/orders/create',
-                data: form.serialize(),
-                success: function (data) {
-                    // window.location.href = '/orders';
-                    console.log('OK');
+                    $("#shopTable tbody").html(add_data);
                 }
-            })
+            }
+        });
+    }
+
+    function updateTotal() {
+        var totalPrice = 0;
+        $('#shopping_cart li').each(function(index) {
+            var price = $(this).find('.price').val();
+            var qty = $(this).find('.qty').val();
+            totalPrice += parseInt(price) * parseInt(qty);
         })
-    })
+        $('#totalResult').html(totalPrice + '원');
+    }
+
+
+    $('#shop_select').click(function () {
+        $("#shopFrm").find("input[name='search_text']").val("");
+        getShopList();
+        $('#shopSelectModal').modal();
+    });
+
+    $('#shopping_cart').on('click', '.close', function () {
+        var itemId = $(this).closest('li').data('id');
+        var element = $(this);
+        $.ajax({
+            type: 'POST',
+            url: '/cart/delete',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                id: itemId
+            },
+            success: function(data) {
+                element.closest('li').remove();
+                updateTotal();
+            }
+        })
+    });
+
+    $('#shopping_cart').on('click', '.minus', function () {
+        var itemId = $(this).closest('li').data('id');
+        var itemElement = $(this).closest('li');
+        $.ajax({
+            type: 'POST',
+            url: '/cart/update',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                id: itemId,
+                action: 'minus',
+            },
+            success: function(data) {
+                itemElement.find('.qty').val(data.item.qty);
+                updateTotal();
+            }
+        })
+    });
+
+    $('#shopping_cart').on('click', '.plus', function () {
+        var itemElement = $(this).closest('li');
+        var itemId = $(this).closest('li').data('id');
+
+        $.ajax({
+            type: 'POST',
+            url: '/cart/update',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                id: itemId,
+                action: 'plus',
+            },
+            success: function(data) {
+                itemElement.find('.qty').val(data.item.qty);
+                updateTotal();
+            }
+        })
+    });
+
+    $('#shopping_cart').on('change', '.price', function () {
+        var itemId = $(this).closest('li').data('id');
+        var itemElement = $(this).closest('li');
+        $.ajax({
+            type: 'POST',
+            url: '/cart/update_price',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                id: itemId,
+                price: $(this).val()
+            },
+            success: function(data) {
+                itemElement.find('.price').val(data.item.price);
+                updateTotal();
+            }
+        })
+    });
+
+    $('#shopping_cart').on('change', '.qty', function () {
+        var itemId = $(this).closest('li').data('id');
+        var itemElement = $(this).closest('li');
+        $.ajax({
+            type: 'POST',
+            url: '/cart/update_qty',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                id: itemId,
+                qty: $(this).val()
+            },
+            success: function(data) {
+                itemElement.find('.qty').val(data.item.qty);
+                updateTotal();
+            }
+        })
+    });
+
+    $('#add_products').on('click', function () {
+        $.ajax({
+            url: '/cart/all',
+            success: function(data) {
+                if (data.items.length > 0) {
+                    $('#shopping_cart').html('');
+                    data.items.forEach(function (item, index) {
+                        var html =
+                            '<li class="list-group-item" data-id='+ item.id + '>\n' +
+                            '    <button class="close">&times;</button>\n' +
+                            '    <h6>' + item.product.name + '</h6>\n' +
+                            '    <p><span class="unit">' + item.product.unit +  '</span> / <span class="country"> ' + item.product.country +'</span> </p>\n' +
+                            '    <div class="form-inline">\n' +
+                            '        <select class="form-control form-control-sm mr-1" style="width: 35%">\n' +
+                            '            <option value="">단가 그룹</option>\n' +
+                            '        </select>\n' +
+                            '        <div class="input-group input-group-sm mr-1">\n' +
+                            '            <div class="input-group-prepend">\n' +
+                            '                <button class="btn btn-secondary btn-sm minus"><i class="fa fa-minus"></i></button>\n' +
+                            '            </div>\n' +
+                            '            <input class="form-control text-center qty" style="width: 50px;" value="'+ item.qty + '">\n' +
+                            '            <div class="input-group-append">\n' +
+                            '                <button class="btn btn-secondary btn-sm plus"><i class="fa fa-plus"></i></button>\n' +
+                            '            </div>\n' +
+                            '        </div>\n' +
+                            '        <div class="input-group input-group-sm" style="width: 35%">\n' +
+                            '            <input class="form-control form-control-sm price" type="number" value="'+ item.price + '">\n' +
+                            '            <div class="input-group-append">\n' +
+                            '                <span class="input-group-text">원</span>\n' +
+                            '            </div>\n' +
+                            '        </div>\n' +
+                            '    </div>\n' +
+                            '</li>';
+                        $('#shopping_cart').append(html);
+                        updateTotal();
+                    });
+                }
+            }
+        })
+        $('#selectProductsModal').modal('show');
+    });
+
+    $('#goodsTable tbody tr').on('click', function() {
+        var productId = $(this).data('id');
+        $.ajax({
+            type: 'POST',
+            url: '/cart/store',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: {
+                product: productId,
+                qty: 0,
+                price: 0,
+            },
+            success: function(data) {
+                if(data.status === 'created') {
+                    var html =
+                        '<li class="list-group-item" data-id='+ data.item.id + '>\n' +
+                        '    <button class="close">&times;</button>\n' +
+                        '    <h6>' + data.item.product.name + '</h6>\n' +
+                        '    <p><span class="unit">' + data.item.product.unit +  '</span> / <span class="country"> ' + data.item.product.country +'</span> </p>\n' +
+                        '    <div class="form-inline">\n' +
+                        '        <select class="form-control form-control-sm mr-1" style="width: 35%">\n' +
+                        '            <option value="">단가 그룹</option>\n' +
+                        '        </select>\n' +
+                        '        <div class="input-group input-group-sm mr-1">\n' +
+                        '            <div class="input-group-prepend">\n' +
+                        '                <button class="btn btn-secondary btn-sm minus"><i class="fa fa-minus"></i></button>\n' +
+                        '            </div>\n' +
+                        '            <input class="form-control text-center qty" style="width: 50px;" value="'+ data.item.qty + '">\n' +
+                        '            <div class="input-group-append">\n' +
+                        '                <button class="btn btn-secondary btn-sm plus"><i class="fa fa-plus"></i></button>\n' +
+                        '            </div>\n' +
+                        '        </div>\n' +
+                        '        <div class="input-group input-group-sm" style="width: 35%">\n' +
+                        '            <input class="form-control form-control-sm price" type="number" value="'+ data.item.price + '">\n' +
+                        '            <div class="input-group-append">\n' +
+                        '                <span class="input-group-text">원</span>\n' +
+                        '            </div>\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '</li>';
+                    $('#shopping_cart').append(html);
+                } else {
+                    var itemElement = $('#shopping_cart').find('li[data-id="' + data.item.id + '"]');
+                    itemElement.find('.price').val(data.item.price);
+                    itemElement.find('.qty').val(data.item.qty);
+                }
+            }
+        })
+    });
+
+    $('#cartItemsSave').click(function () {
+        $('#cartTable tbody').html('');
+        $('#shopping_cart li').each(function(index) {
+            var productId = $(this).data('id')
+            var productName = $(this).find('h6').html();
+            var unit = $(this).find('.unit').html();
+            var country = $(this).find('.country').html();
+            var qty = $(this).find('.qty').val();
+            var price = $(this).find('.price').val();
+            var html =
+                '<tr>' +
+                '<td>' + productId + '</td>' +
+                '<td>' + productName + '</td>' +
+                '<td>' + unit + '</td>' +
+                '<td>' + country + '</td>' +
+                '<td>' + qty + '</td>' +
+                '<td>' + price + '</td>' +
+                '<td>' + parseInt(price) * parseInt(qty) + '</td>' +
+                '</tr>'
+            $('#cartTable tbody').append(html);
+        })
+        $('#selectProductsModal').modal('hide');
+    });
 </script>
 </body>
 </html>

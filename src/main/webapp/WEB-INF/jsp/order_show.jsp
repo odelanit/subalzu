@@ -13,11 +13,15 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
-    <!-- App css -->
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -105,12 +109,12 @@
                             <li class="mm-active">
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -255,79 +259,120 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="text-center">주문번호 1 상세내역입니다.</h5>
+                                <div class="py-5">
+                                    <h5 class="text-center">주문번호 ${order.orderCode} 상세내역입니다.</h5>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <button class="btn btn-sm btn-danger">주문삭제</button>
-                                        <button class="btn btn-sm btn-warning">주문취소</button>
-                                        <button class="btn btn-sm btn-soft-danger">주문거절</button>
+                                        <a href="/orders/${order.id}/delete" class="btn btn-sm btn-outline-danger" id="order_delete">
+                                            <i class="fa fa-trash"></i> 주문삭제
+                                        </a>
+                                        <c:choose>
+                                            <c:when test="${order.orderStatus == 'completed' && order.releaseStatus == 'progress'}">
+                                                <button class="btn btn-sm btn-warning">주문취소</button>
+                                            </c:when>
+                                        </c:choose>
                                     </div>
                                     <div class="col-md-6 text-right">
                                         <button class="btn btn-sm btn-secondary">거래명세표</button>
-                                        <button class="btn btn-sm btn-primary">출고완료</button>
+                                        <c:choose>
+                                            <c:when test="${order.releaseStatus == 'progress'}">
+                                                <button class="btn btn-sm btn-outline-primary change_release_status" data-id="${order.id}" data-status="completed">
+                                                    <i class="fa fa-check"></i>출고완료
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning change_release_status" data-id="${order.id}" data-status="rejected">
+                                                    <i class="fa fa-times"></i>출고거절
+                                                </button>
+                                            </c:when>
+                                        </c:choose>
+                                        <c:choose>
+                                            <c:when test="${order.releaseStatus == 'completed' && order.orderStatus == 'completed'}">
+                                                <button class="btn btn-sm btn-outline-warning">
+                                                    반품접수
+                                                </button>
+                                            </c:when>
+                                        </c:choose>
                                     </div>
                                 </div>
                                 <hr>
-                                <h6 class="card-title">주문 정보</h6>
-                                <table class="table">
-                                    <tbody>
+                                <h6 class="card-title">주문 정보 <span class="text-primary">(주문상태: ${order.orderStatus} / 출고상태: ${order.releaseStatus})</span></h6>
+                                <table class="table form-table table-bordered">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="35%">
+                                        <col width="15%">
+                                        <col width="35%">
+                                    </colgroup>
+                                    <tbody class="thead-light">
                                     <tr>
-                                        <th class="bg-light">주문번호</th>
-                                        <td></td>
-                                        <th class="bg-light">거래처</th>
-                                        <td></td>
+                                        <th>주문번호</th>
+                                        <td>${order.orderCode}</td>
+                                        <th>거래처</th>
+                                        <td>${order.shop.name}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">주문일자</th>
-                                        <td></td>
-                                        <th class="bg-light">담당자/연락처</th>
-                                        <td></td>
+                                        <th>주문일자</th>
+                                        <td>${order.createdAt}</td>
+                                        <th>담당자/연락처</th>
+                                        <td>${order.shop.owner.fullName} / ${order.shop.owner.phone}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">거래처 주소</th>
-                                        <td colspan="3"></td>
+                                        <th>거래처 주소</th>
+                                        <td colspan="3">${order.shop.addressLine1} ${order.shop.addressLine2}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">결제수단</th>
-                                        <td></td>
-                                        <th class="bg-light">총 주문금액</th>
-                                        <td></td>
+                                        <th>결제수단</th>
+                                        <td>${order.shop.paymentMethod}</td>
+                                        <th>총 주문금액</th>
+                                        <td>${order.totalAmount}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">거래처 주소</th>
-                                        <td colspan="3"></td>
+                                        <th>주문 이력</th>
+                                        <td colspan="3">
+                                            <button type="button" class="btn btn-outline-primary">주문이력 보기</button>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
                                 <hr>
                                 <h6 class="card-title">배송 정보</h6>
-                                <table class="table">
-                                    <tbody>
+                                <table class="table table-bordered form-table">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="35%">
+                                        <col width="15%">
+                                        <col width="35%">
+                                    </colgroup>
+                                    <tbody class="thead-light">
                                     <tr>
-                                        <th class="bg-light">배송 요청일</th>
-                                        <td></td>
-                                        <th class="bg-light">배송 유형</th>
-                                        <td></td>
+                                        <th>배송 요청일</th>
+                                        <td>
+                                            <input type="text" class="form-control" id="request-date" value="${order.requestDate}">
+                                        </td>
+                                        <th>배송 유형</th>
+                                        <td>${order.deliveryType}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">배송 담당자</th>
-                                        <td></td>
-                                        <th class="bg-light">영업 담당자</th>
-                                        <td></td>
+                                        <th>배송 담당자</th>
+                                        <td>${order.deliverer.fullName}</td>
+                                        <th>영업 담당자</th>
+                                        <td>${order.salesMan.fullName}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">요청사항</th>
-                                        <td colspan="3"></td>
+                                        <th>요청사항</th>
+                                        <td colspan="3">${order.requestMemo}</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">추가 메모</th>
-                                        <td colspan="3"></td>
+                                        <th>추가 메모</th>
+                                        <td colspan="3">
+                                            <textarea class="form-control">${order.memo}</textarea>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
                                 <hr>
                                 <h6 class="card-title">주문 상품 목록</h6>
-                                <table class="table">
+                                <table class="table table-sm">
                                     <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
@@ -338,12 +383,24 @@
                                         <th>제조사(원산지)</th>
                                         <th>수량</th>
                                         <th>단가(원)</th>
-                                        <th>공급가액</th>
-                                        <th>부가세</th>
-                                        <th>합계금액</th>
                                         <th>삭제</th>
                                     </tr>
                                     </thead>
+                                    <tbody>
+                                    <c:forEach var="orderProduct" items="${order.orderProducts}">
+                                        <tr>
+                                            <td>${orderProduct.id}</td>
+                                            <td>${orderProduct.product.erpCode}</td>
+                                            <td>${orderProduct.product.supplier.name}</td>
+                                            <td>${orderProduct.product.name}</td>
+                                            <td>${orderProduct.product.unit}</td>
+                                            <td>${orderProduct.product.country}</td>
+                                            <td>${orderProduct.qty}</td>
+                                            <td>${orderProduct.price}</td>
+                                            <td></td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -374,10 +431,67 @@
 
 
 </div>
+<div class="modal fade" id="confirmDelete">
+    <div class="modal-dialog modal-dialog-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-light">주문 삭제</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                해당 주문을 삭제 처리하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
+                <button class="btn btn-danger confirm">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- END wrapper -->
 
-<script src="${contextPath}/resources/js/vendor.min.js"></script>
+<script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
+<script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $('#request-date').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
 
+    $('#confirmDelete .confirm').click(function () {
+        var url = $('#order_delete').attr('href');
+        window.location.href = url;
+    });
+
+    $('#order_delete').click(function (e) {
+        e.preventDefault();
+        $('#confirmDelete').modal('show');
+    });
+
+    $('.change_release_status').on('click', function() {
+        var status = $(this).data('status');
+        var token = $('meta[name="_csrf"]').attr('content');
+        var id = $(this).data('id');
+        $.ajax({
+            type: 'POST',
+            url: '/orders/change_status',
+            headers: {
+                'X-CSRF-TOKEN': token
+            },
+            data: {
+                id: id,
+                action: 'release',
+                status: status
+            },
+            success: function (data) {
+                window.location.href = '/orders';
+            }
+        })
+    })
+</script>
 </body>
 </html>

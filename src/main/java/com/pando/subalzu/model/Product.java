@@ -1,12 +1,15 @@
 package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -24,10 +27,12 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name="category_id")
+    @JsonManagedReference
     Category category;
 
     @ManyToOne
     @JoinColumn(name="subcategory_id")
+    @JsonManagedReference
     Category subCategory;
 
     String makerName;
@@ -58,6 +63,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name="supplier_id")
+    @JsonManagedReference
     Supplier supplier;
 
     int buyPrice = 0;
@@ -68,6 +74,10 @@ public class Product {
 
     int parcelPrice = 0;
 
+    int qty = 0;
+
+    boolean status = true;
+
     @CreationTimestamp
     @Column(updatable = false)
     @JsonFormat(pattern="yyyy-MM-dd")
@@ -76,8 +86,13 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product")
+    @JsonIgnore
     Set<ProductGroupPrice> groupPrices;
+
+    @OneToMany(mappedBy = "product")
+    @JsonIgnore
+    Set<ShopProductPrice> shopPrices;
 
     public Long getId() {
         return id;
@@ -269,5 +284,41 @@ public class Product {
 
     public void setSubCategory(Category subCategory) {
         this.subCategory = subCategory;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public Set<ShopProductPrice> getShopPrices() {
+        return shopPrices;
+    }
+
+    public void setShopPrices(Set<ShopProductPrice> shopPrices) {
+        this.shopPrices = shopPrices;
+    }
+
+    public Long getShopPrice(Long shopId) {
+        Iterator<ShopProductPrice> iterator = shopPrices.iterator();
+        Long price = Long.valueOf(0);
+        while (iterator.hasNext()) {
+            ShopProductPrice shopProductPrice = iterator.next();
+            if (shopId.equals(shopProductPrice.getShop().getId())) {
+                return shopProductPrice.getPrice();
+            }
+        }
+        return price;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 }

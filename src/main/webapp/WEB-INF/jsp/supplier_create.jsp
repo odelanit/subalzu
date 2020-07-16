@@ -112,12 +112,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li class="mm-active">
@@ -262,295 +262,233 @@
                     <div class="row">
                         <div class="col">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">기본 정보</h5>
-                                </div>
                                 <div class="card-body">
-                                    <spring:bind path="supplier.id">
-                                        <form:hidden path="supplier.id" />
+                                    <spring:bind path="id">
+                                        <form:hidden path="id" />
                                     </spring:bind>
-                                    <div class="row">
-                                        <spring:bind path="supplier.code">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">매입처 코드</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.code"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    placeholder="매입처코드를 입력하세요"/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.code"/>
-                                                        </div>
+                                    <h5 class="card-title">기본 정보</h5>
+                                    <table class="table table-bordered form-table mb-4">
+                                        <colgroup>
+                                            <col style="width: 15%">
+                                            <col style="width: 35%">
+                                            <col style="width: 15%">
+                                            <col style="width: 35%">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <spring:bind path="code">
+                                                <th>매입처 코드</th>
+                                                <td>
+                                                    <form:input path="code"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="매입처코드를 입력하세요"/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="code"/>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="supplier.name">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row required">
-                                                    <label class="col-form-label col-lg-4">매입처 명</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.name"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    placeholder="매입처명을 입력하세요."/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.name"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="supplier.regNo">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">사업자등록번호</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.regNo"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    placeholder="사업자등록번호를 입력해주세요."/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.regNo"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="supplier.ownerName">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">대표자 명</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.ownerName"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    type="text" placeholder="대표자 명을 입력하세요."/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.ownerName"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="supplier.businessTel">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">대표 전화번호</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.businessTel"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    placeholder="대표 전화번호를 입력해주세요."/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.businessTel"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <div class="col-lg-6">
-                                            <div class="form-group row">
-                                                <label class="col-form-label col-lg-4">업종/업태</label>
-                                                <div class="col-lg-8">
-                                                    <div class="d-flex">
-                                                        <spring:bind path="supplier.businessTel">
-                                                            <form:input path="supplier.businessItem"
-                                                                        class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                        placeholder="업종"/>
-                                                        </spring:bind>
-                                                        <spring:bind path="supplier.businessConditions">
-                                                            <form:input path="supplier.businessConditions"
-                                                                        class="form-control ml-2 ${status.error ? 'is-invalid' : ''}"
-                                                                        placeholder="업태"/>
-                                                        </spring:bind>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <spring:bind path="supplier.fax">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">FAX 번호</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.fax"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    placeholder="FAX 번호를 입력해주세요."/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.fax"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="supplier.email">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">이메일</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="supplier.email"
-                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                    placeholder="abc@naver.com"/>
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="supplier.email"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <div class="form-group row align-items-center">
-                                        <label class="col-form-label col-lg-2">사업장 소재지</label>
-                                        <div class="col-lg-10">
-                                            <spring:bind path="supplier.zipCode">
-                                                <div class="input-group">
-                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                path="supplier.zipCode" readonly="true"/>
-                                                    <div class="input-group-append">
-                                                        <button type="button" class="btn btn-outline-primary">주소검색
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                </td>
                                             </spring:bind>
-                                            <spring:bind path="supplier.addressLine1">
-                                                <form:input
-                                                        class="form-control mt-2 ${status.error ? 'is-invalid' : ''}"
-                                                        path="supplier.addressLine1" readonly="true"
-                                                        placeholder="주소를 선택해주세요."/>
+                                            <spring:bind path="name">
+                                                <th class="required"><span>매입처 명</span></th>
+                                                <td>
+                                                    <form:input path="name"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="매입처명을 입력하세요."/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="name"/>
+                                                    </div>
+                                                </td>
                                             </spring:bind>
-                                            <spring:bind path="supplier.addressLine2">
-                                                <form:input
-                                                        class="form-control mt-2 ${status.error ? 'is-invalid' : ''}"
-                                                        path="supplier.addressLine2" placeholder="상세 주소를 입력해주세요."/>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="regNo">
+                                                <th>사업자등록번호</th>
+                                                <td>
+                                                    <form:input path="regNo"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="사업자등록번호를 입력해주세요."/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="regNo"/>
+                                                    </div>
+                                                </td>
                                             </spring:bind>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">매입처 계정 정보</h5>
-                                </div>
-                                <div class="card-body">
-                                    <spring:bind path="user.id">
-                                        <form:hidden path="user.id" />
-                                    </spring:bind>
-                                    <div class="row">
-                                        <spring:bind path="user.fullName">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">담당자</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input path="user.fullName" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="담당자" />
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="user.fullName"/>
+                                            <spring:bind path="ownerName">
+                                                <th>대표자 명</th>
+                                                <td>
+                                                    <form:input path="ownerName"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                type="text" placeholder="대표자 명을 입력하세요."/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="ownerName"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="businessTel">
+                                                <th>대표 전화번호</th>
+                                                <td>
+                                                    <form:input path="businessTel"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="대표 전화번호를 입력해주세요."/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="businessTel"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                            <th>업종/업태</th>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <spring:bind path="businessTel">
+                                                        <form:input path="businessItem"
+                                                                    class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                    placeholder="업종"/>
+                                                    </spring:bind>
+                                                    <spring:bind path="businessConditions">
+                                                        <form:input path="businessConditions"
+                                                                    class="form-control ml-2 ${status.error ? 'is-invalid' : ''}"
+                                                                    placeholder="업태"/>
+                                                    </spring:bind>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <spring:bind path="fax">
+                                                <th>FAX 번호</th>
+                                                <td>
+                                                    <form:input path="fax"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="FAX 번호를 입력해주세요."/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="fax"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                            <spring:bind path="email">
+                                                <th>이메일</th>
+                                                <td>
+                                                    <form:input path="email"
+                                                                class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="abc@naver.com"/>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="email"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <tr>
+                                            <th>사업장 소재지</th>
+                                            <td colspan="3">
+                                                <spring:bind path="zipCode">
+                                                    <div class="input-group">
+                                                        <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                    path="zipCode" readonly="true" id="business_addr_zip"/>
+                                                        <div class="input-group-append">
+                                                            <button type="button" id="zip_search" class="btn btn-outline-primary">주소검색
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                        <spring:bind path="user.phone">
-                                            <div class="col-lg-6">
-                                                <div class="form-group row">
-                                                    <label class="col-form-label col-lg-4">담당자 휴대폰</label>
-                                                    <div class="col-lg-8">
-                                                        <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="user.phone" placeholder="숫자만 입력해주세요." />
-                                                        <div class="invalid-feedback">
-                                                            <form:errors path="user.phone"/>
-                                                        </div>
+                                                </spring:bind>
+                                                <spring:bind path="addressLine1">
+                                                    <form:input
+                                                            class="form-control mt-2 ${status.error ? 'is-invalid' : ''}"
+                                                            path="addressLine1" readonly="true" id="business_address1"
+                                                            placeholder="주소를 선택해주세요."/>
+                                                </spring:bind>
+                                                <spring:bind path="addressLine2">
+                                                    <form:input
+                                                            class="form-control mt-2 ${status.error ? 'is-invalid' : ''}"
+                                                            id="business_address2"
+                                                            path="addressLine2" placeholder="상세 주소를 입력해주세요."/>
+                                                </spring:bind>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <h5 class="card-title">매입처 계정 정보</h5>
+                                    <form:hidden path="user" />
+                                    <table class="table table-bordered form-table mb-4">
+                                        <colgroup>
+                                            <col style="width: 15%">
+                                            <col style="width: 35%">
+                                            <col style="width: 15%">
+                                            <col style="width: 35%">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <spring:bind path="fullName">
+                                                <th>담당자</th>
+                                                <td>
+                                                    <form:input path="fullName" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="담당자" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="fullName"/>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </spring:bind>
-                                    </div>
-                                    <spring:bind path="user.username">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">아이디</label>
-                                            <div class="col-lg-10">
-                                                <form:input path="user.username" class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                       placeholder="4자 이상 영문 또는 숫자만 사용 가능" />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="user.username"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="user.password">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">임시 비밀번호</label>
-                                            <div class="col-lg-10">
-                                                <form:password path="user.password" class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                       placeholder="6자 이상 영문, 숫자 조합" />
-                                                <small class="form-text text-primary">매입처 최초 로그인을 위한 임시 비밀번호를 설정해 주세요.</small>
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="user.password"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="user.passwordConfirm">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">임시 비밀번호 확인</label>
-                                            <div class="col-lg-10">
-                                                <form:password path="user.passwordConfirm" class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                       placeholder="비밀번호를 다시 입력해주세요." />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="user.passwordConfirm"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                    <spring:bind path="user.bio">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-2">비고</label>
-                                            <div class="col-lg-10">
-                                                <form:input path="user.bio" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="내용을 입력해주세요." />
-                                                <div class="invalid-feedback">
-                                                    <form:errors path="user.bio"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </spring:bind>
-                                </div>
-                            </div>
-                            <div class="card mt-4">
-                                <div class="card-body">
-                                    <h5 class="header-title">매입처 상품</h5>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col">
-
-                                        </div>
-                                        <div class="col text-right">
-                                            <button type="button" data-toggle="modal" data-target="#add-product-modal"
-                                                    class="btn btn-sm btn-outline-primary"><i data-feather="plus"
-                                                                                              class="icon-xs"></i>상품추가
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive mt-3">
-                                        <table class="table">
-                                            <thead class="thead-light">
+                                                </td>
+                                            </spring:bind>
+                                            <spring:bind path="phone">
+                                                <th>담당자 휴대폰</th>
+                                                <td>
+                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="phone" placeholder="숫자만 입력해주세요." />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="phone"/>
+                                                    </div>
+                                                </td>
+                                            </spring:bind>
+                                        </tr>
+                                        <spring:bind path="username">
                                             <tr>
-                                                <th>#</th>
-                                                <th>상품코드</th>
-                                                <th>상품명</th>
-                                                <th>카테고리</th>
-                                                <th>규격(단위)</th>
-                                                <th>제조사(원산지)</th>
-                                                <th>매입단가(원)</th>
-                                                <th>삭제</th>
+                                                <th>아이디</th>
+                                                <td colspan="3">
+                                                    <form:input path="username" class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                placeholder="4자 이상 영문 또는 숫자만 사용 가능" />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="username"/>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                            </thead>
-                                        </table>
+                                        </spring:bind>
+                                        <spring:bind path="password">
+                                            <tr>
+                                                <th>임시 비밀번호</th>
+                                                <td colspan="3">
+                                                    <form:password path="password" class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                   placeholder="6자 이상 영문, 숫자 조합" />
+                                                    <small class="form-text text-primary">매입처 최초 로그인을 위한 임시 비밀번호를 설정해 주세요.</small>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="password"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        <spring:bind path="passwordConfirm">
+                                            <tr>
+                                                <th>임시 비밀번호 확인</th>
+                                                <td colspan="3">
+                                                    <form:password path="passwordConfirm" class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                   placeholder="비밀번호를 다시 입력해주세요." />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="passwordConfirm"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        <spring:bind path="bio">
+                                            <tr>
+                                                <th>비고</th>
+                                                <td colspan="3">
+                                                    <form:input path="bio" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="내용을 입력해주세요." />
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="bio"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        </tbody>
+                                    </table>
+                                    <div class="form-group text-center">
+                                        <a href="/suppliers" class="btn btn-outline-secondary">목록으로</a>
+                                        <button class="btn btn-primary">저장하기</button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <a href="/suppliers" class="btn btn-outline-secondary">목록으로</a>
-                                <button class="btn btn-primary">저장하기</button>
                             </div>
                         </div>
                     </div>
@@ -657,6 +595,62 @@
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
+<script>
+    $("#zip_search").click(function(e){
 
+        var zipcode = "business_addr_zip";
+        var addr1 = "business_address1";
+        var addr2 = "business_address2";
+        var width = 500;	//팝업의 너비
+        var height = 600;	//팝업의 높이
+
+        new daum.Postcode({
+            width: width,
+            height: height,
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+                // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var fullAddr = data.address; // 최종 주소 변수
+                var extraAddr = ''; // 조합형 주소 변수
+
+                // 기본 주소가 도로명 타입일때 조합한다.
+                if(data.addressType === 'R'){
+                    //법정동명이 있을 경우 추가한다.
+                    if(data.bname !== ''){
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있을 경우 추가한다.
+                    if(data.buildingName !== ''){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+                    fullAddr += (extraAddr !== '' ? ' ('+ extraAddr +')' : '');
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                if(data.postcode1 == ""){
+                    document.getElementById(zipcode).value = data.zonecode;
+                }
+                else{
+                    document.getElementById(zipcode).value = data.postcode1+"-"+data.postcode2;
+                }
+
+                if(data.userSelectedType == "R"){
+                    document.getElementById(addr1).value = fullAddr;
+                }
+                else{
+                    document.getElementById(addr1).value = data.jibunAddress;
+                }
+            }
+        }).open({
+            left: (window.screen.width / 2) - (width / 2),
+            top: (window.screen.height / 2) - (height / 2)
+        });
+    });
+</script>
 </body>
 </html>

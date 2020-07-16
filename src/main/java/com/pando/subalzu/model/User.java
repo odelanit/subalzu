@@ -45,19 +45,23 @@ public class User {
     @ManyToMany
     private Set<Role> roles;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToOne(mappedBy = "user")
     private Company company;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private Supplier supplier;
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private Set<Supplier> suppliers;
 
     @OneToMany(mappedBy = "salesman")
+    @JsonBackReference
     private Set<Shop> salesShops;
 
     @OneToMany(mappedBy = "deliverer")
+    @JsonBackReference
     private Set<Shop> deliverShops;
 
     @OneToOne(mappedBy = "owner")
+    @JsonBackReference
     private Shop ownShop;
 
     @ManyToMany
@@ -159,12 +163,12 @@ public class User {
         this.company = company;
     }
 
-    public Supplier getSupplier() {
-        return supplier;
+    public Set<Supplier> getSuppliers() {
+        return suppliers;
     }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
+    public void setSuppliers(Set<Supplier> suppliers) {
+        this.suppliers = suppliers;
     }
 
     public Set<Shop> getSalesShops() {

@@ -3,6 +3,8 @@ package com.pando.subalzu.web;
 import com.pando.subalzu.form.ShopSearchForm3;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
+import com.pando.subalzu.specification.SearchCriteria;
+import com.pando.subalzu.specification.ShopSpecification;
 import com.pando.subalzu.validator.ShopValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,7 +54,7 @@ public class ShopController {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    private RoleRepository rolesRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
     private PermissionRepository permissionsRepository;
@@ -114,6 +116,17 @@ public class ShopController {
         return "shop_list";
     }
 
+    @PostMapping("/shops/get_shops")
+    @ResponseBody
+    public Map<String, Object> getShops(@RequestParam("keyword") String keyword) {
+        Map<String, Object> resultMap = new HashMap<>();
+        ShopSpecification spec = new ShopSpecification(new SearchCriteria("name", ":", keyword));
+        List<Shop> shops = shopRepository.findAll(spec);
+        resultMap.put("shops", shops);
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
     @GetMapping("/shops/create")
     public String create(Model model) {
         model.addAttribute("shopForm", new Shop());
@@ -127,7 +140,7 @@ public class ShopController {
             return "shop_create";
         }
 
-        Role customerRole = rolesRepository.findByName("customer");
+        Role customerRole = roleRepository.findByName("customer");
         Permission chargePermission = permissionsRepository.findByName("in_charge");
         String username = shopForm.getOwnerUsername();
         User user = new User();

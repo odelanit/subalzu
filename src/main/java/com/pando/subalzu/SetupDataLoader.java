@@ -46,6 +46,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound("deliverer", "배송");
         createRoleIfNotFound("accounting", "회계");
         createRoleIfNotFound("customer", "거래자");
+        createRoleIfNotFound("supplier", "공급자");
 
         Permission allPermission = createPermissionIfNotFound("all", "전체");
         createPermissionIfNotFound("in_charge", "담당 거래처");

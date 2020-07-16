@@ -23,7 +23,7 @@ public class NoticeSpecification implements Specification<Notice> {
             if (root.get(criteria.getKey()).getJavaType() == String.class) {
                 return criteriaBuilder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
             } else if (root.get(criteria.getKey()).getJavaType() == boolean.class) {
-                boolean value = "true".equalsIgnoreCase(criteria.getValue()) || ("false".equalsIgnoreCase(criteria.getValue()) ? false : false);
+                boolean value = "true".equalsIgnoreCase((String)criteria.getValue()) || ("false".equalsIgnoreCase((String)criteria.getValue()) ? false : false);
                 return criteriaBuilder.equal(root.get(criteria.getKey()), value);
             } else {
                 return criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue());

@@ -107,12 +107,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -350,7 +350,7 @@
                                             <th class="required"><span>권한 유형</span></th>
                                             <td>
                                                 <c:forEach var="role" items="${roles}">
-                                                    <c:if test="${!role.name.equalsIgnoreCase(\"customer\")}">
+                                                    <c:if test="${!role.name.equalsIgnoreCase(\"customer\") && !role.name.equalsIgnoreCase(\"supplier\")}">
                                                         <div class="custom-control custom-radio custom-control-inline">
                                                             <form:radiobutton id="role-${role.name}" value="${role.id}"
                                                                               checked="${userRole.id == role.id ? 'checked' : '' }"

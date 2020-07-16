@@ -107,12 +107,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li class="mm-active">
@@ -256,51 +256,45 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
-                                                    </div>
+                                <form:form method="get" modelAttribute="form">
+                                    <table class="table table-bordered form-table">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th>기간</th>
+                                            <td>
+                                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                                                    <label class="btn btn-outline-primary active">
+                                                        <input type="radio" name="options" id="option1" checked> 전체
+                                                    </label>
+                                                    <label class="btn btn-outline-primary">
+                                                        <input type="radio" name="options" id="option2"> 전일
+                                                    </label>
+                                                    <label class="btn btn-outline-primary">
+                                                        <input type="radio" name="options" id="option3"> 당일
+                                                    </label>
+                                                    <label class="btn btn-outline-primary">
+                                                        <input type="radio" name="options" id="option4"> 한달
+                                                    </label>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="d-flex">
-                                                    <select class="form-control">
-                                                        <option>거래처명</option>
-                                                    </select>
-                                                    <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
+                                            </td>
+                                            <td rowspan="2">
+                                                <button class="btn btn-outline-primary">검색</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select cssClass="form-control form-control-sm mr-2" path="type">
+                                                        <form:option value="name" label="거래처명" />
+                                                    </form:select>
+                                                    <form:input cssClass="form-control form-control-sm" path="keyword" placeholder="검색어를 입력해주세요" />
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 align-self-center">
-                                        <button class="btn btn-primary">검색</button>
-                                    </div>
-                                </form>
-                                <hr>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form:form>
                                 <ul class="list-group list-group-horizontal-lg">
                                     <li class="list-group-item">총 매입처 잔액</li>
                                     <li class="list-group-item">
@@ -325,34 +319,44 @@
                                     </li>
                                 </ul>
                                 <hr>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>매입처</th>
-                                            <th>이전 잔액</th>
-                                            <th>매입 금액</th>
-                                            <th>출금 금액</th>
-                                            <th>수정 금액</th>
-                                            <th>잔액</th>
-                                            <th>최종거래일</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td><a href="/balance/1">1</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-6">
+                                        <span>전체 ${supplierPage.totalElements}건</span>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fa fa-file-excel"></i> Excel 다운로드
+                                        </button>
+                                    </div>
                                 </div>
+                                <table class="table table-hover text-center table-sm">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>매입처</th>
+                                        <th>이전 잔액</th>
+                                        <th>매입 금액</th>
+                                        <th>출금 금액</th>
+                                        <th>수정 금액</th>
+                                        <th>잔액</th>
+                                        <th>최종거래일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${suppliers}" var="supplier">
+                                        <tr onclick="window.location.href='/balance/${supplier.id}'">
+                                            <td>${supplier.id}</td>
+                                            <td>${supplier.name}</td>
+                                            <td>0원</td>
+                                            <td>0원</td>
+                                            <td>0원</td>
+                                            <td>0원</td>
+                                            <td>0원</td>
+                                            <td></td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

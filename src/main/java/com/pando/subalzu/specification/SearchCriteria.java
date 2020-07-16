@@ -6,9 +6,9 @@ public class SearchCriteria {
 
     private String operation;
 
-    private String value;
+    private Object value;
 
-    public SearchCriteria(String key, String operation, String value) {
+    public SearchCriteria(String key, String operation, Object value) {
         this.key = key;
         this.operation = operation;
         this.value = value;
@@ -30,11 +30,11 @@ public class SearchCriteria {
         this.operation = operation;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 }

@@ -24,9 +24,11 @@ public class OrderProduct {
     @JsonBackReference
     Order order;
 
-    int productCount = 0;
+    int qty = 0;
 
     Long price;
+
+    Long totalAmount;
 
     public Long getId() {
         return id;
@@ -52,12 +54,12 @@ public class OrderProduct {
         this.priceGroup = priceGroup;
     }
 
-    public int getProductCount() {
-        return productCount;
+    public int getQty() {
+        return qty;
     }
 
-    public void setProductCount(int productCount) {
-        this.productCount = productCount;
+    public void setQty(int productCount) {
+        this.qty = productCount;
     }
 
     public Long getPrice() {
@@ -74,5 +76,13 @@ public class OrderProduct {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

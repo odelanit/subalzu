@@ -110,12 +110,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -320,53 +320,29 @@
                         <h5 class="header-title">주문현황</h5>
                         <div class="card">
                             <div class="card-body p-0">
-                                <h4 class="card-title header-title border-bottom p-3 mb-0">당일</h4>
+                                <h4 class="card-title header-title border-bottom p-3 mb-0">전체</h4>
                                 <!-- stat 1 -->
                                 <div class="media px-3 py-4 border-bottom">
                                     <div class="media-body">
-                                        <h5 class="mt-0 mb-0">주문 &nbsp;<strong>13건</strong></h5>
+                                        <h5 class="mt-0 mb-0">주문 &nbsp;<strong>${orders.size()}</strong></h5>
                                     </div>
                                     <p class="h3 align-self-center">
-                                        552,720원
+                                        ${totalAmount} 원
                                     </p>
                                 </div>
 
-                                <!-- stat 2 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h5 class="mt-0 mb-0">취소 &nbsp;<strong class="">2건</strong></h5>
-                                    </div>
-                                    <p class="h3 align-self-center">
-                                        58,890원
-                                    </p>
-                                </div>
+<%--                                <!-- stat 2 -->--%>
+<%--                                <div class="media px-3 py-4 border-bottom">--%>
+<%--                                    <div class="media-body">--%>
+<%--                                        <h5 class="mt-0 mb-0">취소 &nbsp;<strong class="">2건</strong></h5>--%>
+<%--                                    </div>--%>
+<%--                                    <p class="h3 align-self-center">--%>
+<%--                                        58,890원--%>
+<%--                                    </p>--%>
+<%--                                </div>--%>
                             </div>
                         </div>
 
-                        <div class="card mt-2">
-                            <div class="card-body p-0">
-                                <h4 class="card-title header-title border-bottom p-3 mb-0">한달</h4>
-                                <!-- stat 1 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h5 class="mt-0 mb-0">주문 &nbsp;<strong>58건</strong></h5>
-                                    </div>
-                                    <p class="h3 align-self-center">
-                                        2,836,859원
-                                    </p>
-                                </div>
-
-                                <!-- stat 2 -->
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <h5 class="mt-0 mb-0">취소 &nbsp;<strong>10건</strong></h5>
-                                    </div>
-                                    <p class="h3 align-self-center">
-                                        271,264원
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-md-6">
                         <h5 class="header-title">공지사항 및 문의사항</h5>
@@ -379,19 +355,21 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="notification-tab">
-                                        <div class="p-4">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <tbody>
-                                                    <c:forEach items="${notices}" var="notice">
-                                                        <tr>
-                                                            <td>${notice.title}</td>
-                                                            <td>${notice.createdAt}</td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                        <div>
+                                            <table class="table">
+                                                <colgroup>
+                                                    <col width="*">
+                                                    <col width="30%">
+                                                </colgroup>
+                                                <tbody>
+                                                <c:forEach items="${notices}" var="notice">
+                                                    <tr onclick="window.location.href='/notices/${notice.id}'">
+                                                        <td>${notice.title}</td>
+                                                        <td>${notice.createdAt.format(localDateTimeFormat)}</td>
+                                                    </tr>
+                                                </c:forEach>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>

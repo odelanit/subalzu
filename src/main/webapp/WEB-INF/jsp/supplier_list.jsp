@@ -23,14 +23,6 @@
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
-
-    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-          rel="stylesheet" type="text/css"/>
-
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -117,12 +109,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li class="mm-active">
@@ -271,7 +263,42 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <table class="table" id="suppliers">
+                                <table class="table table-bordered form-table mb-4">
+                                    <tbody class="thead-light">
+                                    <tr>
+                                        <th>키워드 검색</th>
+                                        <td class="w-40">
+                                            <form:form modelAttribute="form" cssClass="form-inline" id="search_form" method="get">
+                                                <form:select path="type" cssClass="w-40 mr-2 form-control form-control-sm">
+                                                    <form:option value="name" label="매입처명" />
+                                                    <form:option value="code" label="매입처코드" />
+                                                </form:select>
+                                                <form:input path="keyword" cssClass="form-control w-50 form-control-sm" />
+                                                <form:hidden path="page" />
+                                            </form:form>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary" form="search_form">검색</button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row align-items-center mb-2">
+                                    <div class="col-6">
+                                        전체 ${supplierPage.totalElements}건
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a class="btn btn-sm btn-outline-primary" href="/suppliers/create"><i class="fa fa-plus"></i> 신규 매입처 등록</a>
+                                    </div>
+                                </div>
+                                <table class="table table-sm text-center table-hover" id="suppliers">
+                                    <colgroup>
+                                        <col style="width: 10%">
+                                        <col style="width: 20%">
+                                        <col>
+                                        <col style="width: 20%">
+                                        <col style="width: 20%">
+                                    </colgroup>
                                     <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
@@ -282,7 +309,19 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-
+                                    <c:forEach items="${suppliers}" var="supplier">
+                                        <tr data-id="${supplier.id}">
+                                            <td>${supplier.id}</td>
+                                            <td>${supplier.code}</td>
+                                            <td>${supplier.name}</td>
+                                            <td>${supplier.products.size()}</td>
+                                            <td>
+                                                <a class="btn btn-outline-danger btn-sm" href="/suppliers/${supplier.id}/delete">
+                                                    <i class="fa fa-trash mr-1"></i>삭제
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
@@ -320,73 +359,14 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
-
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
-
 <script>
     $(document).ready(function () {
         var token = $("meta[name='_csrf']").attr("content");
 
-        var userTable = $('#suppliers').DataTable({
-            serverSide: true,
-            ajax: {
-                url: '/data/suppliers',
-                contentType: 'application/json',
-                headers: {"X-CSRF-TOKEN": token},
-                type: 'POST',
-                data: function(d) {
-                    return JSON.stringify(d);
-                },
-            },
-            columns: [
-                {data: 'id', searchable: false},
-                {
-                    data: 'code',
-                },
-                {
-                    data: 'name',
-                },
-                {
-                    data: null,
-                    searchable: false,
-                    orderable: false,
-                    defaultContent: '',
-                },
-                {
-                    data: null,
-                    searchable: false,
-                    orderable: false,
-                    defaultContent: '',
-                    render: function(data) {
-                        return '<a href="/suppliers/' + data.id + '/delete">삭제</a>';
-                    }
-                }
-            ],
-            dom: "<'d-flex justify-content-end mb-2'B>" +
-                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            buttons: [
-                {
-                    text: '<i class="fal fa-plus"></i>신규 매입처 등록',
-                    className: 'btn btn-sm btn-outline-primary',
-                    action: function ( e, dt, node, config ) {
-                        window.location.href = '/suppliers/create';
-                    },
-                }
-            ]
-        });
-
         $('#suppliers tbody').on('click', 'tr', function () {
-            var data = userTable.row( this ).data();
-            window.location.href = '/suppliers/' + data.id;
+            window.location.href = '/suppliers/' + $(this).data('id');
         });
     });
 </script>

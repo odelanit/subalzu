@@ -22,14 +22,6 @@
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
-
-    <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
-          type="text/css"/>
-    <link href="${contextPath}/resources/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-          rel="stylesheet" type="text/css"/>
-
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -116,12 +108,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -270,28 +262,112 @@
                         </c:if>
                         <div class="card">
                             <div class="card-body">
-                                <div>
-                                    <table class="table" id="products">
-                                        <thead class="thead-light">
+                                <form:form method="get" modelAttribute="form">
+                                    <table class="table table-bordered form-table mb-5">
+                                        <tbody class="thead-light">
                                         <tr>
-<%--                                            <th><input type="checkbox"></th>--%>
-                                            <th>#</th>
-                                            <th>상품코드</th>
-                                            <th>썸네일</th>
-                                            <th>상품명</th>
-                                            <th>카테고리</th>
-                                            <th>규격(단위)</th>
-                                            <th>제조사(원산지)</th>
-                                            <th>배송유형</th>
-                                            <th>매입단가</th>
-                                            <th>직배송단가</th>
-                                            <th>택배배송단가</th>
-                                            <th>재고량</th>
-                                            <th>판매상태</th>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select path="field" cssClass="form-control form-control-sm w-25 mr-2">
+                                                        <form:option value="name" label="상품명" />
+                                                        <form:option value="erpCode" label="상품코드" />
+                                                        <form:option value="country" label="제조사" />
+                                                    </form:select>
+                                                    <form:input path="keyword" cssClass="form-control form-control-sm w-70" />
+                                                    <form:hidden path="page" />
+                                                </div>
+                                            </td>
+                                            <td><button class="btn btn-outline-secondary">검색</button></td>
                                         </tr>
-                                        </thead>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-inline">
+                                                    <form:select path="status" cssClass="form-control w-20 form-control-sm mr-2">
+                                                        <form:option value="" label="판매상태" />
+                                                    </form:select>
+                                                    <form:select path="deliveryType" cssClass="form-control w-20 form-control-sm mr-2">
+                                                        <form:option value="" label="배송유형" />
+                                                    </form:select>
+                                                    <form:select path="category" cssClass="form-control w-20 form-control-sm mr-2">
+                                                        <form:option value="" label="1차 카테고리" />
+                                                    </form:select>
+                                                    <form:select path="subcategory" cssClass="form-control w-20 form-control-sm mr-2">
+                                                        <form:option value="" label="2차 카테고리" />
+                                                    </form:select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
                                     </table>
+                                </form:form>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-file-excel"></i>상품 일괄 수정</button>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-file-excel"></i>상품 대량 등록</button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a class="btn btn-sm btn-outline-primary" href="/products/create"><i class="fa fa-plus"></i>상품등록</a>
+                                    </div>
                                 </div>
+                                <hr>
+                                <div class="mb-2 row align-items-center">
+                                    <div class="col-6">
+                                        <span>전체 ${productPage.totalElements}건</span>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-check"></i> 판매중</button>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-times"></i> 판매중지</button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a class="btn btn-sm btn-outline-primary" href="/store"><i class="fa fa-exchange"></i> 재고변경</a>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i> 삭제</button>
+                                    </div>
+                                </div>
+                                <table class="table table-sm table-hover" id="products">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th><input type="checkbox"></th>
+                                        <th>#</th>
+                                        <th>상품코드</th>
+                                        <th>썸네일</th>
+                                        <th>상품명</th>
+                                        <th>카테고리</th>
+                                        <th>규격(단위)</th>
+                                        <th>제조사(원산지)</th>
+                                        <th>배송유형</th>
+                                        <th>매입단가</th>
+                                        <th>직배송단가</th>
+                                        <th>택배배송단가</th>
+                                        <th>재고량</th>
+                                        <th>판매상태</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${products}" var="product">
+                                        <tr data-id="${product.id}">
+                                            <td><input type="checkbox"></td>
+                                            <td>${product.id}</td>
+                                            <td>${product.erpCode}</td>
+                                            <td><c:if test="${product.imageUrl != null}"><img style="max-width: 150px;" class="img-thumbnail" src="${product.imageUrl}"></c:if></td>
+                                            <td>${product.name}</td>
+                                            <td>${product.category.name}</td>
+                                            <td>${product.standard}<br>${product.unit}</td>
+                                            <td>${product.country}</td>
+                                            <td>
+                                                <c:forEach items="${product.deliveryTypes}" var="deliveryType">
+                                                    ${deliveryType == 'direct' ? '직배송' : '택배배송'}
+                                                </c:forEach>
+
+                                            </td>
+                                            <td>${product.buyPrice}</td>
+                                            <td>${product.directPrice}</td>
+                                            <td>${product.parcelPrice}</td>
+                                            <td></td>
+                                            <td>${product.status ? '판매중' : '판매중지'}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -327,82 +403,14 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-
-<script src="${contextPath}/resources/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="${contextPath}/resources/datatables.net-buttons-bs4/js/buttons.bootstrap4.js"></script>
-
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
     $(document).ready(function () {
         var token = $("meta[name='_csrf']").attr("content");
-        var table = $('#products').DataTable({
-            serverSide: true,
-            lengthChange: true,
-            ajax: {
-                url: '/data/products',
-                contentType: 'application/json',
-                headers: {"X-CSRF-TOKEN": token},
-                type: 'POST',
-                data: function(d) {
-                    return JSON.stringify(d);
-                },
-            },
-            columns: [
-                {data: 'id', searchable: false},
-                {data: 'erpCode'},
-                {
-                    data: 'imageUrl',
-                    searchable: false,
-                    orderable: false,
-                    render: function(imageUrl) {
-                        if (imageUrl) {
-                            return '<img class="img-thumbnail" src="' + imageUrl + '" />';
-                        } else {
-                            return '';
-                        }
-                    }
-                },
-                {data: 'name'},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {data: 'unit'},
-                {data: 'country'},
-                {
-                    data: 'deliveryTypes',
-                    searchable: false,
-                    orderable: false,
-                    render: function (types) {
-                        return types;
-                    }
-                },
-                {data: 'buyPrice'},
-                {data: 'directPrice'},
-                {data: 'parcelPrice'},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-                {data: null, searchable: false, orderable: false, defaultContent: ''},
-            ],
-            dom: "<'d-flex justify-content-end mb-2'B>" +
-                "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            buttons: [
-                {
-                    text: '<i class="fal fa-plus"></i>상품 등록',
-                    className: 'btn btn-sm btn-outline-primary',
-                    action: function ( e, dt, node, config ) {
-                        window.location.href = '/products/create';
-                    },
-                }
-            ]
-        });
 
         $('#products tbody').on('click', 'tr', function () {
-            var data = table.row( this ).data();
-            window.location.href = '/products/' + data.id;
+            window.location.href = '/products/' + $(this).data('id');
         });
     });
 </script>

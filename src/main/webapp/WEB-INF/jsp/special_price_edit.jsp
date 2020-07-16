@@ -13,6 +13,8 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -107,12 +109,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <li>
-                                <a href="/product-orders">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/returns">반품 내역</a>
-                            </li>
+<%--                            <li>--%>
+<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
+<%--                            </li>--%>
+<%--                            <li>--%>
+<%--                                <a href="/returns">반품 내역</a>--%>
+<%--                            </li>--%>
                         </ul>
                     </li>
                     <li>
@@ -292,8 +294,19 @@
                                         </tbody>
                                     </table>
                                 </form:form>
-                                <h5 class="text-center mb-5"><span class="h3">${shop.name}</span> 거래처<c:if test="${shop.priceGroup != null}">(단가 속성 = ${shop.priceGroup.name})</c:if>입니다.</h5>
-                                <table class="table table-sm text-center">
+                                <h5 class="text-center mb-5">
+                                    <span class="h3">${shop.name}</span> 거래처<c:if test="${shop.priceGroup != null}">(단가 속성 = ${shop.priceGroup.name})</c:if>입니다.
+                                </h5>
+                                <input type="hidden" value="${shop.id}" id="shop_id">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <span>전체 ${productPage.totalElements}건</span>
+                                    </div>
+                                    <div class="col-6">
+
+                                    </div>
+                                </div>
+                                <table class="table table-sm text-center table-middle">
                                     <thead class="thead-light">
                                     <tr>
                                         <th>#</th>
@@ -309,6 +322,37 @@
                                         <th>적용 상태</th>
                                     </tr>
                                     </thead>
+                                    <tbody>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr>
+                                            <td>${product.id}</td>
+                                            <td>${product.erpCode}</td>
+                                            <td><c:if test="${product.imageUrl != null}"><img style="max-width: 150px;" class="img-thumbnail" src="${product.imageUrl}"></c:if></td>
+                                            <td>${product.name}</td>
+                                            <td>${product.category.name}</td>
+                                            <td>${product.standard}<br>${product.unit}</td>
+                                            <td>${product.country}</td>
+                                            <td>${product.directPrice}</td>
+                                            <td>${product.parcelPrice}</td>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <input style="width: 100px;" class="form-control form-control-sm mr-2" value="${product.getShopPrice(shop.id)}" type="number">
+                                                    <button class="btn btn-sm btn-outline-primary apply" data-product="${product.id}" type="button">적용</button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${product.getShopPrice(shop.id) > 0}">
+                                                        <button class="btn btn-sm btn-outline-warning clear" data-product="${product.id}">적용해제</button>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        미적용
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
                                 </table>
                                 <div class="form-group text-center">
                                     <a class="btn btn-outline-secondary" href="/special-prices">목록으로</a>
@@ -351,6 +395,55 @@
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $(document).ready(function () {
+        var shopId = $('#shop_id').val();
+        var token = $('meta[name="_csrf"]').attr('content');
+        $('.apply').click(function () {
+            var productId = $(this).data('product');
+            var element = $(this);
+            var price = $(this).prev().val();
+            if (parseInt(price) > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/special-prices/apply',
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    data: {
+                        shop: shopId,
+                        product: productId,
+                        price: price,
+                    },
+                    success: function(data) {
+                        var html = '<button class="btn btn-sm btn-outline-warning clear" data-product="' + data.product + '">적용해제</button>';
+                        element.closest('td').next().html(html)
+                    }
+                });
+            }
+        });
 
+        $(document).on('click', '.btn.clear', function () {
+            var productId = $(this).data('product');
+            var element = $(this);
+
+            $.ajax({
+                type: 'POST',
+                url: '/special-prices/clear',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                data: {
+                    shop: shopId,
+                    product: productId,
+                },
+                success: function(data) {
+                    var html = '미적용';
+                    element.closest('td').html(html);
+                }
+            });
+        })
+    });
+</script>
 </body>
 </html>

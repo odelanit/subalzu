@@ -56,18 +56,22 @@ public class Shop { // 거래처
 
     @ManyToOne
     @JoinColumn(name="deliverer_id", nullable = false)
+    @JsonManagedReference
     User deliverer;
 
     @ManyToOne
     @JoinColumn(name="salesman_id")
+    @JsonManagedReference
     User salesman;
 
     @OneToOne
     @JoinColumn(name="owner_id")
+    @JsonManagedReference
     User owner;
 
     @ManyToOne
     @JoinColumn(name="price_group_id")
+    @JsonManagedReference
     PriceGroup priceGroup;
 
     @ManyToOne
@@ -104,6 +108,7 @@ public class Shop { // 거래처
     private LocalDateTime stoppedAt;
 
     @ManyToMany(mappedBy = "shops")
+    @JsonManagedReference
     private Set<Notice> notices;
 
     public Long getId() {

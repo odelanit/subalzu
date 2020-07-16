@@ -1,5 +1,6 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,6 +26,7 @@ public class ShopGrade {
     private int percentage = 0;
 
     @OneToMany(mappedBy = "shopGrade")
+    @JsonBackReference
     Set<Shop> shops;
 
     @CreationTimestamp

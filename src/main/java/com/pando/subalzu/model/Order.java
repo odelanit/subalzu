@@ -57,6 +57,12 @@ public class Order {
     @JsonManagedReference
     Set<OrderProduct> orderProducts;
 
+    Long totalAmount;
+
+    String orderStatus = "completed" ; // completed, modified, canceled,
+
+    String releaseStatus = "progress"; // completed, progress, rejected,
+
     public Long getId() {
         return id;
     }
@@ -143,5 +149,37 @@ public class Order {
 
     public void setOrderProducts(Set<OrderProduct> orderProducts) {
         this.orderProducts = orderProducts;
+    }
+
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getReleaseStatus() {
+        return releaseStatus;
+    }
+
+    public void setReleaseStatus(String releaseStatus) {
+        this.releaseStatus = releaseStatus;
     }
 }

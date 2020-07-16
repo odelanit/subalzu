@@ -1,21 +1,25 @@
 package com.pando.subalzu.web;
 
-import com.pando.subalzu.model.Category;
-import com.pando.subalzu.model.Product;
-import com.pando.subalzu.model.Supplier;
+import com.pando.subalzu.form.ProductSearchForm2;
+import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
+import com.pando.subalzu.specification.ProductSpecification;
+import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.validator.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,10 +36,10 @@ public class ProductController {
     ProductRepository productRepository;
 
     @Autowired
-    ProductDataRepository productDataRepository;
+    PriceGroupRepository priceGroupRepository;
 
     @Autowired
-    PriceGroupRepository priceGroupRepository;
+    ProductGroupPriceRepository productGroupPriceRepository;
 
     @Autowired
     ProductValidator productValidator;
@@ -50,15 +54,31 @@ public class ProductController {
         return supplierRepository.findAll();
     }
 
-    @GetMapping("/products")
-    public String index() {
-        return "product_list";
+    @ModelAttribute("priceGroups")
+    List<PriceGroup> priceGroups() {
+        return priceGroupRepository.findAll();
     }
 
-    @RequestMapping(value = "/data/products", method = RequestMethod.POST)
-    @ResponseBody
-    public DataTablesOutput<Product> dataUsers(@Valid @RequestBody DataTablesInput input) {
-        return productDataRepository.findAll(input);
+    @GetMapping("/products")
+    public String index(@ModelAttribute("form") ProductSearchForm2 form, Model model) {
+        String field = form.getField();
+        String keyword = form.getKeyword();
+        int page = form.getPage();
+        Page<Product> productPage;
+        if (field != null && keyword != null) {
+            ProductSpecification spec = new ProductSpecification(new SearchCriteria(field, ":", keyword));
+            Pageable pageable = PageRequest.of(page - 1, 50);
+            productPage = productRepository.findAll(spec, pageable);
+        } else {
+            Pageable pageable = PageRequest.of(page - 1, 50);
+            productPage = productRepository.findAll(pageable);
+        }
+        List<Product> products = productPage.getContent();
+
+        model.addAttribute("productPage", productPage);
+        model.addAttribute("products", products);
+        model.addAttribute("currentPage", page);
+        return "product_list";
     }
 
     @GetMapping("/products/create")
@@ -74,7 +94,15 @@ public class ProductController {
             return "product_create";
         }
         redirectAttributes.addFlashAttribute("message", "Product Added");
-        productRepository.save(productForm);
+        Product product = productRepository.save(productForm);
+        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+        for (PriceGroup priceGroup : priceGroups) {
+            ProductGroupPrice groupPrice = new ProductGroupPrice();
+            groupPrice.setPrice(product.getBuyPrice());
+            groupPrice.setProduct(product);
+            groupPrice.setPriceGroup(priceGroup);
+            productGroupPriceRepository.save(groupPrice);
+        }
         return "redirect:/products";
     }
 
@@ -83,6 +111,7 @@ public class ProductController {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
+
             model.addAttribute("productForm", product);
             return "product_edit";
         } else {

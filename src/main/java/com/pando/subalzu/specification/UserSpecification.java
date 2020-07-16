@@ -18,7 +18,7 @@ public class UserSpecification implements Specification<User> {
     public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder builder) {
         if (criteria.getOperation().equalsIgnoreCase(":")) {
             if (criteria.getKey().equalsIgnoreCase("shopName")) {
-                if (criteria.getValue() == null || criteria.getValue().isEmpty()) {
+                if (criteria.getValue() == null || ((String)criteria.getValue()).isEmpty()) {
                     return builder.like(root.<String>get("username"), "%%");
                 } else {
                     return builder.like(root.<Shop>get("ownShop").get("name"), "%" + criteria.getValue() + "%");

@@ -1,5 +1,6 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -37,6 +38,7 @@ public class Notice {
     private LocalDateTime updatedAt;
 
     @ManyToMany
+    @JsonBackReference
     private Set<Shop> shops;
 
     public Long getId() {

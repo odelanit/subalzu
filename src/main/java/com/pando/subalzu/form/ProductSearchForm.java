@@ -12,7 +12,7 @@ public class ProductSearchForm {
 
     Category subcategory;
 
-    int page;
+    int page = 1;
 
     public String getField() {
         return field;

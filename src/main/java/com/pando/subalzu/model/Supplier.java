@@ -1,8 +1,9 @@
 package com.pando.subalzu.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "suppliers")
@@ -35,9 +36,34 @@ public class Supplier { // 매입처
 
     private String addressLine2;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+    @Transient
+    private String fullName;
+
+    @Transient
+    private String phone;
+
+    @Transient
+    private String username;
+
+    @Transient
+    private String password;
+
+    @Transient
+    private String passwordConfirm;
+
+    @Transient
+    private String bio;
+
+    @OneToMany(mappedBy = "supplier")
+    @JsonBackReference
+    private Set<Product> products;
+
+    @OneToMany(mappedBy = "supplier")
+    @JsonBackReference
+    private Set<Balance> balances;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Long getId() {
@@ -150,5 +176,69 @@ public class Supplier { // 매입처
 
     public void setUser(User owner) {
         this.user = owner;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public Set<Balance> getBalances() {
+        return balances;
+    }
+
+    public void setBalances(Set<Balance> balances) {
+        this.balances = balances;
     }
 }
