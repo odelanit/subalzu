@@ -120,4 +120,13 @@ public class CartController {
         resultMap.put("message", "Success");
         return resultMap;
     }
+
+    @PostMapping("/cart/reset")
+    @ResponseBody
+    public Map<String, String> reset() {
+        cartItemRepository.deleteAll();
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
 }

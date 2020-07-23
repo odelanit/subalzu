@@ -58,17 +58,7 @@
                 <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
-            </li>
-            <li class="d-none d-sm-block">
-                <div class="app-search">
-                    <form>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span data-feather="search"></span>
-                        </div>
-                    </form>
-                </div>
+                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>
@@ -88,11 +78,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Shreyu"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Shreyu"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -274,16 +259,16 @@
                                     <spring:bind path="user">
                                         <form:hidden path="user" />
                                     </spring:bind>
-                                    <table class="table form-table table-bordered mb-0">
+                                    <table class="table form-table table-bordered mb-5">
                                         <tbody class="thead-light">
-                                        <spring:bind path="ownerName">
+                                        <spring:bind path="vendorName">
                                             <tr>
                                                 <th>사업자명</th>
                                                 <td colspan="3">
                                                     <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                type="text" path="ownerName"/>
+                                                                type="text" path="vendorName"/>
                                                     <div class="invalid-feedback">
-                                                        <form:errors path="ownerName"/>
+                                                        <form:errors path="vendorName"/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -300,14 +285,14 @@
                                                 </td>
                                             </tr>
                                         </spring:bind>
-                                        <spring:bind path="vendorName">
+                                        <spring:bind path="ownerName">
                                             <tr>
                                                 <th>대표자</th>
                                                 <td colspan="3">
                                                     <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                type="text" path="vendorName"/>
+                                                                type="text" path="ownerName"/>
                                                     <div class="invalid-feedback">
-                                                        <form:errors path="vendorName"/>
+                                                        <form:errors path="ownerName"/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -398,10 +383,6 @@
                                         </spring:bind>
                                         </tbody>
                                     </table>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
                                     <h5 class="card-title">정산계좌 정보</h5>
                                     <table class="table text-center table-bordered form-table">
                                         <tbody class="thead-light">

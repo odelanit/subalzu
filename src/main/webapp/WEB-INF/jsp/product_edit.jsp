@@ -60,17 +60,7 @@
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
-                   onclick="document.getElementById('logout-form').submit();">로그아웃</a>
-            </li>
-            <li class="d-none d-sm-block">
-                <div class="app-search">
-                    <form>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span data-feather="search"></span>
-                        </div>
-                    </form>
-                </div>
+                   onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>
@@ -391,23 +381,29 @@
                                                     </div>
                                                 </td>
                                             </spring:bind>
-                                            <spring:bind path="deliveryTypes">
+                                            <spring:bind path="deliveryType">
                                                 <th class="required"><span>배송유형</span></th>
                                                 <td>
-                                                    <div class="custom-control custom-control-inline custom-checkbox">
-                                                        <form:checkbox class="custom-control-input" path="deliveryTypes"
-                                                                       value="direct" id="delivery_type1"/>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="deliveryType"
+                                                                       value="0" id="delivery_type1"/>
                                                         <label class="custom-control-label"
-                                                               for="delivery_type1">직배송</label>
+                                                               for="delivery_type1">전체</label>
                                                     </div>
-                                                    <div class="custom-control custom-control-inline custom-checkbox">
-                                                        <form:checkbox class="custom-control-input" path="deliveryTypes"
-                                                                       value="parcel" id="delivery_type2"/>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="deliveryType"
+                                                                       value="1" id="delivery_type2"/>
                                                         <label class="custom-control-label"
-                                                               for="delivery_type2">택배배송</label>
+                                                               for="delivery_type2">직배송</label>
+                                                    </div>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="deliveryType"
+                                                                          value="2" id="delivery_type3"/>
+                                                        <label class="custom-control-label"
+                                                               for="delivery_type3">택배배송</label>
                                                     </div>
                                                     <div class="invalid-feedback ${status.error ? 'd-block': ''}">
-                                                        <form:errors path="deliveryTypes"/>
+                                                        <form:errors path="deliveryType"/>
                                                     </div>
                                                 </td>
                                             </spring:bind>

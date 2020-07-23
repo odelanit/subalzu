@@ -59,17 +59,7 @@
                 <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
-            </li>
-            <li class="d-none d-sm-block">
-                <div class="app-search">
-                    <form>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span data-feather="search"></span>
-                        </div>
-                    </form>
-                </div>
+                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>
@@ -89,9 +79,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2" alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2" alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -385,7 +372,7 @@
 <%--                                        <button class="btn btn-sm btn-outline-primary" >출고 완료</button>--%>
                                     </div>
                                     <div class="col-6 text-right">
-                                        <a target="_blank" class="btn btn-sm btn-outline-primary" href="/orders/download/orders.xlsx">
+                                        <a target="_blank" class="btn btn-sm btn-excel" href="/orders/download/orders.xlsx">
                                             <i class="fa fa-file-excel"></i> 주문내역
                                         </a>
                                     </div>

@@ -2,6 +2,7 @@ package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
 import com.pando.subalzu.form.OrderSearchForm;
+import com.pando.subalzu.form.ProductSearchForm3;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
 import com.pando.subalzu.specification.OrderSpecification;
@@ -128,6 +129,7 @@ public class OrderController {
     @GetMapping("/orders/create")
     public String create(Model model) {
         model.addAttribute("orderForm", new Order());
+        model.addAttribute("searchForm", new ProductSearchForm3());
         return "order_create";
     }
 
@@ -141,7 +143,7 @@ public class OrderController {
     }
 
     @PostMapping(value = "/orders/create")
-    public String store(@ModelAttribute("orderForm") Order order, BindingResult bindingResult, Principal principal) {
+    public String store(@ModelAttribute("orderForm") Order order, @ModelAttribute("searchForm") ProductSearchForm3 form, BindingResult bindingResult, Principal principal) {
         orderValidator.validate(order, bindingResult);
         if (bindingResult.hasErrors()) {
             return "order_create";
@@ -269,7 +271,10 @@ public class OrderController {
                 dataRow.createCell(0).setCellValue(i + 1);
                 dataRow.createCell(1).setCellValue(orders.get(i).getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd hh:mm:ss")));
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String strRequestDate = dateFormat.format(orders.get(i).getRequestDate());
+                String strRequestDate = "";
+                if (orders.get(i).getRequestDate() != null) {
+                    strRequestDate = dateFormat.format(orders.get(i).getRequestDate());
+                }
                 dataRow.createCell(2).setCellValue(strRequestDate);
                 dataRow.createCell(3).setCellValue(orders.get(i).getOrderCode());
                 dataRow.createCell(4).setCellValue(orders.get(i).getShop().getName());
@@ -312,19 +317,19 @@ public class OrderController {
             }
 
             // Making size of column auto resize to fit with data
-//            sheet.autoSizeColumn(0);
-//            sheet.autoSizeColumn(1);
-//            sheet.autoSizeColumn(2);
-//            sheet.autoSizeColumn(3);
-//            sheet.autoSizeColumn(4);
-//            sheet.autoSizeColumn(5);
-//            sheet.autoSizeColumn(6);
-//            sheet.autoSizeColumn(7);
-//            sheet.autoSizeColumn(8);
-//            sheet.autoSizeColumn(9);
-//            sheet.autoSizeColumn(10);
-//            sheet.autoSizeColumn(11);
-//            sheet.autoSizeColumn(12);
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
+            sheet.autoSizeColumn(6);
+            sheet.autoSizeColumn(7);
+            sheet.autoSizeColumn(8);
+            sheet.autoSizeColumn(9);
+            sheet.autoSizeColumn(10);
+            sheet.autoSizeColumn(11);
+            sheet.autoSizeColumn(12);
 
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

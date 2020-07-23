@@ -60,17 +60,7 @@
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
-                   onclick="document.getElementById('logout-form').submit();">로그아웃</a>
-            </li>
-            <li class="d-none d-sm-block">
-                <div class="app-search">
-                    <form>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span data-feather="search"></span>
-                        </div>
-                    </form>
-                </div>
+                   onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>
@@ -457,7 +447,7 @@
     <div class="modal-dialog-centered modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h5 class="modal-title text-light">거래처 검색</h5>
+                <div class="modal-title text-light">거래처 검색</div>
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -502,15 +492,47 @@
 <div class="modal fade" id="selectProductsModal">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">
-                    상품 검색 및 선택
+            <div class="modal-header bg-primary">
+                <div class="modal-title text-light">
+
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-right" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                <form:form modelAttribute="searchForm">
+                    <table class="table form-table table-bordered">
+                        <colgroup>
+                            <col style="width: 10%">
+                            <col style="width: 57%">
+                            <col>
+                        </colgroup>
+                        <tbody class="thead-light">
+                        <th>즉시 검색</th>
+                        <td>
+                            <div class="row">
+                                <div class="col-3">
+                                    <form:select path="category" cssClass="form-control form-control-sm">
+                                        <form:option value="" label="1차 카테고리" />
+                                    </form:select>
+                                </div>
+                                <div class="col-3">
+                                    <form:select path="subcategory" cssClass="form-control form-control-sm">
+                                        <form:option value="" label="2차 카테고리" />
+                                    </form:select>
+                                </div>
+                                <div class="col-6">
+                                    <form:input path="keyword" cssClass="form-control form-control-sm" placeholder="상품명 또는 상품코드를 입력하세요." />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary">검색</button>
+                        </td>
+                        </tbody>
+                    </table>
+                </form:form>
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="row mb-3">
@@ -551,7 +573,7 @@
                     <div class="col-lg-5">
                         <div class="row mb-3">
                             <div class="col-6">선택상품 목록<span class="cor_primary" id="goodsSelectCountText">(전체 0건)</span></div>
-                            <div class="col-6 text-right"><a class="btn btn-sm btn-outline-primary" role="button">초기화</a></div>
+                            <div class="col-6 text-right"><a class="btn btn-sm btn-outline-primary" id="resetCart" href="javascript:;" role="button"><i class="fa fa-undo"></i></a></div>
                         </div>
                         <div id="goods_select_wrap">
                             <div style="height:420px; overflow: auto;">
@@ -799,7 +821,10 @@
                     });
                 }
             }
-        })
+        });
+        var deliveryType = $('input[name="deliveryType"]:checked').next().text();
+        var modalTitle = deliveryType + " 상품 검색 및 선택";
+        $('#selectProductsModal .modal-title').html(modalTitle);
         $('#selectProductsModal').modal('show');
     });
 
@@ -876,6 +901,19 @@
             $('#cartTable tbody').append(html);
         })
         $('#selectProductsModal').modal('hide');
+    });
+
+    $('#resetCart').click(function() {
+        $.ajax({
+            type: 'POST',
+            url: '/cart/reset',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            success: function (data) {
+                $('#shopping_cart').html('');
+            }
+        })
     });
 </script>
 </body>

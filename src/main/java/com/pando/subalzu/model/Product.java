@@ -55,11 +55,11 @@ public class Product {
 
     String message;
 
-    @ElementCollection
-    List<String> deliveryTypes;
+    @Column(nullable = false)
+    int deliveryType = 0; // 0 : 전체, 1: 직배송, 2: 택배 배송
 
     @Column(nullable = false)
-    String shippingMethod = "manual";
+    String shippingMethod = "manual"; // manual : 수동발주, automatic : 자동발주
 
     @ManyToOne
     @JoinColumn(name="supplier_id")
@@ -74,7 +74,7 @@ public class Product {
 
     int parcelPrice = 0;
 
-    int qty = 0;
+    double qty = 0.0;
 
     boolean status = true;
 
@@ -86,13 +86,16 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<ProductGroupPrice> groupPrices;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<ShopProductPrice> shopPrices;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    Set<CartItem> cartItems;
 
     public Long getId() {
         return id;
@@ -190,12 +193,12 @@ public class Product {
         this.message = message;
     }
 
-    public List<String> getDeliveryTypes() {
-        return deliveryTypes;
+    public int getDeliveryType() {
+        return deliveryType;
     }
 
-    public void setDeliveryTypes(List<String> deliveryTypes) {
-        this.deliveryTypes = deliveryTypes;
+    public void setDeliveryType(int deliveryType) {
+        this.deliveryType = deliveryType;
     }
 
     public String getShippingMethod() {
@@ -304,7 +307,7 @@ public class Product {
 
     public Long getShopPrice(Long shopId) {
         Iterator<ShopProductPrice> iterator = shopPrices.iterator();
-        Long price = Long.valueOf(0);
+        Long price = 0L;
         while (iterator.hasNext()) {
             ShopProductPrice shopProductPrice = iterator.next();
             if (shopId.equals(shopProductPrice.getShop().getId())) {
@@ -314,11 +317,19 @@ public class Product {
         return price;
     }
 
-    public int getQty() {
+    public double getQty() {
         return qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(double qty) {
         this.qty = qty;
+    }
+
+    public Set<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(Set<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
 }

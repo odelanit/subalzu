@@ -4,9 +4,9 @@ import com.pando.subalzu.model.Category;
 
 public class ProductSearchForm2 {
 
-    String field;
+    String field = "name";
 
-    String keyword;
+    String keyword = "";
 
     Category category;
 

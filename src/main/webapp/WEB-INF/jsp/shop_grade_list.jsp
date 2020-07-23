@@ -60,17 +60,7 @@
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
-                   onclick="document.getElementById('logout-form').submit();">로그아웃</a>
-            </li>
-            <li class="d-none d-sm-block">
-                <div class="app-search">
-                    <form>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span data-feather="search"></span>
-                        </div>
-                    </form>
-                </div>
+                   onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>

@@ -19,7 +19,7 @@ public class ProductValidator implements Validator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "tax", "NotEmpty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryTypes", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryType", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingMethod", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "useDecimal", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "parcelPrice", "NotEmpty");
