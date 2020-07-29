@@ -165,18 +165,4 @@ public class UserController {
         }
         return "redirect:/users";
     }
-
-    @PostMapping("/users/check_username")
-    @ResponseBody
-    public Map<String, String> checkUsername(@RequestParam("username") String username, HttpServletResponse response) {
-        Optional<User> optionalUser =  userRepository.findByUsername(username);
-        Map<String, String> resultMap = new HashMap<>();
-        if (optionalUser.isPresent()) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-            resultMap.put("message", "User present");
-        } else {
-            resultMap.put("message", "Success");
-        }
-        return resultMap;
-    }
 }

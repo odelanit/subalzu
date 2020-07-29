@@ -35,14 +35,19 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public String index(Model model, Principal principal) {
-        Company company = companyRepository.findByUserUsername(principal.getName());
-        CategoryPopupForm form = new CategoryPopupForm();
-        form.setPopup(company.getCompanySetting().getCategoryPopup());
-        model.addAttribute("categories", categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level")));
-        model.addAttribute("popupForm", form);
-        model.addAttribute("fixedPriceRate", company.getCompanySetting().getFixedPriceRate());
-        model.addAttribute("categoryForm", new Category());
-        return "category_list";
+        Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            CategoryPopupForm form = new CategoryPopupForm();
+            form.setPopup(company.getCompanySetting().getCategoryPopup());
+            model.addAttribute("categories", categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level")));
+            model.addAttribute("popupForm", form);
+            model.addAttribute("fixedPriceRate", company.getCompanySetting().getFixedPriceRate());
+            model.addAttribute("categoryForm", new Category());
+            return "category_list";
+        } else {
+            return "redirect:/company";
+        }
     }
 
     @PostMapping("/categories/store")
@@ -59,10 +64,13 @@ public class CategoryController {
     @ResponseBody
     public Map<String, String> setPopup(@ModelAttribute("popupForm") CategoryPopupForm form, Principal principal) {
         Map<String, String> resultMap = new HashMap<>();
-        Company company = companyRepository.findByUserUsername(principal.getName());
-        CompanySetting companySetting = company.getCompanySetting();
-        companySetting.setCategoryPopup(form.getPopup());
-        companySettingRepository.save(companySetting);
+        Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            CompanySetting companySetting = company.getCompanySetting();
+            companySetting.setCategoryPopup(form.getPopup());
+            companySettingRepository.save(companySetting);
+        }
         resultMap.put("message", "Success");
         return resultMap;
     }

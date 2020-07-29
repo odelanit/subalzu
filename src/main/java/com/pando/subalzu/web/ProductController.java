@@ -1,6 +1,7 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
+import com.pando.subalzu.form.ProductSearchForm;
 import com.pando.subalzu.form.ProductSearchForm2;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
@@ -30,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -45,6 +47,9 @@ public class ProductController {
     SupplierRepository supplierRepository;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     ProductRepository productRepository;
 
     @Autowired
@@ -52,6 +57,9 @@ public class ProductController {
 
     @Autowired
     ProductGroupPriceRepository productGroupPriceRepository;
+
+    @Autowired
+    ProductRecordRepository productRecordRepository;
 
     @Autowired
     ProductValidator productValidator;
@@ -97,11 +105,13 @@ public class ProductController {
             List<Category> subcategories = categoryRepository.findByParent(category);
             model.addAttribute("subcategories", subcategories);
             spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("category", ":", category)));
-        }
 
-        Category subcategory = form.getSubcategory();
-        if (subcategory != null) {
-            spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
+            Category subcategory = form.getSubcategory();
+            if (subcategory != null) {
+                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
+            }
+        } else {
+            form.setSubcategory(null);
         }
 
         Pageable pageable = PageRequest.of(page - 1, 50);
@@ -112,6 +122,28 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("currentPage", page);
         return "product_list";
+    }
+
+    @GetMapping("/data")
+    @ResponseBody
+    public Map<String, Object> getProducts(@RequestParam("supplier") Supplier supplier) {
+        Specification<Product> spec = new ProductSpecification(new SearchCriteria("supplier", ":", supplier));
+        List<Product> products = productRepository.findAll(spec);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        resultMap.put("products", products);
+        return resultMap;
+    }
+
+    @GetMapping("/data_for_order")
+    @ResponseBody
+    public Map<String, Object> getProductsForOrder(ProductSearchForm form) {
+        Specification<Product> spec = new ProductSpecification(new SearchCriteria("name", ":", form.getKeyword()));
+        List<Product> products = productRepository.findAll(spec);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        resultMap.put("products", products);
+        return resultMap;
     }
 
     @GetMapping("/create")
@@ -907,7 +939,7 @@ public class ProductController {
                             product.setCountry(currentCell.getStringCellValue());
                             break;
                         case 9:
-                            product.setBuyPrice((int)currentCell.getNumericCellValue());
+                            product.setBuyPrice((long)currentCell.getNumericCellValue());
                             break;
                         case 10:
                             product.setTax(currentCell.getBooleanCellValue());
@@ -1027,7 +1059,7 @@ public class ProductController {
                             product.setCountry(currentCell.getStringCellValue());
                             break;
                         case 10:
-                            product.setBuyPrice((int)currentCell.getNumericCellValue());
+                            product.setBuyPrice((long)currentCell.getNumericCellValue());
                             break;
                         case 11:
                             product.setTax(currentCell.getBooleanCellValue());
@@ -1090,6 +1122,83 @@ public class ProductController {
         List<Product> products = productRepository.findAllById(ids);
         productRepository.deleteAll(products);
         resultMap.put("message", "삭제처리 완료됐습니다.");
+        return resultMap;
+    }
+
+    @PostMapping("/change_qty")
+    @ResponseBody
+    public Map<String, String> changeQty(ProductRecord productRecord, Principal principal) {
+        Product product = productRecord.getProduct();
+        String action = productRecord.getAction();
+        double previousQty = product.getQty();
+
+        if (action.contains("input")) {
+            product.setQty(previousQty + productRecord.getDiff());
+        } else if (action.contains("output")) {
+            product.setQty(previousQty - productRecord.getDiff());
+        }
+
+        productRepository.save(product);
+
+        Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+        optionalUser.ifPresent(productRecord::setUser);
+        productRecord.setPreviousQty(previousQty);
+        productRecordRepository.save(productRecord);
+
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "재고값 변경이 완료되었습니다.");
+        return resultMap;
+    }
+
+    @PostMapping("/change_qty_all")
+    @ResponseBody
+    public Map<String, String> changeQtyAll(@RequestBody List<Map<String, Object>> productRecords, Principal principal) {
+        for (Map<String, Object> recordMap: productRecords) {
+            Long productId = Long.parseLong((String) recordMap.get("product"));
+            double diff = Double.parseDouble((String) recordMap.get("diff")) ;
+            String action = (String) recordMap.get("action");
+            ProductRecord productRecord = new ProductRecord();
+            Optional<Product> optionalProduct = productRepository.findById(productId);
+            if (optionalProduct.isPresent()) {
+
+                Product product = optionalProduct.get();
+
+                productRecord.setProduct(product);
+                productRecord.setAction(action);
+                productRecord.setDiff(diff);
+
+                double previousQty = product.getQty();
+
+                if (action.contains("input")) {
+                    product.setQty(previousQty + productRecord.getDiff());
+                } else if (action.contains("output")) {
+                    product.setQty(previousQty - productRecord.getDiff());
+                }
+
+                productRepository.save(product);
+
+                Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                optionalUser.ifPresent(productRecord::setUser);
+                productRecord.setPreviousQty(previousQty);
+                productRecordRepository.save(productRecord);
+            }
+
+        }
+
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "재고값 변경이 완료되었습니다.");
+        return resultMap;
+    }
+
+    @GetMapping("/get_data")
+    @ResponseBody
+    public Map<String, Object> getData(ProductSearchForm form) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Specification<Product> spec = new ProductSpecification(new SearchCriteria("name", ":", form.getKeyword()));
+        spec = Specification.where(spec).or(new ProductSpecification(new SearchCriteria("erpCode", ":", form.getKeyword())));
+        List<Product> products = productRepository.findAll(spec);
+        resultMap.put("products", products);
+        resultMap.put("message", "Success");
         return resultMap;
     }
 }

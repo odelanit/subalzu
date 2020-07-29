@@ -66,13 +66,17 @@ public class Product {
     @JsonManagedReference
     Supplier supplier;
 
-    int buyPrice = 0;
+    @Column(nullable = false)
+    Long buyPrice = 0L;
 
-    Long sellPrice;
+    @Column(nullable = false)
+    Long sellPrice = 0L;
 
-    int directPrice = 0;
+    @Column(nullable = false)
+    Long directPrice = 0L;
 
-    int parcelPrice = 0;
+    @Column(nullable = false)
+    Long parcelPrice = 0L;
 
     double qty = 0.0;
 
@@ -95,7 +99,12 @@ public class Product {
     Set<ShopProductPrice> shopPrices;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<CartItem> cartItems;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnore
+    Set<ProductRecord> productRecords;
 
     public Long getId() {
         return id;
@@ -217,11 +226,11 @@ public class Product {
         this.supplier = supplier;
     }
 
-    public int getBuyPrice() {
+    public Long getBuyPrice() {
         return buyPrice;
     }
 
-    public void setBuyPrice(int buyPrice) {
+    public void setBuyPrice(Long buyPrice) {
         this.buyPrice = buyPrice;
     }
 
@@ -233,19 +242,19 @@ public class Product {
         this.sellPrice = sellPrice;
     }
 
-    public int getDirectPrice() {
+    public Long getDirectPrice() {
         return directPrice;
     }
 
-    public void setDirectPrice(int directPrice) {
+    public void setDirectPrice(Long directPrice) {
         this.directPrice = directPrice;
     }
 
-    public int getParcelPrice() {
+    public Long getParcelPrice() {
         return parcelPrice;
     }
 
-    public void setParcelPrice(int parcelPrice) {
+    public void setParcelPrice(Long parcelPrice) {
         this.parcelPrice = parcelPrice;
     }
 

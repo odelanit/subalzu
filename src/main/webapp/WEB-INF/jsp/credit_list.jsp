@@ -13,6 +13,8 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -53,7 +55,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -166,13 +168,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -242,112 +241,206 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 이전 잔액</span>
+                                                <h3 class="mb-0 text-primary">${sumPrevBalance}원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 매출 금액</span>
+                                                <h3 class="mb-0 text-success">${sumTotalSales} 원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 입금 금액</span>
+                                                <h3 class="mb-0 text-secondary">${sumInputAmount}원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">수정 금액</span>
+                                                <h3 class="mb-0 text-warning">${sumUpdateAmount} 원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 잔액</span>
+                                                <h3 class="mb-0 text-danger">${sumAmount}원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>거래처명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 align-self-center">
-                                        <button class="btn btn-primary">검색</button>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>거래상태</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>결제수단</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <ul class="list-group list-group-horizontal-lg">
-                                    <li class="list-group-item">총 이전 잔액</li>
-                                    <li class="list-group-item">총 매출 잔액</li>
-                                    <li class="list-group-item">총 입금 잔액</li>
-                                    <li class="list-group-item">수정 금액</li>
-                                    <li class="list-group-item">총 잔액</li>
-                                </ul>
-                                <div class="row">
-                                    <div class="col-md-6">
-
-                                    </div>
-                                    <div class="col-md-6 text-md-right mt-md-0 mt-2">
-
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
+                                <form:form modelAttribute="form" method="get">
+                                    <table class="table table-bordered form-table mb-4">
+                                        <colgroup>
+                                            <col style="width: 100px;">
+                                            <col style="width: 650px;">
+                                            <col>
+                                        </colgroup>
+                                        <tbody class="thead-light">
                                         <tr>
-                                            <th>#</th>
-                                            <th>결제수단</th>
-                                            <th>거래처</th>
-                                            <th>이전 잔액</th>
-                                            <th>배출 금액</th>
-                                            <th>입금 금액</th>
-                                            <th>수정 금액</th>
-                                            <th>잔액</th>
-                                            <th>담당자</th>
-                                            <th>최종 거래일</th>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <form:select path="field" cssClass="custom-select custom-select-sm w-30 mr-2">
+                                                        <form:option value="name" label="거래처명" />
+                                                    </form:select>
+                                                    <form:input path="keyword" cssClass="form-control form-control-sm" />
+                                                    <form:hidden path="page" />
+                                                </div>
+                                            </td>
+                                            <td rowspan="2">
+                                                <button class="btn btn-outline-primary">검색</button>
+                                            </td>
                                         </tr>
-                                        </thead>
-
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td>
+                                                <div class="d-flex" id="imSearch">
+                                                    <form:select path="dealStatus" cssClass="custom-select custom-select-sm mr-2">
+                                                        <form:option value="" label="거래 상태" />
+                                                        <form:option value="true" label="거래중" />
+                                                        <form:option value="false" label="거래중지" />
+                                                    </form:select>
+                                                    <form:select path="paymentMethod" cssClass="custom-select custom-select-sm mr-2">
+                                                        <form:option value="" label="결제수단" />
+                                                        <form:option value="credit" label="외상잔액" />
+                                                        <form:option value="prepaid" label="예치금" />
+                                                    </form:select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
                                     </table>
+                                </form:form>
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-6">
+                                        전체 ${shopPage.totalElements}건
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a href="/credits/download_excel" class="btn btn-sm btn-outline-excel">
+                                            <i class="fa fa-file-excel"></i> Excel 다운로드
+                                        </a>
+                                    </div>
                                 </div>
+                                <table class="table text-center table-hover table-middle" id="shops">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>결제수단</th>
+                                        <th>거래처</th>
+                                        <th>이전 잔액</th>
+                                        <th>매출 금액</th>
+                                        <th>입금 금액</th>
+                                        <th>수정 금액</th>
+                                        <th>잔액</th>
+                                        <th>담당자</th>
+                                        <th>최종 거래일</th>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach items="${shops}" var="shop">
+                                        <tr data-id="${shop.id}">
+                                            <td>${shop.id}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${shop.paymentMethod == 'credit'}">외상잔액</c:when>
+                                                    <c:when test="${shop.paymentMethod == 'prepaid'}">예치금</c:when>
+                                                </c:choose>
+                                            </td>
+                                            <td>${shop.name}</td>
+                                            <td>${shop.prevTotalBalance}원</td>
+                                            <td>${shop.totalSales}원</td>
+                                            <td>${shop.totalInput}원</td>
+                                            <td>${shop.totalUpdate}원</td>
+                                            <td>${shop.totalBalance}원</td>
+                                            <td>${shop.shopOwner.fullName}</td>
+                                            <td>${shop.dealtAt.format(localDateTimeFormat)}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                    <c:if test="${shopPage.totalPages > 1}">
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="9">
+                                                <nav>
+                                                    <ul class="pagination justify-content-center">
+                                                        <c:choose>
+                                                            <c:when test="${shopPage.hasPrevious()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <c:forEach var="i" begin="1" end="${shopPage.totalPages}">
+                                                            <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                        </c:forEach>
+                                                        <c:choose>
+                                                            <c:when test="${shopPage.hasNext()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </c:if>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -389,8 +482,17 @@
 <script>
     $('#range-datepicker').flatpickr({
         mode: 'range'
-    })
-</script>
+    });
+    $(document).ready(function() {
+        var token = $("meta[name='_csrf']").attr("content");
+        $('#imSearch').on('change', function() {
+            $('#form').submit();
+        });
 
+        $('#shops tbody tr').on('click', function() {
+            window.location.href = '/credits/' + $(this).data('id');
+        })
+    });
+</script>
 </body>
 </html>

@@ -52,7 +52,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
                         value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
@@ -78,11 +78,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h6 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h6>
@@ -173,13 +168,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -395,7 +387,7 @@
                                         </tbody>
                                     </table>
                                     <h5 class="card-title">매입처 계정 정보</h5>
-                                    <form:hidden path="user" />
+                                    <form:hidden path="owner" />
                                     <table class="table table-bordered form-table mb-4">
                                         <colgroup>
                                             <col style="width: 15%">
@@ -474,6 +466,47 @@
                                         </spring:bind>
                                         </tbody>
                                     </table>
+                                    <h5 class="card-title">매입처 상품</h5>
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#selectProductsModal"><i class="fa fa-plus"></i> 상품 추가</button>
+                                        </div>
+                                    </div>
+                                    <table class="table table-hover table-middle text-center mb-5" id="selectedProducts">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>상품코드</th>
+                                            <th>상품명</th>
+                                            <th>카테고리</th>
+                                            <th>규격(단위)</th>
+                                            <th>제조사</th>
+                                            <th>매입단가(원)</th>
+                                            <th>삭제</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach items="${supplierForm.products}" var="product">
+                                            <tr>
+                                                <td>
+                                                        ${product.id}<input type="hidden" name="products" value="${product.id}" />
+                                                </td>
+                                                <td>${product.erpCode}</td>
+                                                <td>${product.name}</td>
+                                                <td>${product.category.name}</td>
+                                                <td>${product.standard}<br>(${product.unit})</td>
+                                                <td>${product.makerName}<br>(${product.country})</td>
+                                                <td>${product.buyPrice}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger delete">삭제</button>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
                                     <div class="form-group text-center">
                                         <a href="/suppliers" class="btn btn-outline-secondary">목록으로</a>
                                         <button class="btn btn-primary">저장하기</button>
@@ -508,71 +541,55 @@
 
 
 </div>
-<div class="modal fade" id="add-product-modal">
+<div class="modal fade" id="selectProductsModal">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header bg-soft-primary">
-                <h5 class="modal-title">상품선택</h5>
+            <div class="modal-header bg-primary">
+                <div class="modal-title">상품선택</div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="form-row">
-                    <div class="col-8">
-                        <div class="form-group row">
-                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                            <div class="col-lg-9">
-                                <div class="d-flex align-items-center">
-                                    <span class="col-auto">
-                                        상품번호/명
-                                    </span>
-                                    <input class="form-control" type="text" placeholder="">
+                <form:form modelAttribute="productSearchForm" method="get">
+                    <table class="table table-sm form-table table-middle table-bordered">
+                        <tbody class="thead-light">
+                        <tr>
+                            <th>키워드 검색</th>
+                            <td>
+                                <div class="row align-items-center">
+                                    <label class="col-form-label col-auto">상품번호/명</label>
+                                    <div class="col">
+                                        <form:input path="keyword" cssClass="form-control form-control-sm" />
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-primary">검색</button>
-                    </div>
-                </form>
-                <hr>
-                <form>
-                    <div class="form-group row">
-                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                        <div class="col-lg-10">
-                            <div class="form-row">
-                                <div class="col-auto">
-                                    <select class="form-control">
-                                        <option>1차 카테고리</option>
-                                    </select>
-                                </div>
-                                <div class="col-auto">
-                                    <select class="form-control">
-                                        <option>2차 카테고리</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <hr>
-                <table class="table">
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary">검색</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form:form>
+                <table class="table table-sm text-center table-hover table-middle" id="products">
                     <thead class="thead-light">
                     <tr>
-                        <th><input type="checkbox"></th>
+                        <th><input type="checkbox" id="selectAll"></th>
                         <th>상품번호</th>
                         <th>상품명</th>
                         <th>카테고리</th>
                         <th>규격(단위)</th>
                         <th>제조사(원산지)</th>
+                        <th>매입단가</th>
                     </tr>
                     </thead>
+                    <tbody>
+                    </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-dismiss="modal">취소</button>
-                <button class="btn btn-primary">저장</button>
+                <button class="btn btn-primary" id="saveProducts">저장</button>
             </div>
         </div>
     </div>
@@ -587,6 +604,8 @@
 <script src="${contextPath}/resources/js/app.js"></script>
 <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
 <script>
+    var selectedProducts = [];
+    var foundProducts = [];
     $("#zip_search").click(function(e){
 
         var zipcode = "business_addr_zip";
@@ -641,6 +660,84 @@
             top: (window.screen.height / 2) - (height / 2)
         });
     });
+
+    function getProductsData() {
+        var form = $('#productSearchForm');
+        $.ajax({
+            type: 'GET',
+            url: '/products/get_data',
+            data: form.serialize(),
+            success: function(data) {
+                foundProducts = data.products;
+                var tbodyHtml = '';
+                foundProducts.forEach(function(product) {
+                    var trHtml =
+                        '<tr>' +
+                        '<td><input type="checkbox" class="check" value="' + product.id + '" /></td>' +
+                        '<td>' + product.erpCode + '</td>' +
+                        '<td>' + product.name + '</td>' +
+                        '<td>' + product.category.name + '</td>' +
+                        '<td>' + product.standard + '(' + product.unit + ')' + '</td>' +
+                        '<td>' + product.makerName + '(' + product.country + ')' + '</td>' +
+                        '<td>' + product.buyPrice + '</td>' +
+                        '</tr>';
+                    tbodyHtml += trHtml;
+                });
+                $('#products tbody').html(tbodyHtml);
+            }
+        })
+    }
+
+    $('#selectAll').on('change', function() {
+        $('#products tbody tr .check').prop('checked', $(this).prop('checked'));
+    });
+
+    $('#products tbody').on('click', 'tr', function() {
+        var checkbox = $(this).find('.check');
+        checkbox.prop('checked', !checkbox.prop('checked'));
+    });
+
+    $('#saveProducts').on('click', function () {
+        var selectedElements = $('#products tbody tr .check:checked');
+        selectedElements.each(function() {
+            var productId = $(this).val();
+            if (!selectedProducts.find(product => product.id === parseInt(productId))) {
+                selectedProducts.push(foundProducts.find(product => product.id === parseInt(productId)));
+            }
+        });
+        var tbodyHtml = '';
+        selectedProducts.forEach(function(product) {
+            var trHtml =
+                '<tr>' +
+                '<td>' + product.id + '<input type="hidden" name="products" value="' + product.id + '" /></td>' +
+                '<td>' + product.erpCode + '</td>' +
+                '<td>' + product.name + '</td>' +
+                '<td>' + product.category.name + '</td>' +
+                '<td>' + product.standard + '(' + product.unit + ')' + '</td>' +
+                '<td>' + product.makerName + '(' + product.country + ')' + '</td>' +
+                '<td>' + product.buyPrice + '</td>' +
+                '<td><button type="button" class="btn btn-sm btn-outline-danger delete">삭제</button></td>' +
+                '</tr>';
+            tbodyHtml += trHtml;
+        });
+        $('#selectedProducts tbody').html(tbodyHtml);
+        $('#selectProductsModal').modal('hide');
+    });
+
+    $('#selectedProducts tbody').on('click', '.delete', function () {
+        var productId = $(this).closest('tr').find('input[name="products"]').val();
+        selectedProducts = selectedProducts.filter(product => product.id !== parseInt(productId));
+        $(this).closest('tr').remove();
+    })
+
+    $('#selectProductsModal').on('show.bs.modal', function() {
+        getProductsData();
+    });
+
+    $('#productSearchForm').on('submit', function (e) {
+        e.preventDefault();
+        getProductsData();
+    })
 </script>
 </body>
 </html>

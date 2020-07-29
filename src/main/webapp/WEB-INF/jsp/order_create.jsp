@@ -55,7 +55,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
                         value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
@@ -81,11 +81,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -176,13 +171,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -263,16 +255,20 @@
                                             <spring:bind path="shop">
                                                 <th class="required"><span>거래처 선택</span></th>
                                                 <td colspan="3">
-                                                    <div class="input-group w-50">
-                                                        <input id="shop_name" type="text" value="${orderForm.shop.name}"
-                                                               class="form-control ${status.error ? 'is-invalid' : ''}"/>
-                                                        <div class="input-group-append">
-                                                            <button type="button" id="shop_select"
-                                                                    class="btn btn-outline-primary">거래처 선택
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <form:hidden path="shop"/>
+<%--                                                    <div class="input-group w-50">--%>
+<%--                                                        <input id="shop_name" type="text" value="${orderForm.shop.name}"--%>
+<%--                                                               class="form-control ${status.error ? 'is-invalid' : ''}"/>--%>
+<%--                                                        <div class="input-group-append">--%>
+<%--                                                            <button type="button" id="shop_select"--%>
+<%--                                                                    class="btn btn-outline-primary">거래처 선택--%>
+<%--                                                            </button>--%>
+<%--                                                        </div>--%>
+<%--                                                    </div>--%>
+<%--                                                    <form:hidden path="shop"/>--%>
+                                                    <form:select path="shop" cssClass="form-control w-25">
+                                                        <form:option value="" label="-- 거래처 선택 --" />
+                                                        <form:options items="${shops}" itemLabel="name" itemValue="id" />
+                                                    </form:select>
                                                     <div class="invalid-feedback">
                                                         <form:errors path="shop"/>
                                                     </div>
@@ -306,7 +302,7 @@
                                                 <th>배송요청일</th>
                                                 <td>
                                                     <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                path="requestDate" id="request-date"/>
+                                                                path="requestDate" />
                                                     <div class="invalid-feedback">
                                                         <form:errors path="requestDate"/>
                                                     </div>
@@ -381,8 +377,7 @@
                                             </span>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <button type="button" id="add_products"
-                                                    class="btn btn-sm btn-outline-primary float-right">상품추가
+                                            <button type="button" class="btn btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#selectProductsModal">상품추가
                                             </button>
                                         </div>
                                     </div>
@@ -405,6 +400,7 @@
                                             <th scope="col">수량</th>
                                             <th scope="col">단가(원)</th>
                                             <th scope="col">합계금액</th>
+                                            <th scope="col">삭제</th>
                                         </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -462,7 +458,7 @@
                     </div>
                 </form>
                 <div style="height: 430px;">
-                    <table class="table table-sm text-center table-hover" id="shopTable">
+                    <table class="table table-middle text-center table-hover" id="shopTable">
                         <colgroup>
                             <col width="10%">
                             <col width="">
@@ -501,7 +497,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form:form modelAttribute="searchForm">
+                <form:form modelAttribute="searchForm" method="get">
                     <table class="table form-table table-bordered">
                         <colgroup>
                             <col style="width: 10%">
@@ -512,16 +508,6 @@
                         <th>즉시 검색</th>
                         <td>
                             <div class="row">
-                                <div class="col-3">
-                                    <form:select path="category" cssClass="form-control form-control-sm">
-                                        <form:option value="" label="1차 카테고리" />
-                                    </form:select>
-                                </div>
-                                <div class="col-3">
-                                    <form:select path="subcategory" cssClass="form-control form-control-sm">
-                                        <form:option value="" label="2차 카테고리" />
-                                    </form:select>
-                                </div>
                                 <div class="col-6">
                                     <form:input path="keyword" cssClass="form-control form-control-sm" placeholder="상품명 또는 상품코드를 입력하세요." />
                                 </div>
@@ -539,10 +525,10 @@
                             <div class="col-6 text-primary">
                                 <small>*해당 거래처에서 자주 주문한 상품 순입니다.</small>
                             </div>
-                            <div class="col-6 text-right">전체 ${products.size()}건</div>
+                            <div class="col-6 text-right">전체 <span id="productsCount"></span>건</div>
                         </div>
                         <div class="list-wrap" style="height:460px; overflow: auto;">
-                            <table id="goodsTable" class="table table-hover text-center table-sm">
+                            <table id="productsTable" class="table table-hover text-center table-sm">
                                 <colgroup>
                                     <col width="*">
                                     <col width="10%">
@@ -553,19 +539,11 @@
                                 <tr>
                                     <th>상품명</th>
                                     <th>재고량</th>
-                                    <th>매입 단가</th>
-                                    <th>판매 단가</th>
+                                    <th>매입 단가(원)</th>
+                                    <th>판매 단가(원)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach items="${products}" var="product">
-                                    <tr data-id="${product.id}">
-                                        <td>${product.name}</td>
-                                        <td>${product.qty}</td>
-                                        <td>${product.buyPrice}</td>
-                                        <td>${product.sellPrice}</td>
-                                    </tr>
-                                </c:forEach>
                                 </tbody>
                             </table>
                         </div>
@@ -578,13 +556,12 @@
                         <div id="goods_select_wrap">
                             <div style="height:420px; overflow: auto;">
                                 <ul class="list-group" id="shopping_cart">
-
                                 </ul>
                             </div>
                             <div class="bg-light p-4">
-                                <div id="goods_sum" class="row">
-                                    <div id="pop_goods_sum_tit" class="col-6">합계금액</div>
-                                    <div id="totalResult" class="col-6">0원</div>
+                                <div class="row">
+                                    <div class="col-6">합계금액</div>
+                                    <div class="col-6 text-right"><span id="totalAmount">0</span>원</div>
                                 </div>
                             </div>
                         </div>
@@ -599,6 +576,24 @@
     </div>
 </div>
 <!-- END wrapper -->
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
@@ -610,311 +605,176 @@
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
     var token = $("meta[name='_csrf']").attr("content");
-    $('#request-date').datepicker({
+
+    var allProducts = [];
+
+    var cartProducts = [];
+
+    function updateTotal() {
+        var totalAmount = 0;
+        cartProducts.forEach(function(product) {
+            totalAmount += product.qty * product.sellPrice;
+        });
+        $('#totalAmount').html(totalAmount);
+    }
+
+    $('#requestDate').datepicker({
         dateFormat: 'yy-mm-dd'
     });
 
-    function setShopName(shop_id, shop_name) {
-        $('#shop_name').val(shop_name);
-        $('#shop').val(shop_id);
-        $('#shopSelectModal').modal('hide');
-    }
-
-    //거래처 목록 검색
-    function getShopList() {
-        var brand_count = parseInt($("#joinForm").find("input[name='brand_count']").val());
-
-        var search_text = $("#shopFrm").find("input[name='search_text']");
-        var formData = "search_text=" + search_text.val();
-
-
+    $('#selectProductsModal').on('show.bs.modal', function() {
         $.ajax({
-            type: 'POST',
-            url: '/shops/get_shops',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            data: {
-                'keyword': search_text.val()
-            },
-            success: function (data) {
-                var add_data = "";
-
-                if (data.shops != null) {
-                    $.each(data.shops, function (key, shop) {
-                        var shop_id = decodeURIComponent(shop.id).replace(/\+/g, " ");
-                        var shop_name = decodeURIComponent(shop.name).replace(/\+/g, " ");
-                        var shop_tel = decodeURIComponent(shop.owner.phone).replace(/\+/g, " ").trim();
-                        var delivery_vendor_user_name = decodeURIComponent(shop.deliverer.fullName).replace(/\+/g, " ").trim();
-                        // var shop_type = decodeURIComponent(shop["shop_type"]).replace(/\+/g, " ").trim();
-
-                        var tr_class = "";
-
-                        add_data += "<tr " + tr_class + " onclick=\"javascript:setShopName(" + shop_id + ",'" + shop_name + "')\">"
-                            + "<td>" + shop_id + "</td> "
-                            + "<td>" + shop_name + "</td> "
-                            + "<td>" + shop_tel + "</td> "
-                            + "<td>" + delivery_vendor_user_name + "</td> "
-                            + "<td class='text-center'><a class='btn btn-sm text-success strong' href='#'>선택</a></td> "
-                            + "</tr> ";
-
-                    });
-
-                    $("#shopTable tbody").html(add_data);
-                }
-            }
-        });
-    }
-
-    function updateTotal() {
-        var totalPrice = 0;
-        $('#shopping_cart li').each(function(index) {
-            var price = $(this).find('.price').val();
-            var qty = $(this).find('.qty').val();
-            totalPrice += parseInt(price) * parseInt(qty);
-        })
-        $('#totalResult').html(totalPrice + '원');
-    }
-
-
-    $('#shop_select').click(function () {
-        $("#shopFrm").find("input[name='search_text']").val("");
-        getShopList();
-        $('#shopSelectModal').modal();
-    });
-
-    $('#shopping_cart').on('click', '.close', function () {
-        var itemId = $(this).closest('li').data('id');
-        var element = $(this);
-        $.ajax({
-            type: 'POST',
-            url: '/cart/delete',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            data: {
-                id: itemId
-            },
+            type: 'GET',
+            url: '/products/data_for_order',
+            data: $('#searchForm').serialize(),
             success: function(data) {
-                element.closest('li').remove();
-                updateTotal();
+                var tableElement = $('#productsTable');
+                allProducts = data.products;
+                var tbodyHtml = '';
+                allProducts.forEach(function (product, index) {
+                    var trHtml =
+                        '<tr data-id="' + product.id + '">' +
+                        '<td>' + product.name + '</td>' +
+                        '<td>' + product.qty + '</td>' +
+                        '<td>' + product.buyPrice + '</td>' +
+                        '<td>' + product.sellPrice + '</td>' +
+                        '</tr>';
+                    tbodyHtml += trHtml;
+                });
+                tableElement.find('tbody').html(tbodyHtml);
+                $('#productsModal').modal();
             }
         })
     });
 
-    $('#shopping_cart').on('click', '.minus', function () {
-        var itemId = $(this).closest('li').data('id');
-        var itemElement = $(this).closest('li');
-        $.ajax({
-            type: 'POST',
-            url: '/cart/update',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            data: {
-                id: itemId,
-                action: 'minus',
-            },
-            success: function(data) {
-                itemElement.find('.qty').val(data.item.qty);
-                updateTotal();
-            }
-        })
-    });
-
-    $('#shopping_cart').on('click', '.plus', function () {
-        var itemElement = $(this).closest('li');
-        var itemId = $(this).closest('li').data('id');
-
-        $.ajax({
-            type: 'POST',
-            url: '/cart/update',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            data: {
-                id: itemId,
-                action: 'plus',
-            },
-            success: function(data) {
-                itemElement.find('.qty').val(data.item.qty);
-                updateTotal();
-            }
-        })
-    });
-
-    $('#shopping_cart').on('change', '.price', function () {
-        var itemId = $(this).closest('li').data('id');
-        var itemElement = $(this).closest('li');
-        $.ajax({
-            type: 'POST',
-            url: '/cart/update_price',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            data: {
-                id: itemId,
-                price: $(this).val()
-            },
-            success: function(data) {
-                itemElement.find('.price').val(data.item.price);
-                updateTotal();
-            }
-        })
-    });
-
-    $('#shopping_cart').on('change', '.qty', function () {
-        var itemId = $(this).closest('li').data('id');
-        var itemElement = $(this).closest('li');
-        $.ajax({
-            type: 'POST',
-            url: '/cart/update_qty',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            data: {
-                id: itemId,
-                qty: $(this).val()
-            },
-            success: function(data) {
-                itemElement.find('.qty').val(data.item.qty);
-                updateTotal();
-            }
-        })
-    });
-
-    $('#add_products').on('click', function () {
-        $.ajax({
-            url: '/cart/all',
-            success: function(data) {
-                if (data.items.length > 0) {
-                    $('#shopping_cart').html('');
-                    data.items.forEach(function (item, index) {
-                        var html =
-                            '<li class="list-group-item" data-id='+ item.id + '>\n' +
-                            '    <button class="close">&times;</button>\n' +
-                            '    <h6>' + item.product.name + '</h6>\n' +
-                            '    <p><span class="unit">' + item.product.unit +  '</span> / <span class="country"> ' + item.product.country +'</span> </p>\n' +
-                            '    <div class="form-inline">\n' +
-                            '        <select class="form-control form-control-sm mr-1" style="width: 35%">\n' +
-                            '            <option value="">단가 그룹</option>\n' +
-                            '        </select>\n' +
-                            '        <div class="input-group input-group-sm mr-1">\n' +
-                            '            <div class="input-group-prepend">\n' +
-                            '                <button class="btn btn-secondary btn-sm minus"><i class="fa fa-minus"></i></button>\n' +
-                            '            </div>\n' +
-                            '            <input class="form-control text-center qty" style="width: 50px;" value="'+ item.qty + '">\n' +
-                            '            <div class="input-group-append">\n' +
-                            '                <button class="btn btn-secondary btn-sm plus"><i class="fa fa-plus"></i></button>\n' +
-                            '            </div>\n' +
-                            '        </div>\n' +
-                            '        <div class="input-group input-group-sm" style="width: 35%">\n' +
-                            '            <input class="form-control form-control-sm price" type="number" value="'+ item.price + '">\n' +
-                            '            <div class="input-group-append">\n' +
-                            '                <span class="input-group-text">원</span>\n' +
-                            '            </div>\n' +
-                            '        </div>\n' +
-                            '    </div>\n' +
-                            '</li>';
-                        $('#shopping_cart').append(html);
-                        updateTotal();
-                    });
-                }
-            }
-        });
-        var deliveryType = $('input[name="deliveryType"]:checked').next().text();
-        var modalTitle = deliveryType + " 상품 검색 및 선택";
-        $('#selectProductsModal .modal-title').html(modalTitle);
-        $('#selectProductsModal').modal('show');
-    });
-
-    $('#goodsTable tbody tr').on('click', function() {
+    $('#productsTable tbody').on('click', 'tr', function() {
         var productId = $(this).data('id');
+        var orderProduct = allProducts.find(product => product.id === productId);
+
+        if (cartProducts.find(item => item.id === orderProduct.id)) {
+
+        } else {
+            orderProduct.qty = 0;
+            cartProducts.push(orderProduct);
+            var html =
+                '<li class="list-group-item" data-id=' + orderProduct.id + '>\n' +
+                '    <button class="close">&times;</button>\n' +
+                '    <h6>' + orderProduct.name + '</h6>\n' +
+                '    <p><span class="unit">' + orderProduct.unit + '</span> / <span class="country"> ' + orderProduct.country + '</span> </p>\n' +
+                '    <div class="form-inline">\n' +
+                '        <input class="form-control form-control-sm text-center qty mx-2" type="number" style="width: 100px;" value="' + 0 + '">\n' +
+                '        <div class="input-group input-group-sm" style="width: 35%">\n' +
+                '            <input class="form-control form-control-sm text-right price" type="number" value="' + orderProduct.sellPrice + '">\n' +
+                '            <div class="input-group-append">\n' +
+                '                <span class="input-group-text">원</span>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </div>\n' +
+                '</li>';
+            $('#shopping_cart').append(html);
+            updateTotal();
+        }
+    });
+
+    $('#cartItemsSave').on('click', function () {
+        $('#selectProductsModal').modal('hide');
+
+        var tbodyHtml = '';
+        cartProducts.forEach(function (product, index) {
+            var trHtml =
+                '<tr data-id="' + product.id + '">' +
+                '<td>' + product.id + '</td>' +
+                '<td>' + product.name + '</td>' +
+                '<td>' + product.standard + '</td>' +
+                '<td>' + product.makerName + '</td>' +
+                '<td><input class="form-control form-control-sm qty" style="width: 100px;" type="number" value="' + product.qty + '" /></td>' +
+                '<td><input class="form-control form-control-sm price" style="width: 100px;" type="number" value="' + product.sellPrice + '" /></td>' +
+                '<td>' + product.qty * product.sellPrice + '</td>' +
+                '<td><button type="button" class="btn btn-outline-danger btn-sm remove">삭제</button></td>' +
+                '</tr>';
+            tbodyHtml += trHtml;
+        });
+
+        $('#cartTable tbody').html(tbodyHtml);
+    });
+
+    $('#cartTable tbody').on('click', '.remove', function () {
+        var productId = $(this).closest('tr').data('id');
+        cartProducts = cartProducts.filter(product => product.id !== productId);
+        $(this).closest('tr').remove();
+    })
+
+    $('#shopping_cart').on('click', 'li .close', function () {
+        var productId = $(this).closest('li').data('id');
+        cartProducts = cartProducts.filter(item => item.id !== productId);
+        $(this).closest('li').remove();
+        updateTotal();
+    });
+
+    $('#shopping_cart').on('keyup', '.qty', function() {
+        var productId = $(this).closest('li').data('id');
+        var qty = $(this).val();
+        cartProducts.map(product => {
+            if (product.id === productId) {
+                product.qty = parseFloat(qty);
+            }
+        });
+        updateTotal();
+    });
+
+    $('#resetCart').on('click', function() {
+        cartProducts = [];
+        $('#shopping_cart').html('');
+        updateTotal();
+    })
+
+    $('#order_form').on('submit', function (e) {
+        e.preventDefault();
+        var shopId = $('#shop').val();
+        var deliveryType = $('input[name="deliveryType"]').val();
+        var requestDate = $('#requestDate').val();
+        var delivererId = $('#deliverer').val();
+        var salesmanId = $('#salesMan').val();
+        var requestMemo = $('#requestMemo').val();
+        var memo = $('#memo').text();
+        if (!shopId || !delivererId || cartProducts.length === 0) {
+            toastr.error('필수 입력 사항들을 입력하세요.');
+            return false;
+        }
+        var order = {
+            shop: shopId,
+            deliveryType: deliveryType,
+            requestDate: requestDate,
+            deliverer: delivererId,
+            salesman: salesmanId,
+            requestMemo: requestMemo,
+            memo: memo,
+            products: cartProducts
+        }
         $.ajax({
             type: 'POST',
-            url: '/cart/store',
+            url: '/orders/store',
+            contentType: 'application/json',
+            accept: 'text/plain',
             headers: {
                 'X-CSRF-TOKEN': token,
             },
-            data: {
-                product: productId,
-                qty: 0,
-                price: 0,
+            data: JSON.stringify(order),
+            dataType: 'text',
+            beforeSend: function() {
+                $("#overlay").fadeIn(300);
             },
             success: function(data) {
-                if(data.status === 'created') {
-                    var html =
-                        '<li class="list-group-item" data-id='+ data.item.id + '>\n' +
-                        '    <button class="close">&times;</button>\n' +
-                        '    <h6>' + data.item.product.name + '</h6>\n' +
-                        '    <p><span class="unit">' + data.item.product.unit +  '</span> / <span class="country"> ' + data.item.product.country +'</span> </p>\n' +
-                        '    <div class="form-inline">\n' +
-                        '        <select class="form-control form-control-sm mr-1" style="width: 35%">\n' +
-                        '            <option value="">단가 그룹</option>\n' +
-                        '        </select>\n' +
-                        '        <div class="input-group input-group-sm mr-1">\n' +
-                        '            <div class="input-group-prepend">\n' +
-                        '                <button class="btn btn-secondary btn-sm minus"><i class="fa fa-minus"></i></button>\n' +
-                        '            </div>\n' +
-                        '            <input class="form-control text-center qty" style="width: 50px;" value="'+ data.item.qty + '">\n' +
-                        '            <div class="input-group-append">\n' +
-                        '                <button class="btn btn-secondary btn-sm plus"><i class="fa fa-plus"></i></button>\n' +
-                        '            </div>\n' +
-                        '        </div>\n' +
-                        '        <div class="input-group input-group-sm" style="width: 35%">\n' +
-                        '            <input class="form-control form-control-sm price" type="number" value="'+ data.item.price + '">\n' +
-                        '            <div class="input-group-append">\n' +
-                        '                <span class="input-group-text">원</span>\n' +
-                        '            </div>\n' +
-                        '        </div>\n' +
-                        '    </div>\n' +
-                        '</li>';
-                    $('#shopping_cart').append(html);
-                } else {
-                    var itemElement = $('#shopping_cart').find('li[data-id="' + data.item.id + '"]');
-                    itemElement.find('.price').val(data.item.price);
-                    itemElement.find('.qty').val(data.item.qty);
-                }
+                toastr.success(data.message);
+                window.location.href = "/orders";
             }
-        })
-    });
+        }).done(function () {
+            setTimeout(function(){
+                $("#overlay").fadeOut(300);
+            },500);
+        });
+    })
 
-    $('#cartItemsSave').click(function () {
-        $('#cartTable tbody').html('');
-        $('#shopping_cart li').each(function(index) {
-            var productId = $(this).data('id')
-            var productName = $(this).find('h6').html();
-            var unit = $(this).find('.unit').html();
-            var country = $(this).find('.country').html();
-            var qty = $(this).find('.qty').val();
-            var price = $(this).find('.price').val();
-            var html =
-                '<tr>' +
-                '<td>' + productId + '</td>' +
-                '<td>' + productName + '</td>' +
-                '<td>' + unit + '</td>' +
-                '<td>' + country + '</td>' +
-                '<td>' + qty + '</td>' +
-                '<td>' + price + '</td>' +
-                '<td>' + parseInt(price) * parseInt(qty) + '</td>' +
-                '</tr>'
-            $('#cartTable tbody').append(html);
-        })
-        $('#selectProductsModal').modal('hide');
-    });
-
-    $('#resetCart').click(function() {
-        $.ajax({
-            type: 'POST',
-            url: '/cart/reset',
-            headers: {
-                'X-CSRF-TOKEN': token,
-            },
-            success: function (data) {
-                $('#shopping_cart').html('');
-            }
-        })
-    });
 </script>
 </body>
 </html>

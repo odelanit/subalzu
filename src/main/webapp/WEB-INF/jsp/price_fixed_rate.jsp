@@ -13,6 +13,8 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -52,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
                         value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
@@ -78,11 +80,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -173,13 +170,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -251,60 +245,90 @@
                 <div class="row">
                     <div class="col">
                         <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">정액/정률 사용 설정 <span data-toggle="modal" data-target="#infoModal"
-                                                                   class="fa fa-info-circle"></span></h5>
-                            </div>
                             <div class="card-body">
-                                <form:form method="post" id="setting">
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">설정 여부</label>
-                                        <div class="col-lg-10">
-                                            <div class="custom-control custom-control-inline custom-radio">
-                                                <input type="radio" class="custom-control-input" name="is_fixed" value="true"
-                                                       id="flat1"
-                                                       <c:if test="${fixedRateSetting == true}">checked</c:if>>
-                                                <label class="custom-control-label" for="flat1">설정</label>
-                                            </div>
-                                            <div class="custom-control custom-control-inline custom-radio">
-                                                <input type="radio" class="custom-control-input" name="is_fixed" value="false"
-                                                       id="flat2"
-                                                       <c:if test="${fixedRateSetting == false}">checked</c:if>>
-                                                <label class="custom-control-label" for="flat2">비설정</label>
-                                            </div>
-                                            <small class="form-text">
-                                                * 타이틀 우측의 ?를 누르면 자세한 내용을 확인하실수 있습니다.
-                                            </small>
+                                <h5 class="card-title">정액/정률 사용 설정 <span data-toggle="modal" data-target="#infoModal"
+                                                                   class="fa fa-info-circle"></span></h5>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-lg-2">설정 여부</label>
+                                    <div class="col-lg-10">
+                                        <div class="custom-control custom-control-inline custom-radio">
+                                            <input type="radio" class="custom-control-input" name="is_fixed" value="true"
+                                                   id="flat1"
+                                                   <c:if test="${fixedRateSetting == true}">checked</c:if>>
+                                            <label class="custom-control-label" for="flat1">설정</label>
                                         </div>
+                                        <div class="custom-control custom-control-inline custom-radio">
+                                            <input type="radio" class="custom-control-input" name="is_fixed" value="false"
+                                                   id="flat2"
+                                                   <c:if test="${fixedRateSetting == false}">checked</c:if>>
+                                            <label class="custom-control-label" for="flat2">비설정</label>
+                                        </div>
+                                        <small class="form-text">
+                                            * 타이틀 우측의 ?를 누르면 자세한 내용을 확인하실수 있습니다.
+                                        </small>
                                     </div>
-                                </form:form>
+                                </div>
                             </div>
                         </div>
                         <div class="card mb-4 <c:if test="${fixedRateSetting == false}">d-none</c:if>" id="price-rate">
-                            <div class="card-header">
-                                <h5 class="mb-0">단가 그룹/상품 카테고리</h5>
-                            </div>
                             <div class="card-body">
+                                <h5 class="card-title">단가 그룹/상품 카테고리</h5>
                                 <p>* 정률값( (매입단가/100) &times; 설정% )의 소숫점은 올림 처리하고, 나머지 원 단위는 절삭합니다.</p>
                                 <p>* 상품 카테고리별로 정액/정률을 별도 설정하시려면 <a href="/categories">상품 관리 > 카테고리 설정</a>에서 먼저 사용여부를 설정해
                                     주세요.</p>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>카테고리</th>
-                                            <th>직배송 단가</th>
-                                            <th>택배배송 단가</th>
-                                            <th>기본 단가</th>
-                                        </tr>
-                                        </thead>
-                                    </table>
-                                </div>
+                                <form method="post" action="/prices/fixed-price-rate">
+                                    <div class="table-responsive">
+                                        <table class="table table-middle">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th>카테고리</th>
+                                                <th>직배송 단가</th>
+                                                <th>택배배송 단가</th>
+                                                <c:forEach items="${priceGroups}" var="priceGroup">
+                                                    <th>${priceGroup.name}</th>
+                                                </c:forEach>
+                                                <th>삭제</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>기본 설정</td>
+                                                <td>
+                                                    <input type="number">
+                                                    <select class="unit" data-type="direct">
+                                                        <option value="won">원</option>
+                                                        <option value="%">%</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number">
+                                                    <select class="unit" data-type="parcel">
+                                                        <option value="won">원</option>
+                                                        <option value="%">%</option>
+                                                    </select>
+                                                </td>
+                                                <c:forEach items="${priceGroups}" var="priceGroup">
+                                                    <td>
+                                                        <input type="number">
+                                                        <select class="unit" data-type="${priceGroup.id}">
+                                                            <option value="won">원</option>
+                                                            <option value="%">%</option>
+                                                        </select>
+                                                    </td>
+                                                </c:forEach>
+                                                <td>
+
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         <div class="form-group">
                             <a href="/prices" class="btn btn-secondary">이전 목록으로</a>
-                            <button form="setting" class="btn btn-primary">설정 저장</button>
+                            <button class="btn btn-primary">설정 저장</button>
                         </div>
                     </div>
                 </div>
@@ -387,18 +411,23 @@
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
-    $('input[name="is_fixed"]').on('change', function() {
-        var isFixed = $(this).val();
-        switch (isFixed) {
-            case 'true':
-                $('#price-rate').removeClass('d-none');
-                break;
-            case 'false':
-                $('#price-rate').addClass('d-none');
-                break;
-        }
+    $(document).ready(function() {
+        var token = $('meta[name="_csrf"]').attr('content');
+
+        $('input[name="is_fixed"]').on('change', function() {
+            var isFixed = $(this).val();
+            switch (isFixed) {
+                case 'true':
+                    $('#price-rate').removeClass('d-none');
+                    break;
+                case 'false':
+                    $('#price-rate').addClass('d-none');
+                    break;
+            }
+        });
+
+        $('')
     });
 </script>
-
 </body>
 </html>

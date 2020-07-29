@@ -55,7 +55,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
                         value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
@@ -81,11 +81,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -176,13 +171,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -557,19 +549,37 @@
                                                 </td>
                                             </tr>
                                         </spring:bind>
-                                        <c:forEach items="${priceGroups}" var="priceGroup">
+                                        <spring:bind path="sellPrice">
                                             <tr>
-                                                <th>${priceGroup.name}</th>
+                                                <th class="required"><span>기본 단가</span></th>
                                                 <td>
                                                     <div class="input-group">
-                                                        <input class="price-group form-control" type="text" value="${productForm.buyPrice}" readonly>
+                                                        <form:input path="sellPrice" type="number"
+                                                                    class="form-control price-group ${status.error ? 'is-invalid' : ''}"
+                                                                    placeholder="택배배송 단가" readonly="true"/>
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">원</span>
                                                         </div>
                                                     </div>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="sellPrice"/>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        </c:forEach>
+                                        </spring:bind>
+<%--                                        <c:forEach items="${priceGroups}" var="priceGroup">--%>
+<%--                                            <tr>--%>
+<%--                                                <th>${priceGroup.name}</th>--%>
+<%--                                                <td>--%>
+<%--                                                    <div class="input-group">--%>
+<%--                                                        <input class="price-group form-control" type="text" value="${productForm.buyPrice}" readonly>--%>
+<%--                                                        <div class="input-group-append">--%>
+<%--                                                            <span class="input-group-text">원</span>--%>
+<%--                                                        </div>--%>
+<%--                                                    </div>--%>
+<%--                                                </td>--%>
+<%--                                            </tr>--%>
+<%--                                        </c:forEach>--%>
                                         </tbody>
                                     </table>
                                     <div class="form-group text-center">

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,23 +44,9 @@ public class NoticeController {
         String type = form.getType();
         int page = form.getPage();
         Page<Notice> noticePage;
-        if (!Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(isPopup)) {
-            NoticeSpecification spec1 = new NoticeSpecification(new SearchCriteria("type", ":", type));
-            NoticeSpecification spec2 = new NoticeSpecification(new SearchCriteria("popup", ":", isPopup));
-            Pageable pageable = PageRequest.of(page - 1, 5);
-            noticePage = noticeRepository.findAll(Specification.where(spec1).and(spec2), pageable);
-        } else if (!Strings.isNullOrEmpty(type) && Strings.isNullOrEmpty(isPopup)) {
-            NoticeSpecification spec1 = new NoticeSpecification(new SearchCriteria("type", ":", type));
-            Pageable pageable = PageRequest.of(page - 1, 5);
-            noticePage = noticeRepository.findAll(spec1, pageable);
-        } else if (Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(isPopup)) {
-            NoticeSpecification spec2 = new NoticeSpecification(new SearchCriteria("popup", ":", isPopup));
-            Pageable pageable = PageRequest.of(page - 1, 5);
-            noticePage = noticeRepository.findAll(spec2, pageable);
-        } else {
-            Pageable pageable = PageRequest.of(page - 1, 5);
-            noticePage = noticeRepository.findAll(pageable);
-        }
+
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
+        noticePage = noticeRepository.findAll(pageable);
 
         List<Notice> notices = noticePage.getContent();
         model.addAttribute("noticePage", noticePage);

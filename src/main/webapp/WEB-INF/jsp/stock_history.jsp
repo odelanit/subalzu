@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -17,6 +18,7 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
@@ -52,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -165,13 +167,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li class="mm-active">
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -244,94 +243,132 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>상품명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 align-self-center">
-                                        <button class="btn btn-primary">검색</button>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>구분</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>브랜드</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
+                                <form:form modelAttribute="form" method="get">
+                                    <table class="table table-bordered form-table mb-5">
+                                        <tbody class="thead-light">
                                         <tr>
-                                            <th>#</th>
-                                            <th>일지</th>
-                                            <th>구역명</th>
-                                            <th>상품코드</th>
-                                            <th>상품명</th>
-                                            <th>제조사(원산지)</th>
-                                            <th>구분</th>
-                                            <th>처리수량</th>
-                                            <th>재고</th>
-                                            <th>처리 관리자</th>
-                                            <th>비고</th>
+                                            <th>기간</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:input path="dateFrom" class="form-control form-control-sm" placeholder="" />
+                                                    <span class="px-2">-</span>
+                                                    <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
+                                                </div>
+                                            </td>
+                                            <td rowspan="2">
+                                                <button class="btn btn-outline-primary">검색</button>
+                                            </td>
                                         </tr>
-                                        </thead>
+                                        <tr>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select class="form-control form-control-sm w-25 mr-2" path="field">
+                                                        <form:option value="product_name" label="상품명" />
+                                                        <form:option value="product_erpCode" label="상품코드" />
+                                                        <form:option value="product_makerName" label="제조사" />
+                                                    </form:select>
+                                                    <form:input class="form-control form-control-sm w-50" path="keyword" placeholder="검색어를 입력해주세요" />
+                                                    <form:hidden path="page" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <form:select path="action" cssClass="custom-select custom-select-sm w-20">
+                                                    <form:option value="" label="구분" />
+                                                    <form:option value="manual_input" label="수동입고" />
+                                                    <form:option value="manual_output" label="수동출고" />
+                                                    <form:option value="discard_output" label="폐기출고" />
+                                                    <form:option value="return_output" label="반품출고" />
+                                                </form:select>
+                                            </td>
+                                        </tr>
+                                        </tbody>
                                     </table>
+                                </form:form>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-6">
+                                        전체 ${recordPage.totalElements}건
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a href="/stock-history/download_excel" class="btn btn-sm btn-excel"><i class="fa fa-file-excel"></i> Excel 다운로드</a>
+                                    </div>
                                 </div>
+                                <table class="table table-middle text-center">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>일지</th>
+                                        <th>상품코드</th>
+                                        <th>상품명</th>
+                                        <th>제조사(원산지)</th>
+                                        <th>구분</th>
+                                        <th>처리수량</th>
+                                        <th>재고</th>
+                                        <th>처리 관리자</th>
+                                        <th>비고</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${records}" var="record">
+                                        <tr>
+                                            <td>${record.id}</td>
+                                            <td>${record.createdAt.format(localDateTimeFormat)}</td>
+                                            <td>${record.product.erpCode}</td>
+                                            <td>${record.product.name}</td>
+                                            <td>${record.product.makerName}<br>
+                                                <c:if test="${not empty record.product.country}">
+                                                    (${record.product.country})
+                                                </c:if>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${record.action == 'manual_input'}">
+                                                        수동입고
+                                                    </c:when>
+                                                    <c:when test="${record.action == 'manual_output'}">
+                                                        수동출고
+                                                    </c:when>
+                                                    <c:when test="${record.action == 'discard_output'}">
+                                                        폐기출고
+                                                    </c:when>
+                                                    <c:when test="${record.action == 'return_output'}">
+                                                        반품출고
+                                                    </c:when>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${record.product.useDecimal == true}">
+                                                        ${record.diff}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <fmt:parseNumber type="number" value="${record.diff}" integerOnly="true" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${record.product.useDecimal == true}">
+                                                        ${record.product.qty}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <fmt:parseNumber value="${record.product.qty}" integerOnly="true" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:if test="${not empty record.user}">
+                                                    ${record.user.fullName}
+                                                </c:if>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -364,11 +401,22 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#action').on('change', function () {
+            $('#form').submit();
+        });
 
+        $('#dateFrom, #dateTo').datepicker({
+            dateFormat: 'yy-mm-dd'
+        })
+    })
+</script>
 </body>
 </html>

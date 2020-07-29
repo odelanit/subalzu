@@ -48,10 +48,6 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Company company;
 
-    @OneToMany(mappedBy = "user")
-    @JsonBackReference
-    private Set<Supplier> suppliers;
-
     @OneToMany(mappedBy = "salesman")
     @JsonBackReference
     private Set<Shop> salesShops;
@@ -59,10 +55,6 @@ public class User {
     @OneToMany(mappedBy = "deliverer")
     @JsonBackReference
     private Set<Shop> deliverShops;
-
-    @OneToOne(mappedBy = "owner")
-    @JsonBackReference
-    private Shop ownShop;
 
     @ManyToMany
     private Set<Permission> permissions;
@@ -163,14 +155,6 @@ public class User {
         this.company = company;
     }
 
-    public Set<Supplier> getSuppliers() {
-        return suppliers;
-    }
-
-    public void setSuppliers(Set<Supplier> suppliers) {
-        this.suppliers = suppliers;
-    }
-
     public Set<Shop> getSalesShops() {
         return salesShops;
     }
@@ -185,14 +169,6 @@ public class User {
 
     public void setDeliverShops(Set<Shop> deliverShops) {
         this.deliverShops = deliverShops;
-    }
-
-    public Shop getOwnShop() {
-        return ownShop;
-    }
-
-    public void setOwnShop(Shop ownShop) {
-        this.ownShop = ownShop;
     }
 
     public void setRole(Role role) {

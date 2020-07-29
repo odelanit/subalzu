@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -38,8 +38,8 @@ public class Shop { // 거래처
     @Column(nullable = false)
     String addressLine2;
 
-    @ElementCollection
-    List<String> deliveryTypes; // direct: 직배송, parcel: 택배배송
+    @Column(nullable = false)
+    int deliveryType = 0; // 0: 직배송 + 택배배송, 1: 직배송, 2: 택배배송
 
     String fax;
 
@@ -67,7 +67,7 @@ public class Shop { // 거래처
     @OneToOne
     @JoinColumn(name="owner_id")
     @JsonManagedReference
-    User owner;
+    ShopOwner shopOwner;
 
     @ManyToOne
     @JoinColumn(name="price_group_id")
@@ -92,6 +92,12 @@ public class Shop { // 거래처
     @Column(columnDefinition = "TEXT")
     String memo;
 
+    @Column(nullable = false)
+    Long totalSales = 0L;
+
+    @Column(nullable = false)
+    Long prevTotalBalance = 0L;
+
     @ManyToOne
     @JoinColumn(name="assignee_type_id")
     AssigneeType assigneeType;
@@ -107,9 +113,15 @@ public class Shop { // 거래처
 
     private LocalDateTime stoppedAt;
 
+    private LocalDateTime dealtAt;
+
     @ManyToMany(mappedBy = "shops")
     @JsonManagedReference
     private Set<Notice> notices;
+
+    @OneToMany(mappedBy = "shop")
+    @JsonIgnore
+    private Set<Transaction> transactions;
 
     public Long getId() {
         return id;
@@ -165,14 +177,6 @@ public class Shop { // 거래처
 
     public void setAddressLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
-    }
-
-    public List<String> getDeliveryTypes() {
-        return deliveryTypes;
-    }
-
-    public void setDeliveryTypes(List<String> deliveryTypes) {
-        this.deliveryTypes = deliveryTypes;
     }
 
     public String getFax() {
@@ -231,12 +235,12 @@ public class Shop { // 거래처
         this.salesman = salesMan;
     }
 
-    public User getOwner() {
-        return owner;
+    public ShopOwner getShopOwner() {
+        return shopOwner;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setShopOwner(ShopOwner shopOwner) {
+        this.shopOwner = shopOwner;
     }
 
     public PriceGroup getPriceGroup() {
@@ -341,5 +345,77 @@ public class Shop { // 거래처
 
     public void setMemo(String memo) {
         this.memo = memo;
+    }
+
+    public int getDeliveryType() {
+        return deliveryType;
+    }
+
+    public void setDeliveryType(int deliveryType) {
+        this.deliveryType = deliveryType;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public Long getTotalBalance() {
+        Iterator<Transaction> iterator = this.transactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            Transaction transaction = iterator.next();
+            total += transaction.getAmount();
+        }
+        return total;
+    }
+
+    public Long getTotalInput() {
+        Iterator<Transaction> iterator = this.transactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            Transaction transaction = iterator.next();
+            if (transaction.getTransactionType().equalsIgnoreCase("input"))
+                total += transaction.getAmount();
+        }
+        return total;
+    }
+
+    public Long getTotalUpdate() {
+        Iterator<Transaction> iterator = this.transactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            Transaction transaction = iterator.next();
+            if (transaction.getTransactionType().equalsIgnoreCase("update"))
+                total += transaction.getAmount();
+        }
+        return total;
+    }
+
+    public Long getTotalSales() {
+        return totalSales;
+    }
+
+    public void setTotalSales(Long totalSales) {
+        this.totalSales = totalSales;
+    }
+
+    public Long getPrevTotalBalance() {
+        return prevTotalBalance;
+    }
+
+    public void setPrevTotalBalance(Long prevTotalBalance) {
+        this.prevTotalBalance = prevTotalBalance;
+    }
+
+    public LocalDateTime getDealtAt() {
+        return dealtAt;
+    }
+
+    public void setDealtAt(LocalDateTime dealtAt) {
+        this.dealtAt = dealtAt;
     }
 }

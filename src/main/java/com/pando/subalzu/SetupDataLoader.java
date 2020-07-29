@@ -45,8 +45,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound("sales", "영업");
         createRoleIfNotFound("deliverer", "배송");
         createRoleIfNotFound("accounting", "회계");
-        createRoleIfNotFound("customer", "거래자");
-        createRoleIfNotFound("supplier", "공급자");
 
         Permission allPermission = createPermissionIfNotFound("all", "전체");
         createPermissionIfNotFound("in_charge", "담당 거래처");
@@ -130,9 +128,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     void createBusinessIfNotFound(String name) {
-        Business business = businessRepository.findByName(name);
-        if (business == null) {
-            business = new Business();
+        Optional<Business> optionalBusiness = businessRepository.findByName(name);
+        if (!optionalBusiness.isPresent()) {
+            Business business = new Business();
             business.setName(name);
             businessRepository.save(business);
         }

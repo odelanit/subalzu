@@ -40,7 +40,7 @@
 
         <ul class="navbar-nav mb-0 d-none d-xl-flex">
             <li class="nav-item">
-                <a href="/orders/create" class="nav-link">신규주문 등록</a>
+                <a href="/orders/create" class="nav-link active">신규주문 등록</a>
             </li>
             <li class="nav-item">
                 <a href="/products/create" class="nav-link">상품 등록</a>
@@ -52,7 +52,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -165,13 +165,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -241,71 +238,90 @@
                 </div>
                 <div class="row">
                     <div class="col">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 이전 잔액</span>
+                                                <h3 class="mb-0 text-primary">${sumPrevBalance}원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 매입 금액</span>
+                                                <h3 class="mb-0 text-success">${sumOrderAmount} 원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 출금 금액</span>
+                                                <h3 class="mb-0 text-secondary">${sumOutputAmount}원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">수정 금액</span>
+                                                <h3 class="mb-0 text-warning">${sumUpdateAmount} 원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-right">
+                                                <span class="text-muted text-uppercase font-weight-bold">총 잔액</span>
+                                                <h3 class="mb-0 text-danger">${sumAmount}원</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <form:form method="get" modelAttribute="form">
                                     <table class="table table-bordered form-table">
                                         <tbody class="thead-light">
                                         <tr>
-                                            <th>기간</th>
+                                            <th>키워드 검색</th>
                                             <td>
-                                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-outline-primary active">
-                                                        <input type="radio" name="options" id="option1" checked> 전체
-                                                    </label>
-                                                    <label class="btn btn-outline-primary">
-                                                        <input type="radio" name="options" id="option2"> 전일
-                                                    </label>
-                                                    <label class="btn btn-outline-primary">
-                                                        <input type="radio" name="options" id="option3"> 당일
-                                                    </label>
-                                                    <label class="btn btn-outline-primary">
-                                                        <input type="radio" name="options" id="option4"> 한달
-                                                    </label>
+                                                <div class="form-inline">
+                                                    <form:select cssClass="form-control form-control-sm w-20 mr-2" path="type">
+                                                        <form:option value="name" label="거래처명" />
+                                                    </form:select>
+                                                    <form:input cssClass="form-control form-control-sm" path="keyword" placeholder="검색어를 입력해주세요" />
                                                 </div>
                                             </td>
                                             <td rowspan="2">
                                                 <button class="btn btn-outline-primary">검색</button>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <th>키워드 검색</th>
-                                            <td>
-                                                <div class="form-inline">
-                                                    <form:select cssClass="form-control form-control-sm mr-2" path="type">
-                                                        <form:option value="name" label="거래처명" />
-                                                    </form:select>
-                                                    <form:input cssClass="form-control form-control-sm" path="keyword" placeholder="검색어를 입력해주세요" />
-                                                </div>
-                                            </td>
-                                        </tr>
                                         </tbody>
                                     </table>
                                 </form:form>
-                                <ul class="list-group list-group-horizontal-lg">
-                                    <li class="list-group-item">총 매입처 잔액</li>
-                                    <li class="list-group-item">
-                                        총 이전 잔액<br>
-                                        <strong>146,000원</strong>
-                                    </li>
-                                    <li class="list-group-item">
-                                        총 매입 금액<br>
-                                        <strong>146,000원</strong>
-                                    </li>
-                                    <li class="list-group-item">
-                                        총 출금 잔액<br>
-                                        <strong>146,000원</strong>
-                                    </li>
-                                    <li class="list-group-item">
-                                        수정 금액<br>
-                                        <strong>146,000원</strong>
-                                    </li>
-                                    <li class="list-group-item">
-                                        총 잔액<br>
-                                        <strong>146,000원</strong>
-                                    </li>
-                                </ul>
-                                <hr>
                                 <div class="row align-items-center mb-3">
                                     <div class="col-6">
                                         <span>전체 ${supplierPage.totalElements}건</span>
@@ -334,12 +350,12 @@
                                         <tr onclick="window.location.href='/balance/${supplier.id}'">
                                             <td>${supplier.id}</td>
                                             <td>${supplier.name}</td>
-                                            <td>0원</td>
-                                            <td>0원</td>
-                                            <td>0원</td>
-                                            <td>0원</td>
-                                            <td>0원</td>
-                                            <td></td>
+                                            <td>${supplier.totalPrevBalance}원</td>
+                                            <td>${supplier.totalInput}원</td>
+                                            <td>${supplier.totalOutput}원</td>
+                                            <td>${supplier.totalUpdate}원</td>
+                                            <td>${supplier.totalBalance}원</td>
+                                            <td>${supplier.dealtAt.format(localDateTimeFormat)}</td>
                                         </tr>
                                     </c:forEach>
                                     </tbody>

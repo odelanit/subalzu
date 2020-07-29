@@ -4,9 +4,9 @@ import com.pando.subalzu.model.User;
 
 public class ShopSearchForm3 {
 
-    String field;
+    String field = "name";
 
-    String keyword;
+    String keyword = "";
 
     String deliveryType;
 

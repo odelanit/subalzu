@@ -23,6 +23,7 @@
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -54,7 +55,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -167,13 +168,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -247,40 +245,45 @@
                             <div class="card-body">
                                 <form:form modelAttribute="form" method="get">
                                     <table class="table table-bordered form-table mb-4">
+                                        <colgroup>
+                                            <col style="width: 100px;">
+                                            <col style="width: 650px;">
+                                            <col>
+                                        </colgroup>
                                         <tbody class="thead-light">
                                         <tr>
                                             <th>키워드 검색</th>
                                             <td>
-                                                <div class="form-inline">
-                                                    <form:select path="field" cssClass="form-control form-control-sm mr-2 w-25">
+                                                <div class="d-flex">
+                                                    <form:select path="field" cssClass="custom-select custom-select-sm w-30 mr-2">
                                                         <form:option value="name" label="거래처명" />
                                                     </form:select>
-                                                    <form:input path="keyword" cssClass="form-control form-control-sm w-50" />
+                                                    <form:input path="keyword" cssClass="form-control form-control-sm" />
                                                     <form:hidden path="page" />
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td rowspan="2">
                                                 <button class="btn btn-outline-primary">검색</button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>즉시 검색</th>
-                                            <td colspan="2">
-                                                <div class="form-inline">
-                                                    <form:select path="deliveryType" cssClass="form-control form-control-sm mr-2">
+                                            <td>
+                                                <div class="d-flex" id="imSearch">
+                                                    <form:select path="deliveryType" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="배송 유형" />
-                                                        <form:option value="direct" label="직배송" />
-                                                        <form:option value="parcel" label="택배배송" />
+                                                        <form:option value="1" label="직배송" />
+                                                        <form:option value="2" label="택배배송" />
                                                     </form:select>
-                                                    <form:select path="deliverer" cssClass="form-control form-control-sm mr-2">
+                                                    <form:select path="deliverer" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="배송 담당자" />
                                                         <form:options items="${deliverers}" itemValue="id" itemLabel="fullName" />
                                                     </form:select>
-                                                    <form:select path="salesman" cssClass="form-control form-control-sm mr-2">
+                                                    <form:select path="salesman" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="영업 담당자" />
                                                         <form:options items="${salesMans}" itemValue="id" itemLabel="fullName" />
                                                     </form:select>
-                                                    <form:select path="dealStatus" cssClass="form-control form-control-sm mr-2">
+                                                    <form:select path="dealStatus" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="거래 상태" />
                                                         <form:option value="true" label="거래중" />
                                                         <form:option value="false" label="거래중지" />
@@ -294,21 +297,21 @@
                                 <div>
                                     <div class="row mb-3 align-items-center">
                                         <div class="col-lg-6 text-lg-left text-center">
-                                            <span>전체 ${shopPage.totalElements}건</span>
-                                            <button class="btn btn-sm btn-outline-warning"><i class="fa fa-times"></i>거래 중지</button>
-                                            <button class="btn btn-sm btn-outline-success"><i class="fa fa-check"></i>거래 재개</button>
+                                            <span class="mr-3">전체 ${shopPage.totalElements}건</span>
+                                            <button class="btn btn-sm btn-outline-danger changeStatus" data-action="false"><i class="fa fa-times"></i>거래 중지</button>
+                                            <button class="btn btn-sm btn-outline-success changeStatus" data-action="true" ><i class="fa fa-check"></i>거래 재개</button>
                                         </div>
                                         <div class="col-lg-6 text-center text-lg-right">
                                             <a class="btn btn-outline-secondary btn-sm" href="/shop_grades"><i class="fal fa-badge-percent"></i>할인/할증 등급 관리</a>
-<%--                                            <button class="btn btn-outline-secondary btn-sm"><i class="fa fa-file-excel"></i>거래처 일괄 수정</button>--%>
+                                            <button data-toggle="modal" data-target="#downloadEditForm" class="btn btn-outline-excel btn-sm"><i class="fa fa-file-excel"></i>거래처 일괄 수정</button>
                                             <a href="/shops/create" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>거래처 등록</a>
                                         </div>
                                     </div>
-                                    <table class="table table-sm text-center table-hover" id="shops">
+                                    <table class="table text-center table-hover" id="shops">
                                         <thead class="thead-light">
                                         <tr>
                                             <th>
-                                                <input type="checkbox" data-toggle="tooltip" data-title="선택" id="allchk" name="allchk" />
+                                                <input type="checkbox" data-toggle="tooltip" data-title="전체 선택" id="selectAll" />
                                             </th>
                                             <th>#</th>
                                             <th>등록일</th>
@@ -322,26 +325,26 @@
                                         </thead>
                                         <tbody>
                                         <c:forEach items="${shops}" var="shop">
-                                            <tr onclick="window.location.href='/shops/${shop.id}/edit'">
-                                                <td><input type="checkbox" /></td>
+                                            <tr data-id="${shop.id}">
+                                                <td><input type="checkbox" value="${shop.id}" /></td>
                                                 <td>${shop.id}</td>
                                                 <td>${shop.createdAt.format(localDateTimeFormat)}</td>
                                                 <td>${shop.name}</td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${shop.deliveryTypes.size() == 2}">
+                                                        <c:when test="${shop.deliveryType == 0}">
                                                             전체
                                                         </c:when>
-                                                        <c:when test="${shop.deliveryTypes[0] == 'direct'}">
+                                                        <c:when test="${shop.deliveryType == 1}">
                                                             직배송
                                                         </c:when>
-                                                        <c:when test="${shop.deliveryTypes[0] == 'parcel'}">
+                                                        <c:when test="${shop.deliveryType == 2}">
                                                             택배 배송
                                                         </c:when>
                                                     </c:choose>
                                                 </td>
                                                 <td>${shop.shopGrade == null ? '없음' : shop.shopGrade.name}</td>
-                                                <td></td>
+                                                <td>${shop.totalSales}원</td>
                                                 <td>
                                                     <a href="/shops/${shop.id}">보기</a>
                                                 </td>
@@ -351,6 +354,53 @@
                                             </tr>
                                         </c:forEach>
                                         </tbody>
+                                        <c:if test="${shopPage.totalPages > 1}">
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="9">
+                                                    <nav>
+                                                        <ul class="pagination justify-content-center">
+                                                            <c:choose>
+                                                                <c:when test="${shopPage.hasPrevious()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <c:forEach var="i" begin="1" end="${shopPage.totalPages}">
+                                                                <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                            </c:forEach>
+                                                            <c:choose>
+                                                                <c:when test="${shopPage.hasNext()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </ul>
+                                                    </nav>
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </c:if>
                                     </table>
                                 </div>
                             </div>
@@ -379,16 +429,178 @@
     <!-- ============================================================== -->
     <!-- End Page content -->
     <!-- ============================================================== -->
-
-
 </div>
 <!-- END wrapper -->
+<div id="downloadEditForm" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <div class="modal-title text-light">
+                    거래처 일괄 수정
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>양식 다운 로드 > 엑셀 파일 작성 > 등록 </strong> 버튼을 클릭하여 등록합니다.<br>
+                    <small>* 기존 거래처만 수정 가능합니다. <span class="text-danger">※ 거래처 기본코드를 수정하면 오류가 발생하여 수정을 할 수 없습니다.</span></small>
+                </p>
+                <table class="table">
+                    <tbody class="thead-light">
+                    <tr>
+                        <th>양식 다운 로드</th>
+                        <td>
+                            <a href="/shops/download_edit_form" class="btn btn-sm btn-outline-primary"><i
+                                    class="fa fa-download"></i> 다운로드</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>파일 업로드</th>
+                        <td>
+                            <form:form method="post" action="/shops/upload_edit_file" id="uploadEditForm">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file"
+                                               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                                               class="custom-file-input" id="uploadExcelFile2" name="upload">
+                                        <label class="custom-file-label" for="uploadExcelFile2">
+                                            <i class="fa fa-search"></i>파일 찾기
+                                        </label>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary">등록</button>
+                                    </div>
+                                </div>
+                            </form:form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $(document).ready(function() {
+        var token = $("meta[name='_csrf']").attr("content");
+
+        $('#imSearch').on('change', function() {
+            $('#form').submit();
+        });
+
+        $('#selectAll').on('change', function (e) {
+            $('#shops tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+        });
+
+        $('#shops tbody tr td:not(:first-child)').on('click', function () {
+            window.location.href = '/shops/' + $(this).closest('tr').data('id') + '/edit';
+        });
+
+        $('#shops tbody tr td:first-child').on('click', function (e) {
+            var checkboxElement = $(this).find('input[type="checkbox"]');
+            checkboxElement.prop('checked', !checkboxElement.prop('checked'));
+        });
+
+        $('#shops tbody tr td input[type="checkbox"]').on('change', function (e) {
+            var checkboxElement = $(this);
+            checkboxElement.prop('checked', !checkboxElement.prop('checked'));
+        });
+
+        $('#uploadExcelFile2').on('change', function (e) {
+            if (e.target.files.length > 0) {
+                var fileName = e.target.files[0].name;
+                $(this).next('.custom-file-label').html(fileName);
+            } else {
+                $(this).next('.custom-file-label').html('<i class="fa fa-search"></i> 파일 찾기');
+            }
+        });
+
+        $('#uploadEditForm').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    $("#overlay").fadeIn(300);
+                },
+                success: function(data) {
+                    toastr.success(data.message);
+                    window.location.reload();
+                }
+            }).done(function () {
+                setTimeout(function(){
+                    $("#overlay").fadeOut(300);
+                },500);
+            });
+        });
+
+        $('.changeStatus').on('click', function () {
+            var action = $(this).data('action');
+            var ids = [];
+            $('#shops tbody input[type="checkbox"]:checked').each(function(index) {
+                ids.push($(this).val());
+            });
+            if (ids.length === 0) {
+                toastr.error("판매처리하실 상품을 선택해주세요.");
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/shops/change_status',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    },
+                    data: {
+                        ids: ids,
+                        action: action
+                    },
+                    beforeSend: function() {
+                        $("#overlay").fadeIn(300);
+                    },
+                    success: function(data) {
+                        toastr.success(data.message);
+                        window.location.reload();
+                    }
+                }).done(function () {
+                    setTimeout(function(){
+                        $("#overlay").fadeOut(300);
+                    },500);
+                });
+            }
+        });
+    })
+</script>
 </body>
 </html>

@@ -1,11 +1,9 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
+import com.pando.subalzu.form.ProductSearchForm;
 import com.pando.subalzu.form.SupplierSearchForm;
-import com.pando.subalzu.model.Company;
-import com.pando.subalzu.model.Role;
-import com.pando.subalzu.model.Supplier;
-import com.pando.subalzu.model.User;
+import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.SupplierSpecification;
@@ -26,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,10 +43,16 @@ public class SupplierController {
     UserRepository userRepository;
 
     @Autowired
+    SupplyOwnerRepository supplyOwnerRepository;
+
+    @Autowired
     SupplierValidator supplierValidator;
 
     @Autowired
     UserValidator userValidator;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -74,6 +79,11 @@ public class SupplierController {
         return "supplier_list";
     }
 
+    @ModelAttribute("productSearchForm")
+    public ProductSearchForm productSearchForm() {
+        return new ProductSearchForm();
+    }
+
     @GetMapping("/suppliers/create")
     public String create(Model model) {
         model.addAttribute("supplierForm", new Supplier());
@@ -89,22 +99,24 @@ public class SupplierController {
         }
 
         if (!Strings.isNullOrEmpty(supplierForm.getUsername())) {
-            User user = new User();
-            user.setUsername(supplierForm.getUsername());
-            user.setFullName(supplierForm.getFullName());
-            user.setPhone(supplierForm.getPhone());
-            user.setBio(supplierForm.getBio());
-            user.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
+            SupplyOwner owner = new SupplyOwner();
+            owner.setUsername(supplierForm.getUsername());
+            owner.setFullName(supplierForm.getFullName());
+            owner.setPhone(supplierForm.getPhone());
+            owner.setBio(supplierForm.getBio());
+            owner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
+            SupplyOwner dbUser = supplyOwnerRepository.save(owner);
 
-            Role supplierRole = roleRepository.findByName("customer");
-            user.setRole(supplierRole);
-
-            User dbUser = userRepository.save(user);
-
-            supplierForm.setUser(dbUser);
+            supplierForm.setOwner(dbUser);
         }
 
-        supplierRepository.save(supplierForm);
+        Supplier supplier = supplierRepository.save(supplierForm);
+
+        List<Product> products = new ArrayList<>(supplierForm.getProducts());
+        for (Product product : products) {
+            product.setSupplier(supplier);
+            productRepository.save(product);
+        }
 
         redirectAttributes.addFlashAttribute("message", "Supplier Created");
         return "redirect:/suppliers";
@@ -115,12 +127,12 @@ public class SupplierController {
         Optional<Supplier> supplierOptional = supplierRepository.findById(id);
         if (supplierOptional.isPresent()) {
             Supplier supplier = supplierOptional.get();
-            User user = supplier.getUser();
-            if (user != null) {
-                supplier.setUsername(user.getUsername());
-                supplier.setFullName(user.getFullName());
-                supplier.setPhone(user.getPhone());
-                supplier.setBio(user.getBio());
+            SupplyOwner owner = supplier.getOwner();
+            if (owner != null) {
+                supplier.setUsername(owner.getUsername());
+                supplier.setFullName(owner.getFullName());
+                supplier.setPhone(owner.getPhone());
+                supplier.setBio(owner.getBio());
             }
             model.addAttribute("supplierForm", supplier);
             model.addAttribute("page_title", "매입처 수정");
@@ -137,33 +149,46 @@ public class SupplierController {
             return "supplier_create";
         }
 
-        User user = supplierForm.getUser();
-        if (user != null) {
+        SupplyOwner owner = supplierForm.getOwner();
+        if (owner != null) {
             if (!Strings.isNullOrEmpty(supplierForm.getPassword())) {
-                user.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
+                owner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
             }
-            userRepository.save(user);
+            supplyOwnerRepository.save(owner);
         } else {
             if (!Strings.isNullOrEmpty(supplierForm.getUsername())) {
-                User newUser = new User();
-                newUser.setUsername(supplierForm.getUsername());
-                newUser.setFullName(supplierForm.getFullName());
-                newUser.setPhone(supplierForm.getPhone());
-                newUser.setBio(supplierForm.getBio());
-                newUser.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
+                SupplyOwner newOwner = new SupplyOwner();
+                newOwner.setUsername(supplierForm.getUsername());
+                newOwner.setFullName(supplierForm.getFullName());
+                newOwner.setPhone(supplierForm.getPhone());
+                newOwner.setBio(supplierForm.getBio());
+                newOwner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
 
-                Role supplierRole = roleRepository.findByName("customer");
-                newUser.setRole(supplierRole);
+                SupplyOwner dbUser = supplyOwnerRepository.save(newOwner);
 
-                User dbUser = userRepository.save(newUser);
-
-                supplierForm.setUser(dbUser);
+                supplierForm.setOwner(dbUser);
             }
         }
 
-        supplierRepository.save(supplierForm);
+        Supplier supplier = supplierRepository.save(supplierForm);
+
+        List<Product> products = new ArrayList<>(supplierForm.getProducts());
+        for (Product product : products) {
+            product.setSupplier(supplier);
+            productRepository.save(product);
+        }
 
         redirectAttributes.addFlashAttribute("message", "Supplier Updated");
+        return "redirect:/suppliers";
+    }
+
+    @GetMapping("/suppliers/{id}/delete")
+    public String delete(@PathVariable long id) {
+        Optional<Supplier> supplierOptional = supplierRepository.findById(id);
+        if (supplierOptional.isPresent()) {
+            Supplier supplier = supplierOptional.get();
+            supplierRepository.delete(supplier);
+        }
         return "redirect:/suppliers";
     }
 }

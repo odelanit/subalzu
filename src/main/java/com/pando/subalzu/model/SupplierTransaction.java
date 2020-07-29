@@ -7,8 +7,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "supplier_balances")
-public class Balance {
+@Table(name = "supplier_transaction")
+public class SupplierTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,10 +21,13 @@ public class Balance {
 
     String type; // 매입: shipping, 수정: correction, 출금: withdraw
 
-    Long funds;
+    @Column(nullable = false)
+    Long amount = 0L;
+
+    Long totalAmount = 0L;
 
     @Column(columnDefinition = "TEXT")
-    String memo;
+    String description;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -33,10 +36,13 @@ public class Balance {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Balance() {
+    @Transient
+    Long prevTotal;
+
+    public SupplierTransaction() {
     }
 
-    public Balance(Supplier supplier) {
+    public SupplierTransaction(Supplier supplier) {
         this.supplier = supplier;
     }
 
@@ -88,19 +94,35 @@ public class Balance {
         this.updatedAt = updatedAt;
     }
 
-    public Long getFunds() {
-        return funds;
+    public Long getAmount() {
+        return amount;
     }
 
-    public void setFunds(Long funds) {
-        this.funds = funds;
+    public void setAmount(Long funds) {
+        this.amount = funds;
     }
 
-    public String getMemo() {
-        return memo;
+    public String getDescription() {
+        return description;
     }
 
-    public void setMemo(String memo) {
-        this.memo = memo;
+    public void setDescription(String memo) {
+        this.description = memo;
+    }
+
+    public Long getPrevTotal() {
+        return prevTotal;
+    }
+
+    public void setPrevTotal(Long prevTotal) {
+        this.prevTotal = prevTotal;
+    }
+
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

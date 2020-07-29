@@ -55,7 +55,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -168,13 +168,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -239,14 +236,21 @@
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <div class="media p-3">
-                                            <div class="media-body">
-                                                <span class="text-muted text-uppercase font-size-12 font-weight-bold">출고전</span>
+                                            <div class="media-body text-center">
+                                                <span class="text-muted text-uppercase font-weight-bold">출고전</span>
                                                 <h2 class="mb-0">24</h2>
                                             </div>
-                                            <div class="align-self-center">
-                                                <div id="today-revenue-chart" class="apex-charts"></div>
-                                                <span class="text-success font-weight-bold font-size-13"><i
-                                                        class='uil uil-arrow-up'></i> 10.21%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-center">
+                                                <span class="text-muted text-uppercase font-weight-bold">출고완료</span>
+                                                <h2 class="mb-0">24</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -256,31 +260,9 @@
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <div class="media p-3">
-                                            <div class="media-body">
-                                                <span class="text-muted text-uppercase font-size-12 font-weight-bold">출고완료</span>
-                                                <h2 class="mb-0">40</h2>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <div id="today-product-sold-chart" class="apex-charts"></div>
-                                                <span class="text-danger font-weight-bold font-size-13"><i
-                                                        class='uil uil-arrow-down'></i> 5.05%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body">
-                                                <span class="text-muted text-uppercase font-size-12 font-weight-bold">출고거절</span>
-                                                <h2 class="mb-0">2</h2>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <div id="today-new-customer-chart" class="apex-charts"></div>
-                                                <span class="text-success font-weight-bold font-size-13"><i
-                                                        class='uil uil-arrow-up'></i> 25.16%</span>
+                                            <div class="media-body text-center">
+                                                <span class="text-muted text-uppercase font-weight-bold">출고거절</span>
+                                                <h2 class="mb-0">24</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -290,12 +272,16 @@
                     </div>
                     <div class="col-lg-6">
                         <h5 class="header-title">체크항목</h5>
-                        <div class="card">
-                            <div class="card-body p-0">
-                                <div class="media px-3 py-4 border-bottom">
-                                    <div class="media-body">
-                                        <span class="text-muted">재고부족</span>
-                                        <h4 class="mt-0 mb-1 font-size-22 font-weight-normal">691건</h4>
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body text-center">
+                                                <span class="text-muted text-uppercase font-weight-bold">재고 부족</span>
+                                                <h2 class="mb-0">24</h2>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -305,31 +291,26 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h5 class="header-title">주문현황</h5>
-                        <div class="card">
+                        <div class="card mb-3">
                             <div class="card-body p-0">
-                                <h4 class="card-title header-title border-bottom p-3 mb-0">전체</h4>
-                                <!-- stat 1 -->
-                                <div class="media px-3 py-4 border-bottom">
+                                <div class="media p-3">
                                     <div class="media-body">
-                                        <h5 class="mt-0 mb-0">주문 &nbsp;<strong>${orders.size()}</strong></h5>
+                                        <span class="text-muted text-uppercase font-weight-bold">당일</span>
+                                        <h2 class="mb-0">24</h2>
                                     </div>
-                                    <p class="h3 align-self-center">
-                                        ${totalAmount} 원
-                                    </p>
                                 </div>
-
-<%--                                <!-- stat 2 -->--%>
-<%--                                <div class="media px-3 py-4 border-bottom">--%>
-<%--                                    <div class="media-body">--%>
-<%--                                        <h5 class="mt-0 mb-0">취소 &nbsp;<strong class="">2건</strong></h5>--%>
-<%--                                    </div>--%>
-<%--                                    <p class="h3 align-self-center">--%>
-<%--                                        58,890원--%>
-<%--                                    </p>--%>
-<%--                                </div>--%>
                             </div>
                         </div>
-
+                        <div class="card">
+                            <div class="card-body p-0">
+                                <div class="media p-3">
+                                    <div class="media-body">
+                                        <span class="text-muted text-uppercase font-weight-bold">한달</span>
+                                        <h2 class="mb-0">24</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <h5 class="header-title">공지사항 및 문의사항</h5>

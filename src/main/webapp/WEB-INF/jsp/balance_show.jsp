@@ -17,10 +17,11 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -53,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -166,13 +167,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -243,33 +241,48 @@
                 </div>
                 <div class="row">
                     <div class="col">
+                        <div class="row mb-2">
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3">
+                                            <div class="media-body">
+                                                <h3 class="mb-0">${supplier.name}</h3>
+                                                <span class="text-muted text-uppercase font-weight-bold">현재 잔액</span>
+                                            </div>
+                                            <div class="align-self-center">
+                                                <span class="h3 text-danger">${supplier.totalBalance}원</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body">
-                                <form>
+                                <form:form modelAttribute="searchForm" method="get">
                                     <table class="table form-table table-bordered">
                                         <tbody class="thead-light">
                                         <tr>
                                             <th>기간</th>
                                             <td>
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
+                                                <div class="form-inline">
+                                                    <div class="input-group input-group-sm">
+                                                        <form:input path="dateFrom" cssClass="form-control" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
+                                                    <span class="mx-2">-</span>
+                                                    <div class="input-group input-group-sm">
+                                                        <form:input path="dateTo" cssClass="form-control" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -278,33 +291,35 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="col-form-label col-lg-2">즉시 검색</th>
+                                            <th>즉시 검색</th>
                                             <td colspan="2">
-                                                <div class="form-inline">
-                                                    <select class="form-control w-20">
-                                                        <option>구분</option>
-                                                    </select>
-                                                    <select class="form-control w-20 ml-2">
-                                                        <option>처리방식</option>
-                                                    </select>
+                                                <div class="form-inline" id="imSearch">
+                                                    <form:select class="form-control form-control-sm w-20 mr-2" path="type">
+                                                        <form:option value="" label="구분" />
+                                                        <form:option value="output" label="출금" />
+                                                        <form:option value="order" label="매입" />
+                                                        <form:option value="update" label="수정" />
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm w-20" path="method">
+                                                        <form:option value="" label="처리방식" />
+                                                        <form:option value="manual_order" label="일반 발주" />
+                                                        <form:option value="auto_order" label="자동 발주" />
+                                                        <form:option value="direct_minus" label="직접 출금" />
+                                                        <form:option value="fund_minus" label="금액 차감" />
+                                                        <form:option value="fund_plus" label="금액 추가" />
+                                                        <form:option value="canceled_order" label="발주 취소" />
+                                                    </form:select>
                                                 </div>
                                             </td>
                                         </tr>
                                         </tbody>
                                     </table>
-
-                                </form>
-                                <div class="my-4 text-center">
-                                    <h4>
-                                        <strong>${supplier.name}</strong>
-                                        <span class="text-primary">현재 잔액</span>
-                                        <span>0원</span>
-                                    </h4>
-                                </div>
-                                <div class="row mb-3">
+                                </form:form>
+                                <div class="row mb-3 align-items-center">
                                     <div class="col-lg-6">
-                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#outcome-modal">출금 처리</button>
-                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#direct-modal">직접 수정</button>
+                                        <span>전체 ${transactionPage.totalElements}건</span>
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#outputModal">출금 처리</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#manualModal">직접 수정</button>
                                     </div>
                                     <div class="col-lg-6 text-lg-right">
                                         <button class="btn btn-sm btn-outline-primary">
@@ -325,36 +340,42 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach items="${balances}" var="balance">
+                                    <c:forEach items="${transactions}" var="transaction">
                                         <tr>
-                                            <td>${balance.id}</td>
-                                            <td>${balance.createdAt.format(localDateTimeFormat)}</td>
+                                            <td>${transaction.id}</td>
+                                            <td>${transaction.createdAt.format(localDateTimeFormat)}</td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${balance.type == 'withdraw'}">
+                                                    <c:when test="${transaction.type == 'output'}">
                                                         출금
                                                     </c:when>
-                                                    <c:when test="${balance.type == 'correction'}">
+                                                    <c:when test="${transaction.type == 'order'}">
+                                                        매입
+                                                    </c:when>
+                                                    <c:when test="${transaction.type == 'update'}">
                                                         수정
                                                     </c:when>
                                                 </c:choose>
                                             </td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${balance.method == 'withdraw'}">
+                                                    <c:when test="${transaction.method == 'direct_minus'}">
                                                         직접 출금
                                                     </c:when>
-                                                    <c:when test="${balance.method == 'subtraction'}">
+                                                    <c:when test="${transaction.method == 'fund_minus'}">
                                                         금액 차감
                                                     </c:when>
-                                                    <c:when test="${balance.method == 'addition'}">
+                                                    <c:when test="${transaction.method == 'fund_plus'}">
                                                         금액 추가
+                                                    </c:when>
+                                                    <c:when test="${transaction.method == 'manual_order'}">
+                                                        일반 발주
                                                     </c:when>
                                                 </c:choose>
                                             </td>
-                                            <td>${balance.funds}원</td>
-                                            <td></td>
-                                            <td>${balance.memo}</td>
+                                            <td>${transaction.amount}원</td>
+                                            <td>${transaction.totalAmount}원</td>
+                                            <td>${transaction.description}</td>
                                         </tr>
                                     </c:forEach>
                                     </tbody>
@@ -388,127 +409,150 @@
 
 
 </div>
-<div class="modal fade" id="outcome-modal">
-    <div class="modal-dialog">
+<div class="modal fade" id="outputModal">
+    <div class="modal-dialog-centered modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h5 class="modal-title">출금 처리</h5>
+                <div class="modal-title text-light">
+                    출금 처리
+                </div>
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body p-4">
-                <form:form modelAttribute="form" id="form1" action="/balance/add">
-                    <form:hidden path="supplier" />
-                    <form:hidden path="type" value="withdraw" />
-                    <form:hidden path="method" value="withdraw" />
+            <div class="modal-body">
+                <form:form method="post" modelAttribute="form1" action="/balance/add">
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
                         <div class="col-8 text-right">
-                            <label>${supplier.name}</label>
+                                ${supplier.name}
+                            <form:hidden path="supplier" />
+                            <form:hidden path="type" />
+                            <form:hidden path="method" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                            <label>0</label>
+                                ${supplier.totalBalance} 원
+                            <form:hidden path="prevTotal" value="${supplier.totalBalance}" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-4">출금 금액</label>
+                        <label class="col-form-label col-4">입금 금액</label>
                         <div class="col-8 text-right">
-                            <form:input class="form-control form-control-sm" type="number" path="funds" />
+                            <form:input type="number" class="form-control text-right form-control-sm" path="amount" />
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
-                        <label class="col-form-label col-4">출금 후 잔액</label>
-                        <div class="col-8 text-right">
-                            <label>0</label>
+                        <label class="col-form-label col-4">입금 후 잔액</label>
+                        <div class="col-8 text-right text-danger">
+                            <span class="totalAmount">${supplier.totalBalance}</span> 원
+                            <form:hidden path="totalAmount" />
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">비고</label>
-                        <div class="col-8 text-right">
-                            <form:textarea class="form-control form-control-sm" path="memo" />
+                        <div class="col-8">
+                            <form:textarea path="description" class="form-control-sm form-control" rows="3" />
                         </div>
                     </div>
                 </form:form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
                 <button class="btn btn-primary" form="form1">적용</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="direct-modal">
-    <div class="modal-dialog">
+
+<div class="modal fade" id="manualModal">
+    <div class="modal-dialog-centered modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">직접 수정</h5>
+            <div class="modal-header bg-secondary">
+                <div class="modal-title text-light">
+                    직접 수정
+                </div>
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body p-4">
-                <form:form modelAttribute="form" id="form2" action="/balance/add">
-                    <form:hidden path="supplier" />
-                    <form:hidden path="type" value="correction" />
+            <div class="modal-body">
+                <form:form method="post" modelAttribute="form2" action="/balance/add">
                     <div class="form-group row">
                         <label class="col-form-label col-4">구분</label>
                         <div class="col-8 text-right">
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <form:radiobutton id="subtraction" checked="true"
-                                                  value="subtraction" path="method"
-                                                  class="custom-control-input"/>
-                                <label class="custom-control-label"
-                                       for="subtraction">금액 차감</label>
+                            <div class="custom-control custom-control-inline custom-radio">
+                                <form:radiobutton class="custom-control-input" path="method" value="fund_minus" id="transactionType1" />
+                                <label class="custom-control-label" for="transactionType1">금액 차감</label>
                             </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <form:radiobutton id="addition"
-                                                  value="addition" path="method"
-                                                  class="custom-control-input"/>
-                                <label class="custom-control-label"
-                                       for="addition">금액 추가</label>
+                            <div class="custom-control custom-control-inline custom-radio">
+                                <form:radiobutton class="custom-control-input" path="method" value="fund_plus" id="transactionType2" />
+                                <label class="custom-control-label" for="transactionType2">금액 추가</label>
                             </div>
                         </div>
+                        <form:hidden path="prevTotal" value="${supplier.totalBalance}" />
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
                         <div class="col-8 text-right">
-                            <label>${supplier.name}</label>
+                                ${supplier.name}
+                            <form:hidden path="supplier" />
+                            <form:hidden path="type" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                            <label>0</label>
+                                ${supplier.totalBalance} 원
+                            <input type="hidden" name="prevTotal" value="${supplier.totalBalance}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 금액</label>
                         <div class="col-8 text-right">
-                            <form:input class="form-control form-control-sm" type="number" path="funds" />
+                            <form:input type="number" class="form-control text-right form-control-sm" path="amount" />
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 후 잔액</label>
-                        <div class="col-8 text-right">
-                            <label>0</label>
+                        <div class="col-8 text-right text-danger">
+                            <span class="totalBalance">${supplier.totalBalance}</span> 원
+                            <form:hidden path="totalAmount" />
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">비고</label>
-                        <div class="col-8 text-right">
-                            <form:textarea class="form-control form-control-sm" path="memo" />
+                        <div class="col-8">
+                            <form:textarea path="description" class="form-control-sm form-control" rows="3" />
                         </div>
                     </div>
                 </form:form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
                 <button class="btn btn-primary" form="form2">적용</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </div>
 </div>
@@ -516,14 +560,61 @@
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
+    $('#dateFrom, #dateTo').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+
+    $('#form1 input[name="amount"]').on('keyup', function () {
+        var amount = $(this).val();
+        var prevTotal = $('#form1 input[name="prevTotal"]').val();
+        if (parseInt(amount) > 0) {
+            var totalAmount = parseInt(prevTotal) - parseInt(amount);
+            $('#form1 input[name="totalAmount"]').val(totalAmount);
+            $('#form1 .totalAmount').text(totalAmount);
+        }
+    });
+
+    $('#form2 input[name="amount"]').on('keyup', function () {
+        var amount = $(this).val();
+        var prevTotal = $('#form2 input[name="prevTotal"]').val();
+        var method = $('#form2 input[name="method"]:checked').val();
+        console.log(method);
+        if (parseInt(amount) > 0) {
+            if (method === 'fund_plus') {
+                var totalAmount = parseInt(prevTotal) + parseInt(amount);
+            } else {
+                var totalAmount = parseInt(prevTotal) - parseInt(amount);
+            }
+            $('#form2 input[name="totalAmount"]').val(totalAmount);
+            $('#form2 .totalBalance').text(totalAmount);
+        }
+    });
+
+    $('#form2 input[name="method"]').on('change', function () {
+        var method = $('#form2 input[name="method"]:checked').val();
+        var amount = $('#form2 input[name="amount"]').val();
+        var prevTotal = $('#form2 input[name="prevTotal"]').val();
+        console.log(method);
+        if (parseInt(amount) > 0) {
+            if (method === 'fund_plus') {
+                var totalAmount = parseInt(prevTotal) + parseInt(amount);
+            } else {
+                var totalAmount = parseInt(prevTotal) - parseInt(amount);
+            }
+            $('#form2 input[name="totalAmount"]').val(totalAmount);
+            $('#form2 .totalBalance').text(totalAmount);
+        }
+    });
+
     $('#form1, #form2').submit(function (e) {
         e.preventDefault();
-        var funds = $(this).find('input[name="funds"]').val();
+        var funds = $(this).find('input[name="amount"]').val();
         if (funds > 0) {
             $.ajax({
                 type: 'POST',
@@ -535,7 +626,11 @@
                 }
             })
         }
-    })
+    });
+
+    $('#imSearch select').on('change', function() {
+        $('#searchForm').submit();
+    });
 </script>
 </body>
 </html>

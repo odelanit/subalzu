@@ -25,6 +25,8 @@ public class ProductSpecification implements Specification<Product> {
             }
         } else if (criteria.getOperation().equalsIgnoreCase("<")) {
             return criteriaBuilder.lessThan(root.get(criteria.getKey()).as(Double.class), (double)criteria.getValue());
+        } else if (criteria.getOperation().equalsIgnoreCase(">")) {
+            return criteriaBuilder.greaterThan(root.get(criteria.getKey()).as(Double.class), (double)criteria.getValue());
         }
         return null;
     }

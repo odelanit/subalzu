@@ -18,21 +18,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.Principal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class OrderController {
@@ -49,6 +45,9 @@ public class OrderController {
     ProductRepository productRepository;
 
     @Autowired
+    ProductRecordRepository productRecordRepository;
+
+    @Autowired
     CartItemRepository cartItemRepository;
 
     @Autowired
@@ -56,6 +55,9 @@ public class OrderController {
 
     @Autowired
     OrderProductRepository orderProductRepository;
+
+    @Autowired
+    TransactionRepository transactionRepository;
 
     @Autowired
     OrderValidator orderValidator;
@@ -142,35 +144,88 @@ public class OrderController {
         return builder.toString();
     }
 
-    @PostMapping(value = "/orders/create")
-    public String store(@ModelAttribute("orderForm") Order order, @ModelAttribute("searchForm") ProductSearchForm3 form, BindingResult bindingResult, Principal principal) {
-        orderValidator.validate(order, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "order_create";
-        }
-        order.setOrderCode(randomAlphaNumeric(10));
-        order = orderRepository.save(order);
-        Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
-        if (optionalUser.isPresent()) {
-            User currentUser = optionalUser.get();
-            List<CartItem> items = cartItemRepository.findByUser(currentUser);
-            long totalAmount = 0L;
-            for (CartItem item: items) {
-                OrderProduct orderProduct = new OrderProduct();
-                orderProduct.setOrder(order);
-                orderProduct.setProduct(item.getProduct());
-                orderProduct.setPrice(item.getPrice());
-                orderProduct.setQty(item.getQty());
-                long subTotal = item.getPrice() * item.getQty();
-                orderProduct.setTotalAmount(subTotal);
-                orderProductRepository.save(orderProduct);
-                totalAmount += subTotal;
+    @PostMapping(value = "/orders/store")
+    @ResponseBody
+    public Map<String, String> store(@RequestBody Map<String, Object> requestMap) throws ParseException {
+        Long shopId = Long.parseLong((String) requestMap.get("shop"));
+        String deliveryType = (String)requestMap.get("deliveryType");
+        String strRequestDate = (String)requestMap.get("requestDate");
+        Long delivererId = Long.parseLong((String) requestMap.get("deliverer")) ;
+        Long salesmanId = Long.parseLong((String) requestMap.get("salesman")) ;
+        String requestMemo = (String)requestMap.get("requestMemo");
+        String memo = (String)requestMap.get("memo");
+
+        Optional<Shop> optionalShop = shopRepository.findById(shopId);
+        Optional<User> optionalDeliverer = userRepository.findById(delivererId);
+        Optional<User> optionalSalesman = userRepository.findById(salesmanId);
+        if (optionalShop.isPresent() && optionalDeliverer.isPresent()) {
+            Shop shop = optionalShop.get();
+            Order order = new Order();
+            order.setShop(shop);
+            order.setOrderCode(randomAlphaNumeric(10));
+            order.setDeliveryType(deliveryType);
+            if (!Strings.isNullOrEmpty(strRequestDate)) {
+                Date requestDate = new SimpleDateFormat("yyyy-MM-dd").parse(strRequestDate);
+                order.setRequestDate(requestDate);
             }
-            order.setTotalAmount(totalAmount);
+            order.setDeliverer(optionalDeliverer.get());
+            optionalSalesman.ifPresent(order::setSalesMan);
+            order.setRequestMemo(requestMemo);
+            order.setMemo(memo);
+            order = orderRepository.save(order);
+
+            List<Map<String, Object>> orderProductMapList = (List<Map<String, Object>>) requestMap.get("products");
+
+            long total = 0L;
+
+            for (Map<String, Object> orderProductMap: orderProductMapList) {
+                Long productId = ((Integer)orderProductMap.get("id")).longValue();
+                int qty = (int) orderProductMap.get("qty");
+                long price = ((Integer) orderProductMap.get("sellPrice")).longValue();
+                long subTotal = qty * price;
+
+                total += subTotal;
+
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+
+                if (optionalProduct.isPresent()) {
+                    Product product = optionalProduct.get();
+                    OrderProduct orderProduct = new OrderProduct();
+                    orderProduct.setProduct(product);
+                    orderProduct.setQty(qty);
+                    orderProduct.setPrice(price);
+                    orderProduct.setTotalAmount(subTotal);
+                    orderProduct.setOrder(order);
+                    orderProductRepository.save(orderProduct);
+
+                    ProductRecord productRecord = new ProductRecord();
+                    productRecord.setProduct(product);
+                    productRecord.setPreviousQty(product.getQty());
+                    productRecord.setDiff(qty);
+                    productRecord.setAction("order_output");
+                    productRecordRepository.save(productRecord);
+
+                    product.setQty(product.getQty() - qty);
+                    productRepository.save(product);
+
+                }
+            }
+            order.setTotalAmount(total);
             orderRepository.save(order);
-            cartItemRepository.deleteAll(items);
+
+            Transaction transaction = new Transaction();
+            transaction.setShop(shop);
+            transaction.setTransactionType("sale");
+            transaction.setProcessingMethod("order_minus");
+            transaction.setAmount(total);
+            transaction.setTotalAmount(transactionRepository.sumShopAmount(shop));
+            transaction.setDescription(order.getOrderCode() + " 주문 변경");
+            transactionRepository.save(transaction);
         }
-        return "redirect:/orders";
+
+        Map<String, String> resultMap = new HashMap<>();
+        requestMap.put("message", "Success");
+        return resultMap;
     }
 
     @GetMapping("/orders/{id}")

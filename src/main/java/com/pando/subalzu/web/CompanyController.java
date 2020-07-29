@@ -76,6 +76,6 @@ public class CompanyController {
         }
 
         model.addAttribute("message", "Successfully updated.");
-        return "company";
+        return "redirect:/";
     }
 }

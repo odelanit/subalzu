@@ -23,6 +23,6 @@ public class ShopValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ownerFullname", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ownerPhone", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliverer", "NotEmpty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryTypes", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryType", "NotEmpty");
     }
 }

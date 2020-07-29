@@ -54,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
                         value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
@@ -80,11 +80,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -175,13 +170,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -305,9 +297,6 @@
                                                 <td>${user.createdAt.format(localDateTimeFormat)}</td>
                                                 <td>${user.fullName}</td>
                                                 <td>
-                                                    <c:if test="${user.ownShop != null}">
-                                                        ${user.ownShop.name}
-                                                    </c:if>
                                                 </td>
                                                 <td>${user.username}</td>
                                                 <td>${user.bio}</td>

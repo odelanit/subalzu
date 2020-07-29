@@ -39,7 +39,7 @@ public class SupplierValidator implements Validator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fullName", "NotEmpty");
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone", "NotEmpty");
 
-            if (supplier.getUser() == null) {
+            if (supplier.getOwner() == null) {
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
             }
 
@@ -55,7 +55,7 @@ public class SupplierValidator implements Validator {
                 errors.rejectValue("phone", "Numeric");
             }
 
-            if (supplier.getUser() == null && (userRepository.findByUsername(supplier.getUsername())).isPresent()) {
+            if (supplier.getOwner() == null && (userRepository.findByUsername(supplier.getUsername())).isPresent()) {
                 errors.rejectValue("username", "Duplicate.userForm.username");
             }
 

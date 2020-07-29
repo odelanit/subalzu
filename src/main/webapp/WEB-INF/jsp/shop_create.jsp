@@ -54,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -77,11 +77,6 @@
             <!--- Sidemenu -->
             <div id="sidebar-menu" class="slimscroll-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-sm rounded-circle mr-2"
-                         alt="Pando"/>
-                    <img src="${contextPath}/resources/images/users/avatar-7.jpg" class="avatar-xs rounded-circle mr-2"
-                         alt="Pando"/>
-
                     <div class="media-body">
                         <a href="/company">
                             <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
@@ -172,13 +167,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -321,20 +313,24 @@
                                                 </spring:bind>
                                             </td>
                                         </tr>
-                                        <spring:bind path="deliveryTypes">
+                                        <spring:bind path="deliveryType">
                                             <tr>
                                                 <th class="required"><span>배송 유형</span></th>
                                                 <td colspan="3">
-                                                    <div class="custom-control custom-control-inline custom-checkbox">
-                                                        <form:checkbox class="custom-control-input" path="deliveryTypes" value="direct" id="delivery_type2" />
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="deliveryType" value="0" id="delivery_type1" />
+                                                        <label class="custom-control-label" for="delivery_type1">전체</label>
+                                                    </div>
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="deliveryType" value="1" id="delivery_type2" />
                                                         <label class="custom-control-label" for="delivery_type2">직배송</label>
                                                     </div>
-                                                    <div class="custom-control custom-control-inline custom-checkbox">
-                                                        <form:checkbox class="custom-control-input" path="deliveryTypes" value="parcel" id="delivery_type3" />
+                                                    <div class="custom-control custom-control-inline custom-radio">
+                                                        <form:radiobutton class="custom-control-input" path="deliveryType" value="2" id="delivery_type3" />
                                                         <label class="custom-control-label" for="delivery_type3">택배배송</label>
                                                     </div>
                                                     <div class="invalid-feedback ${status.error ? 'd-block' : ''}">
-                                                        <form:errors path="deliveryTypes" />
+                                                        <form:errors path="deliveryType" />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -699,11 +695,11 @@
                     </tr>
                     <tr>
                         <th>거래처 연락처(아이디)</th>
-                        <td>${shopForm.owner.username}</td>
+                        <td>${shopForm.shopOwner.username}</td>
                     </tr>
                     <tr>
                         <th>임시 비밀번호</th>
-                        <td>${shopForm.owner.username}</td>
+                        <td>${shopForm.shopOwner.username}</td>
                     </tr>
                     <tr>
                         <th>거래처 담당자</th>
@@ -823,17 +819,15 @@
         var shop_tel = $(this).val().replace(/-/g, "");
 
         if(shop_tel.length >= 8){
-            var formData = "action=id_chk&user_account="+shop_tel;
-
             //결제내역 정보 추출
             $.ajax({
                 type: 'POST',
-                url: '/users/check_username',
+                url: '/customers/check_username',
                 headers: {
                     'X-CSRF-TOKEN': token
                 },
                 data: {
-                    username: user_account.val(),
+                    username: $(this).val(),
                 },
                 success: function(data) {
                     $("#chk_msg").hide();

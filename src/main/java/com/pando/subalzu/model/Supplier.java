@@ -1,8 +1,13 @@
 package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -36,6 +41,18 @@ public class Supplier { // 매입처
 
     private String addressLine2;
 
+    private Long totalPrevBalance = 0L;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime dealtAt;
+
     @Transient
     private String fullName;
 
@@ -60,11 +77,12 @@ public class Supplier { // 매입처
 
     @OneToMany(mappedBy = "supplier")
     @JsonBackReference
-    private Set<Balance> balances;
+    private Set<SupplierTransaction> supplierTransactions;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    @JsonBackReference
+    private SupplyOwner owner;
 
     public Long getId() {
         return id;
@@ -170,14 +188,6 @@ public class Supplier { // 매입처
         this.addressLine2 = addressLine2;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User owner) {
-        this.user = owner;
-    }
-
     public Set<Product> getProducts() {
         return products;
     }
@@ -234,11 +244,94 @@ public class Supplier { // 매입처
         this.bio = bio;
     }
 
-    public Set<Balance> getBalances() {
-        return balances;
+    public Set<SupplierTransaction> getSupplierTransactions() {
+        return supplierTransactions;
     }
 
-    public void setBalances(Set<Balance> balances) {
-        this.balances = balances;
+    public void setSupplierTransactions(Set<SupplierTransaction> supplierTransactions) {
+        this.supplierTransactions = supplierTransactions;
+    }
+
+    public SupplyOwner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(SupplyOwner owner) {
+        this.owner = owner;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getDealtAt() {
+        return dealtAt;
+    }
+
+    public void setDealtAt(LocalDateTime dealtAt) {
+        this.dealtAt = dealtAt;
+    }
+
+    public Long getTotalPrevBalance() {
+        return totalPrevBalance;
+    }
+
+    public void setTotalPrevBalance(Long totalPrevFunds) {
+        this.totalPrevBalance = totalPrevFunds;
+    }
+
+    public Long getTotalBalance() {
+        Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            SupplierTransaction supplierTransaction = iterator.next();
+            total += supplierTransaction.getAmount();
+        }
+        return total;
+    }
+
+    public Long getTotalInput() {
+        Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            SupplierTransaction supplierTransaction = iterator.next();
+            if (supplierTransaction.getType().equalsIgnoreCase("order"))
+                total += supplierTransaction.getAmount();
+        }
+        return total;
+    }
+
+    public Long getTotalOutput() {
+        Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            SupplierTransaction supplierTransaction = iterator.next();
+            if (supplierTransaction.getType().equalsIgnoreCase("output"))
+                total += supplierTransaction.getAmount();
+        }
+        return total;
+    }
+
+    public Long getTotalUpdate() {
+        Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
+        Long total = 0L;
+        while (iterator.hasNext()) {
+            SupplierTransaction supplierTransaction = iterator.next();
+            if (supplierTransaction.getType().equalsIgnoreCase("update"))
+                total += supplierTransaction.getAmount();
+        }
+        return total;
     }
 }

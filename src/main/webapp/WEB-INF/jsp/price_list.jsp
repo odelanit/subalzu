@@ -13,6 +13,7 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -20,6 +21,7 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -52,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -165,13 +167,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -245,7 +244,12 @@
                         <div class="card">
                             <div class="card-body">
                                 <form:form method="get" modelAttribute="form">
-                                    <table class="table table-bordered mb-5">
+                                    <table class="table form-table table-bordered mb-5">
+                                        <colgroup>
+                                            <col style="width: 150px;">
+                                            <col style="width: 570px;">
+                                            <col>
+                                        </colgroup>
                                         <tbody class="thead-light">
                                         <tr>
                                             <th>키워드 검색</th>
@@ -266,12 +270,14 @@
                                         <tr>
                                             <th>즉시 검색</th>
                                             <td colspan="2">
-                                                <div class="form-inline">
-                                                    <form:select class="form-control form-control-sm mr-2 w-25" path="category">
-                                                        <option value="">1차 카테고리</option>
+                                                <div class="form-inline" id="imSearch">
+                                                    <form:select class="form-control form-control-sm mr-2 w-20" path="category">
+                                                        <form:option value="" label="1차 카테고리" />
+                                                        <form:options items="${categories}" itemValue="id" itemLabel="name" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm w-25" path="subcategory">
-                                                        <option value="">2차 카테고리</option>
+                                                    <form:select class="form-control form-control-sm w-20" path="subcategory">
+                                                        <form:option value="" label="2차 카테고리" />
+                                                        <form:options items="${subcategories}" itemValue="id" itemLabel="name" />
                                                     </form:select>
                                                 </div>
                                             </td>
@@ -279,23 +285,46 @@
                                         </tbody>
                                     </table>
                                 </form:form>
-                                <div class="row">
+                                <div class="row align-items-center">
                                     <div class="col-lg-6">
 
                                     </div>
-                                    <div class="col-lg-6 text-lg-right">
-                                        <a class="btn btn-outline-primary" href="/prices/fixed-price-rate"
-                                           data-toggle="tooltip"
-                                           data-placement="top"
-                                           title="정액/정률 설정값을 변경할 수 있습니다. 적용하실 상품을 먼저 검색하여 사용하시는 것을 권장합니다.">
-                                            정액/정률 관리
-                                        </a>
+<%--                                    <div class="col-lg-6 text-lg-right">--%>
+<%--                                        <a class="btn btn-sm btn-outline-primary" href="/prices/fixed-price-rate"--%>
+<%--                                           data-toggle="tooltip"--%>
+<%--                                           data-placement="top"--%>
+<%--                                           title="정액/정률 설정값을 변경할 수 있습니다. 적용하실 상품을 먼저 검색하여 사용하시는 것을 권장합니다.">--%>
+<%--                                            정액/정률 관리--%>
+<%--                                        </a>--%>
+<%--                                    </div>--%>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span>전체 ${productPage.totalElements}건</span>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" id="applyAll">전체 적용</button>
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <table class="table table-sm text-center">
+                                    <table class="table table-sm text-center table-middle" id="products">
+                                        <colgroup>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col style="width: 120px;">
+                                            <col style="width: 120px;">
+                                            <col style="width: 120px;">
+                                            <col style="width: 120px;">
+                                            <col style="width: 70px;">
+                                        </colgroup>
                                         <thead class="thead-light">
                                         <tr>
+                                            <th><input type="checkbox" id="selectAll"></th>
                                             <th>#</th>
                                             <th>상품명</th>
                                             <th>카테고리</th>
@@ -308,6 +337,35 @@
                                             <th>적용</th>
                                         </tr>
                                         </thead>
+                                        <tbody>
+                                        <c:forEach var="product" items="${products}">
+                                            <tr data-id="${product.id}">
+                                                <td>
+                                                    <input type="checkbox" class="check" value="${product.id}">
+                                                </td>
+                                                <td>${product.id}</td>
+                                                <td>${product.name}</td>
+                                                <td>${product.category.name}</td>
+                                                <td>${product.standard}<br>(${product.unit})</td>
+                                                <td>${product.makerName}<br>(${product.country})</td>
+                                                <td>
+                                                    <input class="form-control form-control-sm buyPrice" type="number" value="${product.buyPrice}">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm directPrice" type="number" value="${product.directPrice}">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm parcelPrice" type="number" value="${product.parcelPrice}">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm sellPrice" type="number" value="${product.sellPrice}">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="apply btn btn-outline-primary btn-sm">적용</button>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -339,14 +397,136 @@
 
 
 </div>
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $(document).ready(function () {
+        var token = $("meta[name='_csrf']").attr("content");
 
+        $('#imSearch').on('change', function() {
+            $('#form').submit();
+        });
+
+        $('.apply').on('click', function() {
+            var productId = $(this).closest('tr').data('id');
+            var buyPrice = $(this).closest('tr').find('.buyPrice').val();
+            var directPrice = $(this).closest('tr').find('.directPrice').val();
+            var parcelPrice = $(this).closest('tr').find('.parcelPrice').val();
+            var sellPrice = $(this).closest('tr').find('.sellPrice').val();
+
+            if (productId && buyPrice && directPrice && parcelPrice && sellPrice) {
+                if (parseInt(buyPrice) <= 0 || parseInt(directPrice) <= 0 || parseInt(parcelPrice) <= 0 || parseInt(sellPrice) <= 0) {
+                    toastr.error('정수값을 입력하세요.');
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/prices/update',
+                        headers: {
+                            'X-CSRF-TOKEN': token
+                        },
+                        data: {
+                            product: productId,
+                            buyPrice: buyPrice,
+                            directPrice: directPrice,
+                            parcelPrice: parcelPrice,
+                            sellPrice: sellPrice
+                        },
+                        beforeSend: function() {
+                            $("#overlay").fadeIn(300);
+                        },
+                        success: function(data) {
+                            toastr.success(data.message);
+                        }
+                    }).done(function () {
+                        setTimeout(function(){
+                            $("#overlay").fadeOut(300);
+                        },500);
+                    });
+                }
+            } else {
+                toastr.error('값을 정확히 입력하세요.');
+            }
+        });
+
+        $('#selectAll').on('change', function () {
+            $('#products tbody tr .check').prop('checked', $(this).prop('checked'));
+        });
+
+        $('#applyAll').on('click', function () {
+            var checkedElements = $('#products tbody tr .check:checked');
+            if (checkedElements.length <= 0) {
+                toastr.error('변경 입력한 단가가 없습니다.');
+                return false;
+            }
+            var priceInfos = [];
+            checkedElements.each(function() {
+                var productId = $(this).closest('tr').data('id');
+                var buyPrice = $(this).closest('tr').find('.buyPrice').val();
+                var directPrice = $(this).closest('tr').find('.directPrice').val();
+                var parcelPrice = $(this).closest('tr').find('.parcelPrice').val();
+                var sellPrice = $(this).closest('tr').find('.sellPrice').val();
+                var priceInfo = {
+                    product: productId,
+                    buyPrice: buyPrice,
+                    directPrice: directPrice,
+                    parcelPrice: parcelPrice,
+                    sellPrice: sellPrice
+                };
+                priceInfos.push(priceInfo);
+            });
+            var invalidInfo = priceInfos.find(info => parseInt(info.buyPrice) <= 0 || parseInt(info.directPrice) <= 0 || parseInt(info.parcelPrice) <= 0 || parseInt(info.sellPrice) <= 0);
+            if (invalidInfo) {
+                toastr.error('정수값을 입력하세요.');
+                return false;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/prices/update_all',
+                contentType: 'application/json',
+                accept: 'text/plain',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                },
+                data: JSON.stringify(priceInfos),
+                dataType: 'text',
+                beforeSend: function() {
+                    $("#overlay").fadeIn(300);
+                },
+                success: function(data) {
+                    toastr.success(data.message);
+                }
+            }).done(function () {
+                setTimeout(function(){
+                    $("#overlay").fadeOut(300);
+                },500);
+            });
+        });
+    })
+</script>
 </body>
 </html>

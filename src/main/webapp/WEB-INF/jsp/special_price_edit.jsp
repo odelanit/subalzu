@@ -54,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -167,13 +167,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -268,12 +265,14 @@
                                         <tr>
                                             <th>즉시 검색</th>
                                             <td colspan="2">
-                                                <div class="form-inline">
+                                                <div class="form-inline" id="imSearch">
                                                     <form:select class="form-control form-control-sm mr-2 w-25" path="category">
                                                         <option value="">1차 카테고리</option>
+                                                        <form:options items="${categories}" itemValue="id" itemLabel="name" />
                                                     </form:select>
                                                     <form:select class="form-control form-control-sm w-25" path="subcategory">
                                                         <option value="">2차 카테고리</option>
+                                                        <form:options items="${subcategories}" itemValue="id" itemLabel="name" />
                                                     </form:select>
                                                 </div>
                                             </td>
@@ -384,6 +383,11 @@
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
     $(document).ready(function () {
+
+        $('#imSearch').on('change', function() {
+            $('#form').submit();
+        });
+
         var shopId = $('#shop_id').val();
         var token = $('meta[name="_csrf"]').attr('content');
         $('.apply').click(function () {

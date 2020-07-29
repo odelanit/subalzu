@@ -10,7 +10,7 @@ public class ProductGroupPrice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    int price = 0;
+    Long price = 0L;
 
     @ManyToOne
     @JoinColumn(name="product_id")
@@ -32,7 +32,7 @@ public class ProductGroupPrice {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 

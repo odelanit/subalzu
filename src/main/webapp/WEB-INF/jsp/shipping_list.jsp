@@ -17,6 +17,7 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
@@ -52,7 +53,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="/profile" class="nav-link"><i data-feather="user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -165,13 +166,10 @@
 
                         <ul class="nav-second-level" aria-expanded="false">
                             <li>
-                                <a href="/store">입/출고 관리</a>
+                                <a href="/stock">입/출고 관리</a>
                             </li>
                             <li>
-                                <a href="/store-history">입/출고 내역</a>
-                            </li>
-                            <li>
-                                <a href="/store-status">재고 현황</a>
+                                <a href="/stock-history">입/출고 내역</a>
                             </li>
                         </ul>
                     </li>
@@ -244,74 +242,62 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <table class="table form-table table-bordered">
-                                    <tbody class="thead-light">
-                                    <tr>
-                                        <th>기간</th>
-                                        <td>
-                                            <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                                <label class="btn btn-outline-primary active">
-                                                    <input type="radio" name="options" id="option1" checked> 전체
-                                                </label>
-                                                <label class="btn btn-outline-primary">
-                                                    <input type="radio" name="options" id="option2"> 전일
-                                                </label>
-                                                <label class="btn btn-outline-primary">
-                                                    <input type="radio" name="options" id="option3"> 당일
-                                                </label>
-                                                <label class="btn btn-outline-primary">
-                                                    <input type="radio" name="options" id="option4"> 한달
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td rowspan="2" style="vertical-align: middle">
-                                            <button class="btn btn-primary">검색</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>키워드 검색</th>
-                                        <td>
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control form-control-sm">
-                                                        <option>매입처</option>
-                                                    </select>
+                                <form:form modelAttribute="form" method="get">
+                                    <table class="table form-table table-bordered">
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th>기간</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:input path="dateFrom" class="form-control form-control-sm mr-2" />
+                                                    <form:input path="dateTo" class="form-control form-control-sm" />
                                                 </div>
-                                                <div class="col-auto">
-                                                    <input class="form-control form-control" type="text" placeholder="검색어를 입력해주세요">
+                                            </td>
+                                            <td rowspan="2" style="vertical-align: middle">
+                                                <button class="btn btn-primary">검색</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select path="field" class="form-control form-control-sm w-20 mr-2">
+                                                        <form:option value="supplier_name" label="매입처" />
+                                                    </form:select>
+                                                    <form:input path="keyword" class="form-control form-control-sm" placeholder="검색어를 입력해주세요" />
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>즉시 검색</th>
-                                        <td colspan="2">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control form-control-sm">
-                                                        <option>발주 유형</option>
-                                                    </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-row">
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option value="">발주 유형</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option value="">발주 상태</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option value="">매입처 출고상태</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select class="form-control form-control-sm">
+                                                            <option value="">입고 상태</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control form-control-sm">
-                                                        <option>발주 상태</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control form-control-sm">
-                                                        <option>매입처 출고상태</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <select class="form-control form-control-sm">
-                                                        <option>입고 상태</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form:form>
                                 <hr>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -320,7 +306,7 @@
                                         </a>
                                     </div>
                                     <div class="col-md-6 text-md-right mt-md-0 mt-2">
-                                        <a href="javascript:;" class="btn btn-sm btn-outline-danger">
+                                        <a href="/shipping/create" class="btn btn-sm btn-outline-primary">
                                             <i class="fa fa-plus"></i> 신규 발주 등록
                                         </a>
                                     </div>
@@ -338,13 +324,47 @@
                                         <th>발주일시</th>
                                         <th>총 발주수량</th>
                                         <th>발주금액</th>
-                                        <th>발주유형</th>
                                         <th>발주상태</th>
-                                        <th></th>
                                         <th>입고상태</th>
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    <c:forEach items="${orders}" var="order">
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox">
+                                            </td>
+                                            <td>${order.id}</td>
+                                            <td>${order.orderCode}</td>
+                                            <td>${order.supplier.name}</td>
+                                            <td>${order.createdAt.format(localDateTimeFormat)}</td>
+                                            <td>${order.supplyOrderProducts.size()}</td>
+                                            <td>${order.totalAmount}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${order.shippingStatus == 'standby'}">
+                                                        발주 대기
+                                                    </c:when>
+                                                    <c:when test="${order.shippingStatus == 'completed'}">
+                                                        발주 완료
+                                                    </c:when>
+                                                    <c:when test="${order.shippingStatus == 'canceled'}">
+                                                        발주 취소
+                                                    </c:when>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${order.inputStatus == 'standby'}">
+                                                        입고 대기
+                                                    </c:when>
+                                                    <c:when test="${order.inputStatus == 'canceled'}">
+                                                        입고 완료
+                                                    </c:when>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
@@ -379,11 +399,16 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
-
+<script>
+    $('#dateFrom, #dateTo').datepicker({
+        dateFormat: 'yy-mm-dd'
+    })
+</script>
 </body>
 </html>

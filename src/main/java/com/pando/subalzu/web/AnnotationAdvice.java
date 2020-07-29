@@ -35,13 +35,12 @@ public class AnnotationAdvice {
 
     @ModelAttribute("currentCompany")
     public Company getCurrentCompany(Principal principal) {
-        Company company;
         if (principal == null) {
-            company = null;
+            return null;
         }
         else {
-            company = companyRepository.findByUserUsername(principal.getName());
+            Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
+            return optionalCompany.orElse(null);
         }
-        return company;
     }
 }
