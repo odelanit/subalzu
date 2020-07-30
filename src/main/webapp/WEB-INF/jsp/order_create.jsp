@@ -56,7 +56,7 @@
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
-                        value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
@@ -100,12 +100,12 @@
                             <li class="mm-active">
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li>--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -301,8 +301,15 @@
                                             <spring:bind path="requestDate">
                                                 <th>배송요청일</th>
                                                 <td>
-                                                    <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                path="requestDate" />
+                                                    <div class="input-group">
+                                                        <form:input class="form-control ${status.error ? 'is-invalid' : ''}"
+                                                                    path="requestDate" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                     <div class="invalid-feedback">
                                                         <form:errors path="requestDate"/>
                                                     </div>
@@ -404,6 +411,9 @@
                                         </tr>
                                         </thead>
                                         <tbody></tbody>
+                                        <tfoot class="thead-light">
+
+                                        </tfoot>
                                     </table>
                                     <div class="form-group text-center">
                                         <a href="/orders" class="btn btn-dark">목록으로</a>
@@ -490,7 +500,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <div class="modal-title text-light">
-
+                    상품 검색 및 선택
                 </div>
                 <button type="button" class="close text-right" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -508,13 +518,19 @@
                         <th>즉시 검색</th>
                         <td>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-4">
+                                    <form:select path="category" cssClass="form-control form-control-sm">
+                                        <form:option value="" label="카테고리" />
+                                        <form:options items="${categories}" itemValue="id" itemLabel="name" />
+                                    </form:select>
+                                </div>
+                                <div class="col-8">
                                     <form:input path="keyword" cssClass="form-control form-control-sm" placeholder="상품명 또는 상품코드를 입력하세요." />
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-outline-primary">검색</button>
+                            <button class="btn btn-outline-primary">검색</button>
                         </td>
                         </tbody>
                     </table>
@@ -612,17 +628,20 @@
 
     function updateTotal() {
         var totalAmount = 0;
+        var sumQty = 0;
         cartProducts.forEach(function(product) {
             totalAmount += product.qty * product.sellPrice;
+            sumQty += product.qty;
         });
-        $('#totalAmount').html(totalAmount);
+        $('#totalAmount, .total').html(totalAmount);
+        $('.sumQty').html(sumQty);
     }
 
     $('#requestDate').datepicker({
         dateFormat: 'yy-mm-dd'
     });
 
-    $('#selectProductsModal').on('show.bs.modal', function() {
+    function getProducts() {
         $.ajax({
             type: 'GET',
             url: '/products/data_for_order',
@@ -645,7 +664,20 @@
                 $('#productsModal').modal();
             }
         })
+    }
+
+    $('#selectProductsModal').on('show.bs.modal', function() {
+        getProducts();
     });
+
+    $('#searchForm').on('submit', function(e) {
+        e.preventDefault();
+        getProducts();
+    });
+
+    $('#keyword').on('keyup', function(e) {
+        getProducts();
+    })
 
     $('#productsTable tbody').on('click', 'tr', function() {
         var productId = $(this).data('id');
@@ -680,7 +712,11 @@
         $('#selectProductsModal').modal('hide');
 
         var tbodyHtml = '';
+        var sumQty = 0;
+        var total = 0;
         cartProducts.forEach(function (product, index) {
+            sumQty += product.qty;
+            total += product.qty * product.sellPrice;
             var trHtml =
                 '<tr data-id="' + product.id + '">' +
                 '<td>' + product.id + '</td>' +
@@ -689,19 +725,32 @@
                 '<td>' + product.makerName + '</td>' +
                 '<td><input class="form-control form-control-sm qty" style="width: 100px;" type="number" value="' + product.qty + '" /></td>' +
                 '<td><input class="form-control form-control-sm price" style="width: 100px;" type="number" value="' + product.sellPrice + '" /></td>' +
-                '<td>' + product.qty * product.sellPrice + '</td>' +
+                '<td class="subtotal">' + product.qty * product.sellPrice + '</td>' +
                 '<td><button type="button" class="btn btn-outline-danger btn-sm remove">삭제</button></td>' +
                 '</tr>';
             tbodyHtml += trHtml;
         });
 
+        var tfootHtml =
+            '<tr>' +
+            '<th>합계</th>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td class="sumQty">' + sumQty + '</td>' +
+            '<td></td>' +
+            '<td class="total">' + total + '</td>' +
+            '</tr>';
+
         $('#cartTable tbody').html(tbodyHtml);
+        $('#cartTable tfoot').html(tfootHtml);
     });
 
     $('#cartTable tbody').on('click', '.remove', function () {
         var productId = $(this).closest('tr').data('id');
         cartProducts = cartProducts.filter(product => product.id !== productId);
         $(this).closest('tr').remove();
+        updateTotal();
     })
 
     $('#shopping_cart').on('click', 'li .close', function () {
@@ -722,6 +771,32 @@
         updateTotal();
     });
 
+    $('#cartTable').on('keyup', '.qty', function() {
+        var productId = $(this).closest('tr').data('id');
+        var qty = $(this).val();
+        cartProducts.map(product => {
+            if (product.id === productId) {
+                product.qty = parseFloat(qty);
+            }
+        });
+        var sellPrice = $(this).closest('tr').find('.price').val();
+        $(this).closest('tr').find('.subtotal').html(parseFloat(sellPrice) * parseFloat(qty));
+        updateTotal();
+    });
+
+    $('#cartTable').on('keyup', '.price', function() {
+        var productId = $(this).closest('tr').data('id');
+        var qty = $(this).closest('tr').find('.qty').val();
+        var sellPrice = $(this).closest('tr').find('.price').val();
+        cartProducts.map(product => {
+            if (product.id === productId) {
+                product.sellPrice = parseFloat(sellPrice);
+            }
+        });
+        $(this).closest('tr').find('.subtotal').html(parseFloat(sellPrice) * parseFloat(qty));
+        updateTotal();
+    });
+
     $('#resetCart').on('click', function() {
         cartProducts = [];
         $('#shopping_cart').html('');
@@ -731,7 +806,7 @@
     $('#order_form').on('submit', function (e) {
         e.preventDefault();
         var shopId = $('#shop').val();
-        var deliveryType = $('input[name="deliveryType"]').val();
+        var deliveryType = $('input[name="deliveryType"]:checked').val();
         var requestDate = $('#requestDate').val();
         var delivererId = $('#deliverer').val();
         var salesmanId = $('#salesMan').val();
@@ -760,7 +835,6 @@
                 'X-CSRF-TOKEN': token,
             },
             data: JSON.stringify(order),
-            dataType: 'text',
             beforeSend: function() {
                 $("#overlay").fadeIn(300);
             },

@@ -27,22 +27,35 @@ public class ShippingSearchForm {
     public ShippingSearchForm() {
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        Date end = calendar.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateTo = dateFormat.format(end);
+
+        calendar.add(Calendar.DATE, -1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         Date beginning = calendar.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFrom = dateFormat.format(beginning);
-
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        Date end = calendar.getTime();
-        dateTo = dateFormat.format(end);
+//        Calendar calendar = GregorianCalendar.getInstance();
+//        calendar.setTime(new Date());
+//        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+//        Date beginning = calendar.getTime();
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        dateFrom = dateFormat.format(beginning);
+//
+//        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+//        calendar.set(Calendar.HOUR_OF_DAY, 23);
+//        calendar.set(Calendar.MINUTE, 59);
+//        calendar.set(Calendar.SECOND, 59);
+//        calendar.set(Calendar.MILLISECOND, 999);
+//        Date end = calendar.getTime();
+//        dateTo = dateFormat.format(end);
     }
 
     public String getField() {

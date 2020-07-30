@@ -17,6 +17,7 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
@@ -52,7 +53,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -94,12 +95,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li>--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li class="mm-active">--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li class="mm-active">
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -240,145 +241,159 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <div class="col-8">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">기간</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control" placeholder="2019-01-01 to 2019-12-31">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">키워드 검색</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control">
-                                                            <option>거래처명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 align-self-center text-right">
-                                        <button class="btn btn-primary">검색</button>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form>
-                                    <div class="form-group row">
-                                        <label class="col-form-label col-lg-2">즉시 검색</label>
-                                        <div class="col-lg-10">
-                                            <div class="form-row">
-                                                <div class="col-auto">
-                                                    <select class="form-control">
-                                                        <option>처리 담당자</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <a href="/returns/transaction-details" class="btn btn-outline-primary">
-                                            <i data-feather="file-text" class="icon-xs"></i> 반품 거래명세표 출력
-                                        </a>
-                                    </div>
-                                    <div class="col-md-6 text-md-right mt-md-0 mt-2">
-                                        <a href="/returns/create" class="btn btn-outline-danger">
-                                            <i data-feather="file-plus" class="icon-xs"></i> 반품 등록
-                                        </a>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
+                                <form:form modelAttribute="form" method="get">
+                                    <form:hidden path="page" />
+                                    <table class="table table-bordered form-table">
+                                        <tbody class="thead-light">
                                         <tr>
-                                            <th>
-                                                <input type="checkbox">
-                                            </th>
-                                            <th>#</th>
-                                            <th>반품일시</th>
-                                            <th>주문번호</th>
-                                            <th>거래처</th>
-                                            <th>총 주문수량</th>
-                                            <th>주문금액</th>
-                                            <th>총 반품수량</th>
-                                            <th>반품금액</th>
-                                            <th>처리 담당자</th>
-                                            <th>출고상태</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td><input type="checkbox"></td>
-                                            <td><a href="/returns/1">1</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고전</td>
+                                            <th>기간</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:input path="dateFrom" class="form-control form-control-sm" placeholder="" />
+                                                    <span class="px-2">-</span>
+                                                    <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
+                                                </div>
+                                            </td>
+                                            <td rowspan="2">
+                                                <button class="btn btn-sm btn-outline-primary">검색</button>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td><input type="checkbox"></td>
-                                            <td><a href="/returns/2">2</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고 거절</td>
+                                            <th>키워드 검색</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <form:select class="form-control form-control-sm mr-2 w-20" path="field">
+                                                        <form:option value="shopName" label="거래처명" />
+                                                        <form:option value="orderCode" label="주문번호" />
+                                                    </form:select>
+                                                    <form:input class="form-control form-control-sm w-40" path="keyword" placeholder="검색어를 입력해주세요" />
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td><input type="checkbox"></td>
-                                            <td><a href="/returns/3">3</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고 완료</td>
+                                            <th>즉시 검색</th>
+                                            <td colspan="2">
+                                                <div class="form-inline" id="imSearch">
+                                                    <form:select class="form-control form-control-sm w-10 mr-2" path="deliverer">
+                                                        <form:option value="" label="처리 담당자" />
+                                                        <form:options items="${deliverers}" itemValue="id" itemLabel="fullName" />
+                                                    </form:select>
+                                                </div>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
+                                </form:form>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <a href="/returns/transaction-details" class="btn btn-sm btn-outline-primary">
+                                            <i data-feather="file-text" class="icon-xs"></i> 반품 거래명세표 출력
+                                        </a>
+                                    </div>
+<%--                                    <div class="col-md-6 text-md-right mt-md-0 mt-2">--%>
+<%--                                        <a href="/returns/create" class="btn btn-outline-danger">--%>
+<%--                                            <i data-feather="file-plus" class="icon-xs"></i> 반품 등록--%>
+<%--                                        </a>--%>
+<%--                                    </div>--%>
                                 </div>
+                                <table class="table table-middle text-center table-hover">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox">
+                                        </th>
+                                        <th>#</th>
+                                        <th>반품일시</th>
+                                        <th>주문번호</th>
+                                        <th>거래처</th>
+                                        <th>총 주문수량</th>
+                                        <th>주문금액</th>
+                                        <th>총 반품수량</th>
+                                        <th>반품금액</th>
+                                        <th>처리 담당자</th>
+                                        <th>출고상태</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${orders}" var="order">
+                                        <tr onclick="window.location.href='/orders/${order.id}'">
+                                            <td><input type="checkbox" value="${order.id}"></td>
+                                            <td>${order.id}</td>
+                                            <td>${order.returnedAt.format(localDateTimeFormat)}</td>
+                                            <td>${order.orderCode}</td>
+                                            <td>${order.shop.name}</td>
+                                            <td>${order.orderProducts.size()}</td>
+                                            <td>${order.totalAmount}</td>
+                                            <td>${order.returnOrderProducts.size()}</td>
+                                            <td>${order.returnAmount}</td>
+                                            <td>
+                                                ${order.deliverer.fullName}
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${order.releaseStatus == 'progress'}">
+                                                        출고전
+                                                    </c:when>
+                                                    <c:when test="${order.releaseStatus == 'completed'}">
+                                                        출고완료
+                                                    </c:when>
+                                                    <c:when test="${order.releaseStatus == 'rejected'}">
+                                                        출고거절
+                                                    </c:when>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                    <c:if test="${orderPage.totalPages > 1}">
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="11">
+                                                <nav>
+                                                    <ul class="pagination justify-content-center">
+                                                        <c:choose>
+                                                            <c:when test="${orderPage.hasPrevious()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <c:forEach var="i" begin="1" end="${orderPage.totalPages}">
+                                                            <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                        </c:forEach>
+                                                        <c:choose>
+                                                            <c:when test="${orderPage.hasNext()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </c:if>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -411,11 +426,32 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $('#dateFrom').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+    $('#dateTo').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
 
+    $('#imSearch select').on('change', function () {
+        $('#form').submit();
+    });
+
+    $('.page-link').on('click', function() {
+        var pageNo = $(this).data('page');
+        if (pageNo) {
+            $('#page').val(pageNo);
+            $('#form').submit();
+        }
+    })
+
+</script>
 </body>
 </html>

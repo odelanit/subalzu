@@ -1,6 +1,6 @@
 package com.pando.subalzu.form;
 
-import com.pando.subalzu.model.User;
+import com.pando.subalzu.model.Category;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -8,11 +8,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class OrderSearchForm {
+public class OrderProductSearchForm {
 
-    String dateField = "createdAt";
+    String dateField = "order_createdAt";
 
-    String field = "shopName";
+    String field = "product_name";
+
+    String shopKeyword = "";
 
     String keyword = "";
 
@@ -26,13 +28,13 @@ public class OrderSearchForm {
 
     String releaseStatus;
 
-    User deliverer;
+    Category category;
 
-    User salesman;
+    Category subcategory;
 
     int page = 1;
 
-    public OrderSearchForm() {
+    public OrderProductSearchForm() {
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(new Date());
         Date end = calendar.getTime();
@@ -112,27 +114,35 @@ public class OrderSearchForm {
         this.orderStatus = orderStatus;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Category getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(Category subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public String getShopKeyword() {
+        return shopKeyword;
+    }
+
+    public void setShopKeyword(String shopKeyword) {
+        this.shopKeyword = shopKeyword;
+    }
+
     public String getReleaseStatus() {
         return releaseStatus;
     }
 
     public void setReleaseStatus(String releaseStatus) {
         this.releaseStatus = releaseStatus;
-    }
-
-    public User getDeliverer() {
-        return deliverer;
-    }
-
-    public void setDeliverer(User deliverer) {
-        this.deliverer = deliverer;
-    }
-
-    public User getSalesman() {
-        return salesman;
-    }
-
-    public void setSalesman(User salesman) {
-        this.salesman = salesman;
     }
 }

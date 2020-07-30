@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -17,6 +18,7 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
@@ -52,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -94,12 +96,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li class="mm-active">--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li class="mm-active">
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -240,19 +242,25 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-row">
-                                    <table class="table table-bordered form-table">
+                                <form:form modelAttribute="form" method="get">
+                                    <form:hidden path="page" />
+                                    <table class="table table-bordered form-table mb-5">
+                                        <colgroup>
+                                            <col width="100">
+                                            <col width="570">
+                                            <col width="*">
+                                        </colgroup>
                                         <tbody class="thead-light">
                                         <tr>
                                             <th>기간 구분</th>
                                             <td>
                                                 <div class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" id="customRadioInline1" class="custom-control-input">
+                                                    <form:radiobutton path="dateField" id="customRadioInline1" class="custom-control-input" value="order_createdAt" />
                                                     <label class="custom-control-label" for="customRadioInline1">주문 일시</label>
                                                 </div>
                                                 <div class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" id="customRadioInline2" class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadioInline2">배송 요정일</label>
+                                                    <form:radiobutton path="dateField" id="customRadioInline2" class="custom-control-input" value="order_requestDate" />
+                                                    <label class="custom-control-label" for="customRadioInline2">배송 요청일</label>
                                                 </div>
                                             </td>
                                             <td rowspan="3">
@@ -262,25 +270,23 @@
                                         <tr>
                                             <th>기간</th>
                                             <td>
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                                            <label class="btn btn-outline-primary active">
-                                                                <input type="radio" name="options" id="option1" checked> 전체
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option2"> 전일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option3"> 당일
-                                                            </label>
-                                                            <label class="btn btn-outline-primary">
-                                                                <input type="radio" name="options" id="option4"> 한달
-                                                            </label>
+                                                <div class="form-inline">
+                                                    <div class="input-group">
+                                                        <form:input path="dateFrom" class="form-control form-control-sm" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-auto">
-                                                        <input type="text" id="range-datepicker" class="form-control form-control-sm" placeholder="2019-01-01 to 2019-12-31">
+                                                    <span class="mx-2">-</span>
+                                                    <div class="input-group">
+                                                        <form:input path="dateTo" class="form-control form-control-sm" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -288,123 +294,159 @@
                                         <tr>
                                             <th>거래처 검색</th>
                                             <td>
-                                                <input class="form-control form-control-sm" type="text" placeholder="검색어를 입력해주세요.">
+                                                <form:input path="shopKeyword" class="form-control form-control-sm" placeholder="검색어를 입력해주세요." />
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>키워드 검색</th>
                                             <td colspan="2">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option>상품명</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input class="form-control form-control-sm" type="text" placeholder="검색어를 입력해주세요">
-                                                    </div>
+                                                <div class="form-inline">
+                                                    <form:select class="form-control form-control-sm w-10 mr-2" path="field">
+                                                        <form:option value="product_name" label="상품명" />
+                                                        <form:option value="product_erpCode" label="상품코드" />
+                                                        <form:option value="order_code" label="주문번호" />
+                                                    </form:select>
+                                                    <form:input path="keyword" class="form-control form-control-sm w-20" placeholder="검색어를 입력해주세요" />
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>즉시 검색</th>
                                             <td colspan="2">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option>배송유형</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option>주문상태</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option>1차 카테고리</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option>2차 카테고리</option>
-                                                        </select>
-                                                    </div>
+                                                <div class="form-inline" id="imSearch">
+                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="deliveryType">
+                                                        <form:option value="" label="배송유형" />
+                                                        <form:option value="direct" label="직배송" />
+                                                        <form:option value="parcel" label="택배배송" />
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="orderStatus">
+                                                        <form:option value="" label="주문상태" />
+                                                        <form:option value="completed" label="주문완료" />
+                                                        <form:option value="modified" label="주문변경" />
+                                                        <form:option value="canceled" label="주문취소" />
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="releaseStatus">
+                                                        <form:option value="" label="출고상태" />
+                                                        <form:option value="progress" label="출고전" />
+                                                        <form:option value="completed" label="출고완료" />
+                                                        <form:option value="rejected" label="출고거절" />
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="category">
+                                                        <form:option value="" label="1차 카테고리" />
+                                                        <form:options items="${categories}" itemValue="id" itemLabel="name" />
+                                                    </form:select>
+                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="subcategory">
+                                                        <form:option value="" label="2차 카테고리" />
+                                                    </form:select>
                                                 </div>
                                             </td>
                                         </tr>
                                         </tbody>
                                     </table>
-                                </form>
-                                <hr>
-                                <div class="row mb-3">
+                                </form:form>
+                                <div class="row mb-3 align-items-center">
                                     <div class="col-6">
-                                        <span>전체 0건</span>
+                                        <span>전체 ${orderProductPage.totalElements}건</span>
                                     </div>
-                                    <div class="col-6">
-
+                                    <div class="col-6 text-right">
+                                        <span>* 전일~당일까지의 주문내역이 기본으로 노출됩니다.</span>
+<%--                                        <a class="btn btn-sm btn-outline-excel" href=""><i class="fa fa-file-excel"></i>Excel 다운로드</a>--%>
                                     </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>주문일시</th>
-                                            <th>배송요청일</th>
-                                            <th>주문번호</th>
-                                            <th>거래처</th>
-                                            <th>상품명</th>
-                                            <th>판매규격(단위)</th>
-                                            <th>주문수량</th>
-                                            <th>단가</th>
-                                            <th>대표매입처</th>
-                                            <th>주문상태</th>
+                                <table class="table text-center table-middle table-hover" id="orderProducts">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>주문일시</th>
+                                        <th>배송요청일</th>
+                                        <th>주문번호</th>
+                                        <th>거래처</th>
+                                        <th>상품명</th>
+                                        <th>판매규격(단위)</th>
+                                        <th>주문수량</th>
+                                        <th>단가</th>
+                                        <th>대표매입처</th>
+                                        <th>주문상태</th>
+                                        <th>출고상태</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${orderProducts}" var="orderProduct">
+                                        <tr data-order="${orderProduct.order.id}">
+                                            <td>${orderProduct.id}</td>
+                                            <td>${orderProduct.order.createdAt.format(localDateTimeFormat)}</td>
+                                            <td><fmt:formatDate value="${orderProduct.order.requestDate}" pattern="yyyy-MM-dd" /></td>
+                                            <td>${orderProduct.order.orderCode}</td>
+                                            <td>${orderProduct.order.shop.name}</td>
+                                            <td>${orderProduct.product.name}</td>
+                                            <td>${orderProduct.product.standard}<br>(${orderProduct.product.unit})</td>
+                                            <td>${orderProduct.qty}</td>
+                                            <td>${orderProduct.price}</td>
+                                            <td>${orderProduct.product.supplier.name}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${orderProduct.order.orderStatus == 'completed'}">주문완료</c:when>
+                                                    <c:when test="${orderProduct.order.orderStatus == 'canceled'}">주문취소</c:when>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${orderProduct.order.releaseStatus == 'progress'}">출고전</c:when>
+                                                    <c:when test="${orderProduct.order.releaseStatus == 'rejected'}">출고거절</c:when>
+                                                    <c:when test="${orderProduct.order.releaseStatus == 'completed'}">출고완료</c:when>
+                                                </c:choose>
+                                            </td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
+                                    </c:forEach>
+                                    </tbody>
+                                    <c:if test="${orderProductPage.totalPages > 1}">
+                                        <tfoot>
                                         <tr>
-                                            <td><a href="/orders/1">1</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고전</td>
+                                            <td colspan="11">
+                                                <nav>
+                                                    <ul class="pagination justify-content-center">
+                                                        <c:choose>
+                                                            <c:when test="${orderProductPage.hasPrevious()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <c:forEach var="i" begin="1" end="${orderProductPage.totalPages}">
+                                                            <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                        </c:forEach>
+                                                        <c:choose>
+                                                            <c:when test="${orderProductPage.hasNext()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </nav>
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td><a href="/orders/2">2</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고 거절</td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="/orders/3">3</a></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>출고 완료</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        </tfoot>
+                                    </c:if>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -437,11 +479,35 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#dateFrom, #dateTo').datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
 
+        $('#orderProducts tbody tr').on('click', function () {
+            var orderId = $(this).data('order');
+            window.location.href = '/orders/' + orderId;
+        });
+
+        $('#imSearch select').on('change', function() {
+            $('#form').submit();
+        });
+
+        $('.page-link').on('click', function() {
+            var pageNo = $(this).data('page');
+            if (pageNo) {
+                $('#page').val(pageNo);
+                $('#form').submit();
+            }
+        })
+    });
+</script>
 </body>
 </html>

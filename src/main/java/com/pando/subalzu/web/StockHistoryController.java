@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
@@ -66,7 +67,7 @@ public class StockHistoryController {
             spec = Specification.where(spec).and(new ProductRecordSpecification(new SearchCriteria("createdAt", "<>", dateTimePair)));
         }
 
-        Pageable pageable = PageRequest.of(page - 1, 50);
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
         recordPage = productRecordRepository.findAll(spec, pageable);
         List<ProductRecord> records = recordPage.getContent();
 

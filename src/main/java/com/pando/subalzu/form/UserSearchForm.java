@@ -2,9 +2,9 @@ package com.pando.subalzu.form;
 
 public class UserSearchForm {
 
-    String field;
+    String field = "fullName";
 
-    String keyword;
+    String keyword = "";
 
     int page = 1;
 

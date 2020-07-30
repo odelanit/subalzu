@@ -26,9 +26,15 @@ public class OrderProduct {
 
     int qty = 0;
 
+    @Column(nullable = false)
+    int returnQty = 0;
+
     Long price;
 
     Long totalAmount;
+
+    @Column(nullable = false)
+    Long returnAmount = 0L;
 
     public Long getId() {
         return id;
@@ -84,5 +90,21 @@ public class OrderProduct {
 
     public void setTotalAmount(Long totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public int getReturnQty() {
+        return returnQty;
+    }
+
+    public void setReturnQty(int returnQty) {
+        this.returnQty = returnQty;
+    }
+
+    public Long getReturnAmount() {
+        return returnAmount;
+    }
+
+    public void setReturnAmount(Long returnAmount) {
+        this.returnAmount = returnAmount;
     }
 }

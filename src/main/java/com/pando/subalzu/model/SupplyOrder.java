@@ -6,7 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Set;
 
 @Entity
@@ -33,7 +35,8 @@ public class SupplyOrder {
     @Column(columnDefinition = "TEXT")
     String description;
 
-    Long totalAmount;
+    @Column(nullable = false)
+    Long totalAmount = 0L;
 
     String shippingStatus = "standby"; // standby: 발주 대기, completed: 발주 완료, canceled: 발주 취소
 
@@ -48,6 +51,17 @@ public class SupplyOrder {
 
     @OneToMany(mappedBy = "supplyOrder")
     Set<SupplyOrderProduct> supplyOrderProducts;
+
+    public SupplyOrder() {
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        deliverBy = calendar.getTime();
+    }
 
     public Long getId() {
         return id;

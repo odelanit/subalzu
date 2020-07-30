@@ -307,7 +307,7 @@ public class Supplier { // 매입처
         Long total = 0L;
         while (iterator.hasNext()) {
             SupplierTransaction supplierTransaction = iterator.next();
-            if (supplierTransaction.getType().equalsIgnoreCase("order"))
+            if (supplierTransaction.getType().equalsIgnoreCase("shipping"))
                 total += supplierTransaction.getAmount();
         }
         return total;

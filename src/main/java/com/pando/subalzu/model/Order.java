@@ -7,9 +7,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "orders")
@@ -53,15 +54,33 @@ public class Order {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private LocalDateTime returnedAt;
+
     @OneToMany(mappedBy = "order")
     @JsonManagedReference
     Set<OrderProduct> orderProducts;
 
     Long totalAmount;
 
+    Long returnAmount = 0L;
+
+    @Column(columnDefinition = "TEXT")
+    String releaseCancelMemo;
+
     String orderStatus = "completed" ; // completed, modified, canceled,
 
     String releaseStatus = "progress"; // completed, progress, rejected,
+
+    public Order() {
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        requestDate = calendar.getTime();
+    }
 
     public Long getId() {
         return id;
@@ -181,5 +200,39 @@ public class Order {
 
     public void setReleaseStatus(String releaseStatus) {
         this.releaseStatus = releaseStatus;
+    }
+
+    public String getReleaseCancelMemo() {
+        return releaseCancelMemo;
+    }
+
+    public void setReleaseCancelMemo(String releaseCancelMemo) {
+        this.releaseCancelMemo = releaseCancelMemo;
+    }
+
+    public Long getReturnAmount() {
+        return returnAmount;
+    }
+
+    public void setReturnAmount(Long returnAmount) {
+        this.returnAmount = returnAmount;
+    }
+
+    public LocalDateTime getReturnedAt() {
+        return returnedAt;
+    }
+
+    public void setReturnedAt(LocalDateTime returnedAt) {
+        this.returnedAt = returnedAt;
+    }
+
+    public Set<OrderProduct> getReturnOrderProducts() {
+        Set<OrderProduct> returnOrderProducts = new HashSet<>();
+        for (OrderProduct orderProduct : this.orderProducts) {
+            if (orderProduct.getReturnQty() > 0) {
+                returnOrderProducts.add(orderProduct);
+            }
+        }
+        return returnOrderProducts;
     }
 }

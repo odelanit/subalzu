@@ -23,7 +23,7 @@ public class CompanyValidator implements Validator {
         Company company = (Company) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ownerName", "NotEmpty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "registeredNumber", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "erpCode", "NotEmpty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "vendorName", "NotEmpty");
     }
 }

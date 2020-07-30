@@ -18,7 +18,7 @@ public class Company {
 
     private String ownerName;
 
-    private String registeredNumber;
+    private String erpCode;
 
     private String vendorName;
 
@@ -77,12 +77,12 @@ public class Company {
         this.ownerName = ownerName;
     }
 
-    public String getRegisteredNumber() {
-        return registeredNumber;
+    public String getErpCode() {
+        return erpCode;
     }
 
-    public void setRegisteredNumber(String registeredNumber) {
-        this.registeredNumber = registeredNumber;
+    public void setErpCode(String registeredNumber) {
+        this.erpCode = registeredNumber;
     }
 
     public String getVendorName() {

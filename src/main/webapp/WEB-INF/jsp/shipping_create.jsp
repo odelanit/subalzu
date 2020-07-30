@@ -56,7 +56,7 @@
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
-                        value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
@@ -100,12 +100,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <%--                            <li>--%>
-                            <%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-                            <%--                            </li>--%>
-                            <%--                            <li>--%>
-                            <%--                                <a href="/returns">반품 내역</a>--%>
-                            <%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="mm-active">
@@ -315,10 +315,13 @@
                                             <th>제조사(원산지)</th>
                                             <th>수량</th>
                                             <th>매입단가(원)</th>
+                                            <th>합계금액(원)</th>
                                             <th>삭제</th>
                                         </tr>
                                         </thead>
                                         <tbody></tbody>
+                                        <tfoot class="thead-light">
+                                        </tfoot>
                                     </table>
                                     <div class="form-group text-center">
                                         <a href="/shipping/" class="btn btn-outline-secondary">목록으로</a>
@@ -366,6 +369,7 @@
                 <table class="table table-sm table-hover text-center" id="selectProducts">
                     <thead class="thead-light">
                     <tr>
+                        <th></th>
                         <th>상품코드</th>
                         <th>상품명</th>
                         <th>카테고리</th>
@@ -439,9 +443,10 @@
                     allProducts.forEach(function (product, index) {
                         var trHtml =
                             '<tr data-id="' + product.id + '">' +
+                                '<td><input type="checkbox" value="' + product.id + '" /></td>' +
                                 '<td>' + product.erpCode + '</td>' +
                                 '<td>' + product.name + '</td>' +
-                                '<td>' + product.category.name + '</td>' +
+                                '<td>' + (product.category ? product.category.name : '') + '</td>' +
                                 '<td>' + product.standard + '(' + product.unit + ')' + '</td>' +
                                 '<td>' + product.makerName + '(' + product.country + ')' +  '</td>' +
                                 '<td>' + product.buyPrice + '</td>' +
@@ -457,40 +462,77 @@
 
         $('#selectProducts tbody').on('click', 'tr', function() {
             var trElement = $(this);
+            var checkboxEl = trElement.find('input[type="checkbox"]');
+            checkboxEl.prop('checked', !checkboxEl.prop('checked'));
             var productId = trElement.data('id');
             var cartItem = selectedProducts.find(product => product.id === productId);
             var selectedProduct = allProducts.find(product => product.id === productId);
-            if (cartItem) {
-                selectedProducts.map(product => {
-                    if (product.id === productId) product.qty++;
-                })
-            } else {
+            if (checkboxEl.prop('checked')) {
                 cartItem = selectedProduct;
                 cartItem.qty = 1;
                 selectedProducts.push(cartItem);
+            } else {
+                selectedProducts = selectedProducts.filter(product => product.id != productId);
             }
         });
 
         $('#confirmButton').on('click', function () {
             var tableElement = $('#products');
             var tbodyHtml = '';
+            var tfootHtml = '';
+            var sumQty = 0;
+            var totalFunds = 0;
             selectedProducts.forEach(function (product, index) {
+                var subTotal = product.qty * product.buyPrice;
+                sumQty += product.qty;
+                totalFunds += subTotal;
                 var trHtml =
                     '<tr data-id="' + product.id + '">' +
                     '<td>' + product.id + '<input name="product" value="' + product.id + '" type="hidden" /></td>' +
                     '<td>' + product.name + '</td>' +
-                    '<td>' + product.category.name + '</td>' +
+                    '<td>' + (product.category ? product.category.name : '') + '</td>' +
                     '<td>' + product.standard + '(' + product.unit + ')' + '</td>' +
                     '<td>' + product.makerName + '(' + product.country + ')' +  '</td>' +
                     '<td><input class="form-control" type="number" name="qty" value="' + product.qty + '"/></td>' +
                     '<td><input class="form-control" type="number" name="price" value="' + product.buyPrice + '"/></td>' +
+                    '<td class="subtotal">' + subTotal + '</td>' +
                     '<td><button type="button" class="btn btn-sm btn-danger deleteProduct"><i class="fa fa-trash"></i></button></td>' +
                     '</tr>';
                 tbodyHtml += trHtml;
             });
+            tfootHtml =
+                '<tr>' +
+                '<th>합계</th>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td class="sumQty">' + sumQty + '</td>' +
+                '<td></td>' +
+                '<td class="total">' + totalFunds + '</td>' +
+                '<td></td>' +
+                '</tr>';
             tableElement.find('tbody').html(tbodyHtml);
+            tableElement.find('tfoot').html(tfootHtml);
             $('#productsModal').modal('hide');
         });
+
+        $('#products tbody').on('keyup', 'input', function() {
+            var trElement = $(this).closest('tr');
+            var qty = parseFloat(trElement.find('input[name="qty"]').val());
+            var buyPrice = parseFloat(trElement.find('input[name="price"]').val());
+            trElement.find('.subtotal').html(qty * buyPrice);
+            var sumQty = 0;
+            var totalFunds = 0;
+            $('#products tbody tr').each(function() {
+                var qty = parseFloat($(this).find('input[name="qty"]').val());
+                var buyPrice = parseFloat($(this).find('input[name="price"]').val());
+                totalFunds += qty * buyPrice;
+                sumQty += qty;
+            });
+            $('#products tfoot .sumQty').html(sumQty);
+            $('#products tfoot .total').html(totalFunds);
+        })
 
         $('#shippingForm').on('submit', function(e) {
             e.preventDefault();
@@ -521,8 +563,6 @@
                 supplyOrderProducts: supplyOrderProducts
             };
 
-            console.log(supplyOrder);
-
             var token = $("meta[name='_csrf']").attr("content");
 
             $.ajax({
@@ -534,7 +574,6 @@
                     'X-CSRF-TOKEN': token,
                 },
                 data: JSON.stringify(supplyOrder),
-                dataType: 'text',
                 beforeSend: function() {
                     $("#overlay").fadeIn(300);
                 },

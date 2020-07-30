@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.pando.subalzu.form.ShippingSearchForm;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
-import com.pando.subalzu.specification.ProductRecordSpecification;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.SupplyOrderSpecification;
 import com.pando.subalzu.validator.ShippingValidator;
@@ -17,8 +16,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -48,6 +49,9 @@ public class ShippingController {
     ShippingProductRepository shippingProductRepository;
 
     @Autowired
+    ProductRecordRepository productRecordRepository;
+
+    @Autowired
     ShippingValidator shippingValidator;
 
     @Autowired
@@ -56,14 +60,14 @@ public class ShippingController {
     public String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
             builder.append(ALPHA_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
     }
 
     @GetMapping("")
-    public String index(@ModelAttribute("form")ShippingSearchForm form, Model model) {
+    public String index(@ModelAttribute("form") ShippingSearchForm form, Model model) {
         String field = form.getField();
         String keyword = form.getKeyword();
         String strDateFrom = form.getDateFrom();
@@ -113,9 +117,9 @@ public class ShippingController {
     @ResponseBody
     public Map<String, String> store(@RequestBody Map<String, Object> requestMap) throws ParseException {
         Long supplierId = Long.parseLong((String) requestMap.get("supplier"));
-        Long userId = Long.parseLong((String) requestMap.get("user")) ;
-        String strDeliverBy = (String)requestMap.get("deliverBy");
-        String description = (String)requestMap.get("description");
+        Long userId = Long.parseLong((String) requestMap.get("user"));
+        String strDeliverBy = (String) requestMap.get("deliverBy");
+        String description = (String) requestMap.get("description");
         Date deliverBy = new SimpleDateFormat("yyyy-MM-dd").parse(strDeliverBy);
 
         Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
@@ -135,7 +139,7 @@ public class ShippingController {
 
             long total = 0L;
 
-            for (Map<String, Object> orderProductMap: orderProductMapList) {
+            for (Map<String, Object> orderProductMap : orderProductMapList) {
                 Long productId = Long.parseLong((String) orderProductMap.get("product"));
                 int qty = Integer.parseInt((String) orderProductMap.get("qty"));
                 Long price = Long.parseLong((String) orderProductMap.get("price"));
@@ -159,19 +163,85 @@ public class ShippingController {
 
             supplyOrder.setTotalAmount(total);
             supplyOrderRepository.save(supplyOrder);
-
-            SupplierTransaction transaction = new SupplierTransaction();
-            transaction.setSupplier(supplier);
-            transaction.setType("order");
-            transaction.setMethod("manual_order");
-            transaction.setAmount(total);
-            transaction.setTotalAmount(supplierTransactionRepository.sumSupplierAmount(supplier) + total);
-            transaction.setDescription(supplyOrder.getOrderCode() + " 발주 확정");
-            supplierTransactionRepository.save(transaction);
         }
 
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;
+    }
+
+    @PostMapping("/order_complete")
+    @ResponseBody
+    public Map<String, String> complete(@RequestBody Map<String, String> requestMap, Principal principal) {
+        Long id = Long.valueOf(requestMap.get("id"));
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
+        if (optionalSupplyOrder.isPresent()) {
+            SupplyOrder supplyOrder = optionalSupplyOrder.get();
+            Set<SupplyOrderProduct> supplyOrderProducts = supplyOrder.getSupplyOrderProducts();
+            Long total = 0L;
+            for (SupplyOrderProduct supplyOrderProduct : supplyOrderProducts) {
+                total += supplyOrderProduct.getTotalAmount();
+
+                Product product = supplyOrderProduct.getProduct();
+                double previousQty = product.getQty();
+
+                product.setQty(previousQty + supplyOrderProduct.getQty());
+                productRepository.save(product);
+
+                ProductRecord productRecord = new ProductRecord();
+                productRecord.setProduct(supplyOrderProduct.getProduct());
+                productRecord.setPreviousQty(previousQty);
+                productRecord.setDiff(supplyOrderProduct.getQty());
+                productRecord.setAction("shipping_input");
+                Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                optionalUser.ifPresent(productRecord::setUser);
+                productRecord.setPreviousQty(previousQty);
+                productRecordRepository.save(productRecord);
+            }
+            SupplierTransaction transaction = new SupplierTransaction();
+            transaction.setSupplier(supplyOrder.getSupplier());
+            transaction.setType("shipping");
+            transaction.setMethod("manual_order");
+            transaction.setAmount(total);
+            Long prevSumTotal = supplierTransactionRepository.sumSupplierAmount(supplyOrder.getSupplier());
+            if (prevSumTotal == null) prevSumTotal = 0L;
+            transaction.setTotalAmount(prevSumTotal + total);
+            transaction.setDescription(supplyOrder.getOrderCode() + " 발주 확정");
+            supplierTransactionRepository.save(transaction);
+            supplyOrder.setShippingStatus("completed");
+            supplyOrderRepository.save(supplyOrder);
+        }
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @GetMapping("/{id}")
+    public String edit(Model model, @PathVariable Long id) {
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
+        if (optionalSupplyOrder.isPresent()) {
+            model.addAttribute("shippingForm", optionalSupplyOrder.get());
+            return "shipping_edit";
+        }
+        return "redirect:/shipping";
+    }
+
+    @PostMapping("/{id}")
+    public String update(Model model, @PathVariable Long id, SupplyOrder shippingForm, BindingResult bindingResult) {
+        shippingValidator.validate(shippingForm, bindingResult);
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
+        if (optionalSupplyOrder.isPresent()) {
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("shippingForm", optionalSupplyOrder.get());
+                return "shipping_edit";
+            }
+            SupplyOrder supplyOrder = optionalSupplyOrder.get();
+            supplyOrder.setSupplier(shippingForm.getSupplier());
+            supplyOrder.setUser(shippingForm.getUser());
+            supplyOrder.setDeliverBy(shippingForm.getDeliverBy());
+            supplyOrder.setDescription(shippingForm.getDescription());
+            supplyOrderRepository.save(supplyOrder);
+        }
+        return "redirect:/shipping";
     }
 }

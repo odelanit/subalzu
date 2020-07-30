@@ -7,26 +7,26 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8"/>
-    <title>Pando</title>
+    <title>Pando Subalzu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="" name="description"/>
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
-
 </head>
-
 <body class="left-side-menu-dark">
-
 <!-- Begin page -->
 <div id="wrapper">
 
@@ -55,10 +55,12 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/></a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
+                <a href="javascript:;" class="nav-link"
+                   onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>
@@ -70,8 +72,9 @@
     <div class="left-side-menu">
         <div class="side-menu-logo">
             <a href="/">
-                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
-                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
+                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon"/>
+                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40"
+                     class="logo-full"/>
             </a>
         </div>
         <div class="sidebar-content">
@@ -105,7 +108,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="mm-active">
                         <a href="javascript: void(0);">
                             <i class="fa fa-folder"></i>
                             <span> 매입 관리 </span>
@@ -113,7 +116,7 @@
                         </a>
 
                         <ul class="nav-second-level" aria-expanded="false">
-                            <li>
+                            <li class="mm-active">
                                 <a href="/shipping">발주 관리</a>
                             </li>
                             <li>
@@ -228,165 +231,116 @@
 
             <!-- Start Content-->
             <div class="container-fluid">
-                <div class="row mt-4">
-                    <div class="col-lg-6">
-                        <h5 class="header-title">판매 진행 현황(한달기준)</h5>
-                        <div class="row">
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body text-center">
-                                                <a href="/orders?releaseStatus=progress" class="text-info text-decoration-none">
-                                                    <span class="text-muted text-uppercase font-weight-bold">출고전</span>
-                                                    <h2 class="mb-0">${countOrderReleaseProgress}</h2>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body text-center">
-                                                <a href="/orders?releaseStatus=completed" class="text-success text-decoration-none">
-                                                    <span class="text-muted text-uppercase font-weight-bold">출고완료</span>
-                                                    <h2 class="mb-0">${countOrderReleaseCompleted}</h2>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body text-center">
-                                                <a href="/orders?releaseStatus=rejected" class="text-danger text-decoration-none">
-                                                    <span class="text-muted text-uppercase font-weight-bold">출고거절</span>
-                                                    <h2 class="mb-0">${countOrderReleaseCanceled}</h2>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <h5 class="header-title">체크항목</h5>
-                        <div class="row">
-                            <div class="col-xl-4">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="media p-3">
-                                            <div class="media-body text-center">
-                                                <a href="/stock?qtyStatus=0" class="text-danger text-decoration-none">
-                                                    <span class="text-uppercase font-weight-bold">재고 부족</span>
-                                                    <h2 class="mb-0">${countQtyInsufficient}</h2>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="row page-title">
+                    <div class="col-md-12">
+                        <nav aria-label="breadcrumb" class="float-right mt-1">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">홈</a></li>
+                                <li class="breadcrumb-item"><a href="/shipping/">발주 관리</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">발주 수정</li>
+                            </ol>
+                        </nav>
+                        <h4 class="mb-1 mt-0">발주 수정</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <h5 class="header-title">주문현황</h5>
+                    <div class="col">
                         <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">당일</h6>
-                            </div>
-                            <div class="card-body pt-2">
-
-                                <!-- stat 1 -->
-                                <div class="media px-3 py-3 border-bottom">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${orders1.size()}건</h4>
-                                        <span class="text-muted">주문</span>
-                                    </div>
-                                    <div>
-                                        <span class="h4">${total1}원</span>
-                                    </div>
-                                </div>
-
-                                <!-- stat 2 -->
-                                <div class="media px-3 py-3">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${countReturnOrder1}건</h4>
-                                        <span class="text-muted">취소</span>
-                                    </div>
-                                    <div>
-                                        <span class="h4">${sumReturnAmount1}원</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0">한달</h6>
-                            </div>
-                            <div class="card-body pt-2">
-
-                                <!-- stat 1 -->
-                                <div class="media px-3 py-3 border-bottom">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${orders30.size()}</h4>
-                                        <span class="text-muted">주문</span>
-                                    </div>
-                                    <div>
-                                        <span class="h4">${total30}원</span>
-                                    </div>
-                                </div>
-
-                                <!-- stat 2 -->
-                                <div class="media px-3 py-3">
-                                    <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${countReturnOrder30}</h4>
-                                        <span class="text-muted">취소</span>
-                                    </div>
-                                    <div>
-                                        <span class="h4">${sumReturnAmount30}원</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h5 class="header-title">공지사항 및 문의사항</h5>
-                        <div class="card">
-                            <div class="card-body p-0">
-                                <ul class="nav nav-tabs">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" data-toggle="tab" href="#notification-tab">공지사항</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane fade show active" id="notification-tab">
-                                        <div>
-                                            <table class="table">
-                                                <colgroup>
-                                                    <col width="*">
-                                                    <col width="30%">
-                                                </colgroup>
-                                                <tbody>
-                                                <c:forEach items="${notices}" var="notice">
-                                                    <tr onclick="window.location.href='/notices/${notice.id}'">
-                                                        <td>${notice.title}</td>
-                                                        <td>${notice.createdAt.format(localDateTimeFormat)}</td>
-                                                    </tr>
-                                                </c:forEach>
-                                                </tbody>
-                                            </table>
+                            <div class="card-body">
+                                <form:form modelAttribute="shippingForm" method="post">
+                                    <h5 class="card-title">발주 정보</h5>
+                                    <table class="table form-table table-bordered">
+                                        <colgroup>
+                                            <col width="15%">
+                                            <col width="35%">
+                                            <col width="15%">
+                                            <col width="35%">
+                                        </colgroup>
+                                        <tbody class="thead-light">
+                                        <tr>
+                                            <th class="required"><span>매입처</span></th>
+                                            <td>
+                                                <form:select class="form-control" path="supplier">
+                                                    <form:option value="" label="-- 매입처 선택 --" />
+                                                    <form:options items="${suppliers}" itemValue="id" itemLabel="name" />
+                                                </form:select>
+                                            </td>
+                                            <th class="required"><span>담당자</span></th>
+                                            <td>
+                                                <form:select class="form-control" path="user">
+                                                    <form:option value="" label="--담당자 선택 --" />
+                                                    <form:options items="${employees}" itemValue="id" itemLabel="fullName" />
+                                                </form:select>
+                                            </td>
+                                        </tr>
+                                        <spring:bind path="deliverBy">
+                                            <tr>
+                                                <th class="required"><span>납기일자</span></th>
+                                                <td colspan="3">
+                                                    <div class="input-group w-25">
+                                                        <form:input class="form-control" path="deliverBy" />
+                                                        <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </spring:bind>
+                                        <tr>
+                                            <th>비고</th>
+                                            <td colspan="3">
+                                                <form:textarea path="description" class="form-control" rows="4" />
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <h5>발주 상품</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            전체 ${shippingForm.supplyOrderProducts.size()}건
                                         </div>
+<%--                                        <div class="col-6 text-right">--%>
+<%--                                            <button type="button" class="btn btn-outline-primary btn-sm" id="addProducts">상품 추가</button>--%>
+<%--                                        </div>--%>
                                     </div>
-                                </div>
+                                    <table class="table text-center table-middle mb-5" id="products">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>상품명</th>
+                                            <th>카테고리</th>
+                                            <th>규격(단위)</th>
+                                            <th>제조사(원산지)</th>
+                                            <th>수량</th>
+                                            <th>매입단가(원)</th>
+                                            <th>합계금액(원)</th>
+<%--                                            <th>삭제</th>--%>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach var="orderProduct" items="${shippingForm.supplyOrderProducts}">
+                                            <tr>
+                                                <td>${orderProduct.id}</td>
+                                                <td>${orderProduct.product.name}</td>
+                                                <td>${orderProduct.product.category.name}</td>
+                                                <td>${orderProduct.product.standard}<br>(${orderProduct.product.unit})</td>
+                                                <td>${orderProduct.product.makerName}<br>(${orderProduct.product.country})</td>
+                                                <td>${orderProduct.qty}</td>
+                                                <td>${orderProduct.price}</td>
+                                                <td>${orderProduct.totalAmount}</td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                        <tfoot class="thead-light">
+                                        </tfoot>
+                                    </table>
+                                    <div class="form-group text-center">
+                                        <a href="/shipping/" class="btn btn-outline-secondary">목록으로</a>
+                                        <button class="btn btn-primary">저장하기</button>
+                                    </div>
+                                </form:form>
                             </div>
                         </div>
                     </div>
@@ -417,19 +371,77 @@
 
 </div>
 <!-- END wrapper -->
+<div class="modal fade" id="productsModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <div class="modal-title text-light">상품 선택</div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm table-hover text-center" id="selectProducts">
+                    <thead class="thead-light">
+                    <tr>
+                        <th></th>
+                        <th>상품코드</th>
+                        <th>상품명</th>
+                        <th>카테고리</th>
+                        <th>규격(단위)</th>
+                        <th>제조사(원산지)</th>
+                        <th>매입단가</th>
+                        <th>부가세여부</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+                <button class="btn btn-primary" id="confirmButton">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/libs/moment/moment.min.js"></script>
-<script src="${contextPath}/resources/libs/apexcharts/apexcharts.min.js"></script>
-<script src="${contextPath}/resources/libs/flatpickr/flatpickr.min.js"></script>
-
-<!-- page js -->
-<script src="${contextPath}/resources/js/pages/dashboard.init.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    var allProducts = [];
+    var selectedProducts = [];
+    $(document).ready(function() {
+        $('#deliverBy').datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
 
+    });
+
+</script>
 </body>
 </html>

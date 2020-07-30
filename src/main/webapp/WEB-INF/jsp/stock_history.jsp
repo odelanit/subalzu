@@ -54,7 +54,7 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
@@ -96,12 +96,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li>--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -278,6 +278,7 @@
                                             <td colspan="2">
                                                 <form:select path="action" cssClass="custom-select custom-select-sm w-20">
                                                     <form:option value="" label="구분" />
+                                                    <form:option value="shipping_input" label="입고" />
                                                     <form:option value="manual_input" label="수동입고" />
                                                     <form:option value="manual_output" label="수동출고" />
                                                     <form:option value="discard_output" label="폐기출고" />
@@ -325,6 +326,9 @@
                                             </td>
                                             <td>
                                                 <c:choose>
+                                                    <c:when test="${record.action == 'shipping_input'}">
+                                                        입고
+                                                    </c:when>
                                                     <c:when test="${record.action == 'manual_input'}">
                                                         수동입고
                                                     </c:when>
@@ -368,6 +372,53 @@
                                         </tr>
                                     </c:forEach>
                                     </tbody>
+                                    <c:if test="${recordPage.totalPages > 1}">
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="11">
+                                                <nav>
+                                                    <ul class="pagination justify-content-center">
+                                                        <c:choose>
+                                                            <c:when test="${recordPage.hasPrevious()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <c:forEach var="i" begin="1" end="${recordPage.totalPages}">
+                                                            <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                        </c:forEach>
+                                                        <c:choose>
+                                                            <c:when test="${recordPage.hasNext()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </c:if>
                                 </table>
                             </div>
                         </div>
@@ -415,6 +466,14 @@
 
         $('#dateFrom, #dateTo').datepicker({
             dateFormat: 'yy-mm-dd'
+        });
+
+        $('.page-link').on('click', function() {
+            var pageNo = $(this).data('page');
+            if (pageNo) {
+                $('#page').val(pageNo);
+                $('#form').submit();
+            }
         })
     })
 </script>

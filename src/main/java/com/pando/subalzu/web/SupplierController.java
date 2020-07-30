@@ -112,10 +112,12 @@ public class SupplierController {
 
         Supplier supplier = supplierRepository.save(supplierForm);
 
-        List<Product> products = new ArrayList<>(supplierForm.getProducts());
-        for (Product product : products) {
-            product.setSupplier(supplier);
-            productRepository.save(product);
+        if (supplierForm.getProducts() != null) {
+            List<Product> products = new ArrayList<>(supplierForm.getProducts());
+            for (Product product : products) {
+                product.setSupplier(supplier);
+                productRepository.save(product);
+            }
         }
 
         redirectAttributes.addFlashAttribute("message", "Supplier Created");

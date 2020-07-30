@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,14 +62,9 @@ public class UserController {
         String keyword = form.getKeyword();
         int page = form.getPage();
         Page<User> userPage;
-        if (field != null && keyword != null) {
-            UserSpecification spec = new UserSpecification(new SearchCriteria(field, ":", keyword));
-            Pageable pageable = PageRequest.of(page - 1, 50);
-            userPage = userRepository.findAll(spec, pageable);
-        } else {
-            Pageable pageable = PageRequest.of(page - 1, 50);
-            userPage = userRepository.findAll(pageable);
-        }
+        Specification<User> specification = new UserSpecification(new SearchCriteria(field, ":", keyword));
+        Pageable pageable = PageRequest.of(page - 1, 50);
+        userPage = userRepository.findAll(specification, pageable);
         List<User> users = userPage.getContent();
 
         model.addAttribute("userPage", userPage);

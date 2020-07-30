@@ -1,9 +1,11 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
+import com.pando.subalzu.form.OrderSearchForm;
 import com.pando.subalzu.form.ShopSearchForm3;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
+import com.pando.subalzu.specification.OrderSpecification;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.ShopSpecification;
 import com.pando.subalzu.validator.ShopValidator;
@@ -15,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +34,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -57,6 +64,9 @@ public class ShopController {
 
     @Autowired
     AssigneeTypeRepository assigneeTypeRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     ShopRepository shopRepository;
@@ -133,7 +143,7 @@ public class ShopController {
             spec = Specification.where(spec).and(new ShopSpecification(new SearchCriteria("dealStatus", ":", Boolean.parseBoolean(dealStatus))));
         }
 
-        Pageable pageable = PageRequest.of(page - 1, 50);
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
         shopPage = shopRepository.findAll(spec, pageable);
         List<Shop> shops = shopPage.getContent();
 
@@ -179,6 +189,49 @@ public class ShopController {
         shopRepository.save(shopForm);
         model.addAttribute("success", true);
         return "shop_create";
+    }
+
+    @GetMapping("/{id}")
+    public String show(@ModelAttribute("form") OrderSearchForm form, Model model, @PathVariable Long id) throws ParseException {
+        Optional<Shop> optionalShop = shopRepository.findById(id);
+        if (optionalShop.isPresent()) {
+            Shop shop = optionalShop.get();
+            String field = form.getField();
+            String keyword = form.getKeyword();
+            String dateField = form.getDateField();
+            String strDateFrom = form.getDateFrom();
+            String strDateTo = form.getDateTo();
+            int page = form.getPage();
+
+            Page<Order> orderPage;
+            Specification<Order> spec = new OrderSpecification(new SearchCriteria("shop", ":", shop));
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(field, ":", keyword)));
+            if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
+                if (dateField.equals("createdAt")) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+                    LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+                    Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+                    spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
+                } else if (dateField.equals("requestDate")) {
+                    Date dateFrom = new SimpleDateFormat("yyyy-MM-dd").parse(strDateFrom);
+                    Date dateTo = new SimpleDateFormat("yyyy-MM-dd").parse(strDateTo);
+                    Pair<Date, Date> dateTimePair = Pair.of(dateFrom, dateTo);
+                    spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
+                }
+            }
+            Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
+            orderPage = orderRepository.findAll(spec, pageable);
+            List<Order> orders = orderPage.getContent();
+
+            model.addAttribute("orderPage", orderPage);
+            model.addAttribute("orders", orders);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+            return "shop_show";
+        } else {
+            return "redirect:/shops";
+        }
     }
 
     @GetMapping("/{id}/edit")

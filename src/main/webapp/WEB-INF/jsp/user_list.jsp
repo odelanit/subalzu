@@ -55,7 +55,7 @@
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
-                        value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
@@ -99,12 +99,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li>--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -278,7 +278,7 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <table class="table table-sm text-center table-hover" id="user-table">
+                                    <table class="table text-center table-hover" id="user-table">
                                         <thead class="thead-light">
                                         <tr>
                                             <th>#</th>

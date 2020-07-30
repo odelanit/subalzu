@@ -56,7 +56,7 @@
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
-                        value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
@@ -100,12 +100,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-                            <%--                            <li>--%>
-                            <%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-                            <%--                            </li>--%>
-                            <%--                            <li>--%>
-                            <%--                                <a href="/returns">반품 내역</a>--%>
-                            <%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -416,6 +416,53 @@
                                         </tr>
                                     </c:forEach>
                                     </tbody>
+                                    <c:if test="${productPage.totalPages > 1}">
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="14">
+                                                <nav>
+                                                    <ul class="pagination pagination-sm justify-content-center">
+                                                        <c:choose>
+                                                            <c:when test="${productPage.hasPrevious()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &laquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <c:forEach var="i" begin="1" end="${productPage.totalPages}">
+                                                            <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                        </c:forEach>
+                                                        <c:choose>
+                                                            <c:when test="${productPage.hasNext()}">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link" href="#">
+                                                                        &raquo;
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </c:if>
                                 </table>
                             </div>
                         </div>
@@ -701,6 +748,14 @@
         $('#imSearch select').on('change', function() {
             $('#form').submit();
         });
+
+        $('.page-link').on('click', function() {
+            var pageNo = $(this).data('page');
+            if (pageNo) {
+                $('#page').val(pageNo);
+                $('#form').submit();
+            }
+        })
     });
 </script>
 </body>

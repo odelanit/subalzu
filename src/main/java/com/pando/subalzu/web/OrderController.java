@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -60,6 +64,9 @@ public class OrderController {
     TransactionRepository transactionRepository;
 
     @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
     OrderValidator orderValidator;
 
     @Autowired
@@ -90,41 +97,64 @@ public class OrderController {
         return productRepository.findAll();
     }
 
+    @ModelAttribute("categories")
+    List<Category> categories() {
+        return categoryRepository.findByParentNull(Sort.by("name"));
+    }
+
     @GetMapping("/orders")
-    public String index(@ModelAttribute("form")OrderSearchForm form, Model model) {
+    public String index(@ModelAttribute("form")OrderSearchForm form, Model model) throws ParseException {
         String field = form.getField();
         String keyword = form.getKeyword();
+        String deliveryType = form.getDeliveryType();
+        String orderStatus = form.getOrderStatus();
+        String releaseStatus = form.getReleaseStatus();
+        String dateField = form.getDateField();
+        String strDateFrom = form.getDateFrom();
+        String strDateTo = form.getDateTo();
+        User deliverer = form.getDeliverer();
+        User salesman = form.getSalesman();
         int page = form.getPage();
+
         Page<Order> orderPage;
         Specification<Order> spec = new OrderSpecification(new SearchCriteria(field, ":", keyword));
-        String deliveryType = form.getDeliveryType();
         if (!Strings.isNullOrEmpty(deliveryType)) {
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliveryType", ":", deliveryType)));
         }
-        String orderStatus = form.getOrderStatus();
         if (!Strings.isNullOrEmpty(orderStatus)) {
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("orderStatus", ":", orderStatus)));
         }
-        String releaseStatus = form.getReleaseStatus();
         if (!Strings.isNullOrEmpty(releaseStatus)) {
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("releaseStatus", ":", releaseStatus)));
         }
-        User deliverer = form.getDeliverer();
         if (deliverer != null) {
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliverer", ":", deliverer)));
         }
-        User salesman = form.getSalesman();
         if (salesman != null) {
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("salesMan", ":", salesman)));
         }
-        Pageable pageable = PageRequest.of(page - 1, 50);
+        if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
+            if (dateField.equals("createdAt")) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+                LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+                Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+                spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
+            } else if (dateField.equals("requestDate")) {
+                Date dateFrom = new SimpleDateFormat("yyyy-MM-dd").parse(strDateFrom);
+                Date dateTo = new SimpleDateFormat("yyyy-MM-dd").parse(strDateTo);
+                Pair<Date, Date> dateTimePair = Pair.of(dateFrom, dateTo);
+                spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
+            }
+        }
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
         orderPage = orderRepository.findAll(spec, pageable);
         List<Order> orders = orderPage.getContent();
 
         model.addAttribute("orderPage", orderPage);
         model.addAttribute("orders", orders);
         model.addAttribute("currentPage", page);
-        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
         return "order_list";
     }
 
@@ -197,17 +227,6 @@ public class OrderController {
                     orderProduct.setTotalAmount(subTotal);
                     orderProduct.setOrder(order);
                     orderProductRepository.save(orderProduct);
-
-                    ProductRecord productRecord = new ProductRecord();
-                    productRecord.setProduct(product);
-                    productRecord.setPreviousQty(product.getQty());
-                    productRecord.setDiff(qty);
-                    productRecord.setAction("order_output");
-                    productRecordRepository.save(productRecord);
-
-                    product.setQty(product.getQty() - qty);
-                    productRepository.save(product);
-
                 }
             }
             order.setTotalAmount(total);
@@ -233,8 +252,91 @@ public class OrderController {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
+            model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
             model.addAttribute("order", order);
+            model.addAttribute("searchForm", new ProductSearchForm3());
             return "order_show";
+        }
+        return "redirect:/orders";
+    }
+
+    @PostMapping("/orders/{id}/update")
+    @ResponseBody
+    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String> requestMap) throws ParseException {
+        String field = requestMap.get("field");
+        String value = requestMap.get("value");
+        Optional<Order> optionalOrder = orderRepository.findById(Long.valueOf(id));
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            if (field.equals("requestDate")) {
+                Date requestDate = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+                order.setRequestDate(requestDate);
+            } else if (field.equals("deliverer")) {
+                if (!Strings.isNullOrEmpty(value)) {
+                    Optional<User> optionalUser = userRepository.findById(Long.valueOf(value));
+                    if (optionalUser.isPresent()) {
+                        User user = optionalUser.get();
+                        order.setDeliverer(user);
+                    }
+                }
+            } else if (field.equals("salesMan")) {
+                if (Strings.isNullOrEmpty(value)) {
+                    order.setSalesMan(null);
+                } else {
+                    Optional<User> optionalUser = userRepository.findById(Long.valueOf(value));
+                    if (optionalUser.isPresent()) {
+                        User user = optionalUser.get();
+                        order.setSalesMan(user);
+                    }
+                }
+            } else if (field.equals("memo")) {
+                order.setMemo(value);
+            }
+            orderRepository.save(order);
+        }
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @PostMapping("/orders/{id}/return")
+    @ResponseBody
+    public Map<String, String> createReturn(@PathVariable String id, @RequestBody List<Map<String, Object>> orderProducts) {
+        Optional<Order> optionalOrder = orderRepository.findById(Long.valueOf(id));
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setOrderStatus("return_pending");
+            long totalAmount = 0L;
+            for (Map<String, Object> orderProductMap: orderProducts) {
+                Long orderProductId = ((Integer)orderProductMap.get("orderProduct")).longValue();
+                int qty = (Integer)orderProductMap.get("qty");
+                Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findById(orderProductId);
+                if (optionalOrderProduct.isPresent()) {
+                    OrderProduct orderProduct = optionalOrderProduct.get();
+                    orderProduct.setReturnQty(qty);
+                    long subtotal = qty * orderProduct.getPrice();
+                    orderProduct.setReturnAmount(subtotal);
+                    orderProductRepository.save(orderProduct);
+                    totalAmount += subtotal;
+                }
+            }
+            order.setReturnAmount(totalAmount);
+            order.setReturnedAt(LocalDateTime.now());
+            orderRepository.save(order);
+        }
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @GetMapping("/orders/{id}/cancel")
+    public String cancel(@PathVariable Long id, Model model) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setOrderStatus("canceled");
+            orderRepository.save(order);
+            return "redirect:/orders/" + order.getId();
         }
         return "redirect:/orders";
     }
@@ -249,14 +351,9 @@ public class OrderController {
         return "/order_release";
     }
 
-    @GetMapping("/product-orders")
-    public String ordersPerProduct() {
-        return "orders_per_product";
-    }
-
     @GetMapping("/returns")
     public String returnedOrders() {
-        return "returned_orders";
+        return "return_orders";
     }
 
     ByteArrayInputStream orderListToExcelFile(List<Order> orders) {
@@ -428,5 +525,53 @@ public class OrderController {
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;
+    }
+
+    @GetMapping("/return_orders")
+    public String returnOrders(@ModelAttribute("form")OrderSearchForm form, Model model) {
+        String field = form.getField();
+        String keyword = form.getKeyword();
+        String strDateFrom = form.getDateFrom();
+        String strDateTo = form.getDateTo();
+        User deliverer = form.getDeliverer();
+        int page = form.getPage();
+
+        Page<Order> orderPage;
+        Specification<Order> spec = new OrderSpecification(new SearchCriteria(field, ":", keyword));
+        if (deliverer != null) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliverer", ":", deliverer)));
+        }
+        if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+            LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+            Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("returnedAt", "<>", dateTimePair)));
+        }
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("returnedAt").descending());
+        orderPage = orderRepository.findAll(spec, pageable);
+        List<Order> orders = orderPage.getContent();
+
+        model.addAttribute("orderPage", orderPage);
+        model.addAttribute("orders", orders);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+        return "return_orders";
+    }
+
+    @GetMapping("/orders/print_order")
+    public String printOrder(@RequestParam List<Long> ids, Model model) {
+        List<Order> orders = orderRepository.findAllById(ids);
+        model.addAttribute("orders", orders);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return "orders_print";
+    }
+
+    @GetMapping("/orders/print_release")
+    public String printReleaseProducts(@RequestParam List<Long> ids, Model model) {
+        List<Order> orders = orderRepository.findAllById(ids);
+        model.addAttribute("orders", orders);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return "orders_print_release";
     }
 }

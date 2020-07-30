@@ -56,7 +56,7 @@
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
-                        value="${pageContext.request.remoteUser}"/> 정보보기</a>
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
                 <a href="javascript:;" class="nav-link"
@@ -100,12 +100,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li>--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -250,6 +250,9 @@
                                     <h5 class="card-title">기본 정보</h5>
                                     <spring:bind path="id">
                                         <form:hidden path="id" />
+                                    </spring:bind>
+                                    <spring:bind path="qty">
+                                        <form:hidden path="qty" />
                                     </spring:bind>
                                     <table class="table table-bordered form-table mb-5">
                                         <tbody class="thead-light">

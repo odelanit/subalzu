@@ -17,9 +17,9 @@ public class SupplierTransaction {
     @JoinColumn(name = "supplier_id")
     Supplier supplier;
 
-    String method; // shipping: 일반 발주, addition: 금액 추가, subtraction: 금액 차감, withdraw: 직접 출금,
+    String method; // manual_order: 일반 발주, fund_plus: 금액 추가, fund_minus: 금액 차감, direct_minus: 직접 출금,
 
-    String type; // 매입: shipping, 수정: correction, 출금: withdraw
+    String type; // 매입: shipping, 수정: update, 출금: output
 
     @Column(nullable = false)
     Long amount = 0L;

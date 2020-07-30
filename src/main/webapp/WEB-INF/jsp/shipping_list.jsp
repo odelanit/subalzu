@@ -13,6 +13,8 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
+    <meta name="_csrf" content="${_csrf.token}"/>
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -21,6 +23,7 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -95,12 +98,12 @@
                             <li>
                                 <a href="/orders">주문 목록</a>
                             </li>
-<%--                            <li>--%>
-<%--                                <a href="/product-orders">상품별 주문 목록</a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="/returns">반품 내역</a>--%>
-<%--                            </li>--%>
+                            <li>
+                                <a href="/order_products">상품별 주문 목록</a>
+                            </li>
+                            <li>
+                                <a href="/return_orders">반품 내역</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="mm-active">
@@ -271,23 +274,13 @@
                                         <tr>
                                             <th>즉시 검색</th>
                                             <td colspan="2">
-                                                <div class="form-row">
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option value="">발주 유형</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
+                                                <div class="d-flex">
+                                                    <div class="w-20 mr-2">
                                                         <select class="form-control form-control-sm">
                                                             <option value="">발주 상태</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-auto">
-                                                        <select class="form-control form-control-sm">
-                                                            <option value="">매입처 출고상태</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-auto">
+                                                    <div class="w-20 mr-2">
                                                         <select class="form-control form-control-sm">
                                                             <option value="">입고 상태</option>
                                                         </select>
@@ -298,12 +291,11 @@
                                         </tbody>
                                     </table>
                                 </form:form>
-                                <hr>
-                                <div class="row">
+                                <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <a href="/shipping/print" class="btn btn-sm btn-outline-secondary">
-                                            <i class="fa fa-print"></i> 발주서 출력
-                                        </a>
+<%--                                        <a href="/shipping/print" class="btn btn-sm btn-outline-secondary">--%>
+<%--                                            <i class="fa fa-print"></i> 발주서 출력--%>
+<%--                                        </a>--%>
                                     </div>
                                     <div class="col-md-6 text-md-right mt-md-0 mt-2">
                                         <a href="/shipping/create" class="btn btn-sm btn-outline-primary">
@@ -311,12 +303,11 @@
                                         </a>
                                     </div>
                                 </div>
-                                <hr>
-                                <table class="table table-sm text-center">
+                                <table class="table table-middle text-center table-hover" id="orders">
                                     <thead class="thead-light">
                                     <tr>
                                         <th>
-                                            <input type="checkbox">
+                                            <input type="checkbox" id="selectAll">
                                         </th>
                                         <th>#</th>
                                         <th>발주번호</th>
@@ -330,9 +321,9 @@
                                     </thead>
                                     <tbody>
                                     <c:forEach items="${orders}" var="order">
-                                        <tr>
+                                        <tr data-id="${order.id}">
                                             <td>
-                                                <input type="checkbox">
+                                                <input type="checkbox" value="${order.id}">
                                             </td>
                                             <td>${order.id}</td>
                                             <td>${order.orderCode}</td>
@@ -343,7 +334,7 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${order.shippingStatus == 'standby'}">
-                                                        발주 대기
+                                                        <button type="button" class="btn btn-sm btn-outline-primary complete">발주완료</button>
                                                     </c:when>
                                                     <c:when test="${order.shippingStatus == 'completed'}">
                                                         발주 완료
@@ -389,26 +380,86 @@
         <!-- end Footer -->
 
     </div>
-
-    <!-- ============================================================== -->
-    <!-- End Page content -->
-    <!-- ============================================================== -->
-
-
 </div>
 <!-- END wrapper -->
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
+    var token = $("meta[name='_csrf']").attr("content");
+
     $('#dateFrom, #dateTo').datepicker({
         dateFormat: 'yy-mm-dd'
-    })
+    });
+
+    $('.complete').on('click', function() {
+        var orderId = $(this).closest('tr').data('id');
+        $.ajax({
+            type: 'POST',
+            url: '/shipping/order_complete',
+            contentType: 'application/json',
+            accept: 'text/plain',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: JSON.stringify({
+                id: orderId.toString()
+            }),
+            beforeSend: function() {
+                $("#overlay").fadeIn(300);
+            },
+            success: function(data) {
+                toastr.success(data.message);
+                window.location.reload();
+            }
+        }).done(function () {
+            setTimeout(function(){
+                $("#overlay").fadeOut(300);
+            }, 500);
+        });
+    });
+
+    $('#selectAll').on('change', function (e) {
+        $('#orders tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+    });
+
+    $('#orders tbody tr td:not(:first-child)').on('click', function () {
+        window.location.href = '/shipping/' + $(this).closest('tr').data('id');
+    });
+
+    $('#orders tbody tr td:first-child').on('click', function (e) {
+        var checkboxElement = $(this).find('input[type="checkbox"]');
+        checkboxElement.prop('checked', !checkboxElement.prop('checked'));
+    });
+
+    $('#orders tbody tr td input[type="checkbox"]').on('change', function (e) {
+        var checkboxElement = $(this);
+        checkboxElement.prop('checked', !checkboxElement.prop('checked'));
+    });
 </script>
 </body>
 </html>

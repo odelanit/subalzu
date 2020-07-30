@@ -2,11 +2,14 @@ package com.pando.subalzu.specification;
 
 import com.pando.subalzu.model.Order;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Pair;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class OrderSpecification implements Specification<Order> {
 
@@ -32,6 +35,23 @@ public class OrderSpecification implements Specification<Order> {
                     return criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue());
                 }
             }
+        } else if (criteria.getOperation().equalsIgnoreCase("<>")) {
+            if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
+                Pair<LocalDateTime, LocalDateTime> dateTimePair = (Pair<LocalDateTime, LocalDateTime>) criteria.getValue();
+                LocalDateTime startDate = dateTimePair.getFirst();
+                LocalDateTime endDate = dateTimePair.getSecond();
+                return criteriaBuilder.between(root.<LocalDateTime>get(criteria.getKey()), (startDate), (endDate));
+            } else if (root.get(criteria.getKey()).getJavaType() == Date.class) {
+                Pair<Date, Date> dateTimePair = (Pair<Date, Date>) criteria.getValue();
+                Date startDate = dateTimePair.getFirst();
+                Date endDate = dateTimePair.getSecond();
+                return criteriaBuilder.between(root.<Date>get(criteria.getKey()), (startDate), (endDate));
+            }
+            else {
+                return null;
+            }
+        } else if (criteria.getOperation().equalsIgnoreCase("!")) {
+            return criteriaBuilder.notEqual(root.get(criteria.getKey()), criteria.getValue());
         }
         return null;
     }
