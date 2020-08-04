@@ -30,3 +30,6 @@ build/
 ### VS Code ###
 .vscode/
 /uploads/
+/src/main/webapp/resources/vue-starter/
+/src/main/webapp/resources/libs/.idea/
+/src/main/webapp/resources/libs/node_modules/

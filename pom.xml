@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pando</groupId>
     <artifactId>subalzu</artifactId>
-    <version>0.9</version>
+    <version>0.9.1</version>
     <name>subalzu</name>
     <description>Demo project for Spring Boot</description>
     <packaging>war</packaging>
