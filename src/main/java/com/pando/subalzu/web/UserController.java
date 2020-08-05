@@ -161,4 +161,15 @@ public class UserController {
         }
         return "redirect:/users";
     }
+
+    @GetMapping("/users/deliverers_salesmans")
+    @ResponseBody
+    public Map<String, Object> getDeliverersAndSalesMans() {
+        List<User> deliverers = userRepository.findByRoleName("deliverer");
+        List<User> salesmans = userRepository.findByRoleName("sales");
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("deliverers", deliverers);
+        resultMap.put("salesMans", salesmans);
+        return resultMap;
+    }
 }

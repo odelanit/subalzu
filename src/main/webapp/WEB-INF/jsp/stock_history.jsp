@@ -250,9 +250,37 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
-                                                    <form:input path="dateFrom" class="form-control form-control-sm" placeholder="" />
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-2" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="1" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-1" label="전일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="0" label="당일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-30" label="한달" />
+                                                        </label>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <form:input path="dateFrom" cssClass="form-control" placeholder="" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="far fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                     <span class="px-2">-</span>
-                                                    <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
+                                                    <div class="input-group input-group-sm">
+                                                        <form:input path="dateTo" cssClass="form-control" placeholder="" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="far fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td rowspan="2">
@@ -474,7 +502,27 @@
                 $('#page').val(pageNo);
                 $('#form').submit();
             }
-        })
+        });
+
+        $('input[name="period"]').on('change', function() {
+            var diff = +$(this).val();
+            const dateTo = new Date();
+            let strDateTo = formatDate(dateTo);
+            let strDateFrom;
+            if (diff !== 1) {
+                const dateFrom = new Date(dateTo);
+                dateFrom.setDate(dateTo.getDate() + diff);
+                strDateFrom = formatDate(dateFrom);
+                $('#dateFrom').val(strDateFrom);
+            } else {
+                $('#dateFrom').val('2020-01-01');
+            }
+            if (diff === -1) {
+                $('#dateTo').val(strDateFrom);
+            } else {
+                $('#dateTo').val(strDateTo);
+            }
+        });
     })
 </script>
 </body>

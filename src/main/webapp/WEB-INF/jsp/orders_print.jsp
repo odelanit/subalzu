@@ -65,7 +65,7 @@
                         <!-- 유통사 -->
                         <th class="text-center" rowspan="5">공<br>급<br>자</th>
                         <td>사업자등록번호</td>
-                        <td>${currentCompany.registeredNumber}</td>
+                        <td>${currentCompany.erpCode}</td>
                         <!-- 가맹점 -->
                         <th class="text-center" rowspan="5">공<br>급<br>받<br>는<br>자</th>
                         <td class="text-center">사업자등록번호</td>
@@ -151,7 +151,7 @@
                                     </c:choose>
                                 </div>
                                 <div class="col-6 text-right">
-                                    <span class="h5 mr-3">총 주문수량: ${order.orderProducts.size()}개</span>
+                                    <span class="h5 mr-3">총 주문수량: ${order.totalQty}개</span>
                                     <span class="h5">총 금액: ${order.totalAmount}원</span>
                                 </div>
                             </div>
@@ -226,7 +226,7 @@
                         <!-- 유통사 -->
                         <th class="text-center" rowspan="5">공<br>급<br>자</th>
                         <td>사업자등록번호</td>
-                        <td>${currentCompany.registeredNumber}</td>
+                        <td>${currentCompany.erpCode}</td>
                         <!-- 가맹점 -->
                         <th class="text-center" rowspan="5">공<br>급<br>받<br>는<br>자</th>
                         <td class="text-center">사업자등록번호</td>
@@ -312,7 +312,7 @@
                                     </c:choose>
                                 </div>
                                 <div class="col-6 text-right">
-                                    <span class="h5 mr-3">총 주문수량: ${order.orderProducts.size()}개</span>
+                                    <span class="h5 mr-3">총 주문수량: ${order.totalQty}개</span>
                                     <span class="h5">총 금액: ${order.totalAmount}원</span>
                                 </div>
                             </div>
@@ -356,6 +356,13 @@
             <div class="my-5" style="border: solid 1px black;"></div>
         </c:if>
     </c:forEach>
+</div>
+<div class="fixed-bottom py-4 bg-secondary">
+<div class="row justify-content-center">
+    <div class="col-3">
+        <button type="button" onclick="window.print()" class="btn btn-primary btn-block">출력</button>
+    </div>
+</div>
 </div>
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>

@@ -249,6 +249,20 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-2" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="1" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-1" label="전일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="0" label="당일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-30" label="한달" />
+                                                        </label>
+                                                    </div>
                                                     <form:input path="dateFrom" class="form-control form-control-sm" placeholder="" />
                                                     <span class="px-2">-</span>
                                                     <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
@@ -287,7 +301,7 @@
                                 <hr>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <a href="/returns/transaction-details" class="btn btn-sm btn-outline-primary">
+                                        <a href="javascript:;" class="btn btn-sm btn-outline-primary">
                                             <i data-feather="file-text" class="icon-xs"></i> 반품 거래명세표 출력
                                         </a>
                                     </div>
@@ -450,7 +464,40 @@
             $('#page').val(pageNo);
             $('#form').submit();
         }
-    })
+    });
+
+    formatDate = function (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    $('input[name="period"]').on('change', function() {
+        var diff = +$(this).val();
+        const dateTo = new Date();
+        let strDateTo = formatDate(dateTo);
+        let strDateFrom;
+        if (diff !== 1) {
+            const dateFrom = new Date(dateTo);
+            dateFrom.setDate(dateTo.getDate() + diff);
+            strDateFrom = formatDate(dateFrom);
+            $('#dateFrom').val(strDateFrom);
+        } else {
+            $('#dateFrom').val('2020-01-01');
+        }
+        if (diff === -1) {
+            $('#dateTo').val(strDateFrom);
+        } else {
+            $('#dateTo').val(strDateTo);
+        }
+    });
 
 </script>
 </body>

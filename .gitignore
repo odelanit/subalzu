@@ -33,3 +33,6 @@ build/
 /src/main/webapp/resources/vue-starter/
 /src/main/webapp/resources/libs/.idea/
 /src/main/webapp/resources/libs/node_modules/
+/src/main/webapp/resources/libs/package-lock.json
+/src/main/webapp/resources/libs/mix-manifest.json
+/src/main/webapp/resources/libs/dist/

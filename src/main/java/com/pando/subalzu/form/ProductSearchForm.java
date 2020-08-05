@@ -12,6 +12,8 @@ public class ProductSearchForm {
 
     Category subcategory;
 
+    int deliveryType = -1;
+
     int page = 1;
 
     public String getField() {
@@ -52,5 +54,13 @@ public class ProductSearchForm {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public int getDeliveryType() {
+        return deliveryType;
+    }
+
+    public void setDeliveryType(int deliveryType) {
+        this.deliveryType = deliveryType;
     }
 }

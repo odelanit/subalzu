@@ -2,11 +2,8 @@ package com.pando.subalzu.form;
 
 import com.pando.subalzu.model.Category;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OrderProductSearchForm {
 
@@ -34,20 +31,12 @@ public class OrderProductSearchForm {
 
     int page = 1;
 
-    public OrderProductSearchForm() {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(new Date());
-        Date end = calendar.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateTo = dateFormat.format(end);
+    int period = 2;
 
-        calendar.add(Calendar.DATE, -1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date beginning = calendar.getTime();
-        dateFrom = dateFormat.format(beginning);
+    public OrderProductSearchForm() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        dateTo = LocalDateTime.now().format(formatter);
+        dateFrom = LocalDateTime.now().minusDays(1).format(formatter);
     }
 
     public String getField() {
@@ -144,5 +133,13 @@ public class OrderProductSearchForm {
 
     public void setReleaseStatus(String releaseStatus) {
         this.releaseStatus = releaseStatus;
+    }
+
+    public int getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
     }
 }

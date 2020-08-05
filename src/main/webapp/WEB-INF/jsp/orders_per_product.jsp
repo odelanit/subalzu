@@ -245,11 +245,6 @@
                                 <form:form modelAttribute="form" method="get">
                                     <form:hidden path="page" />
                                     <table class="table table-bordered form-table mb-5">
-                                        <colgroup>
-                                            <col width="100">
-                                            <col width="570">
-                                            <col width="*">
-                                        </colgroup>
                                         <tbody class="thead-light">
                                         <tr>
                                             <th>기간 구분</th>
@@ -271,11 +266,25 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-2" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="1" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-1" label="전일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="0" label="당일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-30" label="한달" />
+                                                        </label>
+                                                    </div>
                                                     <div class="input-group">
                                                         <form:input path="dateFrom" class="form-control form-control-sm" />
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">
-                                                                <i class="fa fa-calendar"></i>
+                                                                <i class="far fa-calendar"></i>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -284,7 +293,7 @@
                                                         <form:input path="dateTo" class="form-control form-control-sm" />
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">
-                                                                <i class="fa fa-calendar"></i>
+                                                                <i class="far fa-calendar"></i>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -314,28 +323,28 @@
                                             <th>즉시 검색</th>
                                             <td colspan="2">
                                                 <div class="form-inline" id="imSearch">
-                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="deliveryType">
+                                                    <form:select class="form-control form-control-sm mr-2 w-15" path="deliveryType">
                                                         <form:option value="" label="배송유형" />
                                                         <form:option value="direct" label="직배송" />
                                                         <form:option value="parcel" label="택배배송" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="orderStatus">
+                                                    <form:select class="form-control form-control-sm mr-2 w-15" path="orderStatus">
                                                         <form:option value="" label="주문상태" />
                                                         <form:option value="completed" label="주문완료" />
                                                         <form:option value="modified" label="주문변경" />
                                                         <form:option value="canceled" label="주문취소" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="releaseStatus">
+                                                    <form:select class="form-control form-control-sm mr-2 w-15" path="releaseStatus">
                                                         <form:option value="" label="출고상태" />
                                                         <form:option value="progress" label="출고전" />
                                                         <form:option value="completed" label="출고완료" />
                                                         <form:option value="rejected" label="출고거절" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="category">
+                                                    <form:select class="form-control form-control-sm mr-2 w-15" path="category">
                                                         <form:option value="" label="1차 카테고리" />
                                                         <form:options items="${categories}" itemValue="id" itemLabel="name" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm mr-2 w-10" path="subcategory">
+                                                    <form:select class="form-control form-control-sm mr-2 w-15" path="subcategory">
                                                         <form:option value="" label="2차 카테고리" />
                                                     </form:select>
                                                 </div>
@@ -375,7 +384,7 @@
                                         <tr data-order="${orderProduct.order.id}">
                                             <td>${orderProduct.id}</td>
                                             <td>${orderProduct.order.createdAt.format(localDateTimeFormat)}</td>
-                                            <td><fmt:formatDate value="${orderProduct.order.requestDate}" pattern="yyyy-MM-dd" /></td>
+                                            <td>${orderProduct.order.requestDate.format(localDateTimeFormat2)}</td>
                                             <td>${orderProduct.order.orderCode}</td>
                                             <td>${orderProduct.order.shop.name}</td>
                                             <td>${orderProduct.product.name}</td>
@@ -506,7 +515,40 @@
                 $('#page').val(pageNo);
                 $('#form').submit();
             }
-        })
+        });
+
+        formatDate = function (date) {
+            let month = '' + (date.getMonth() + 1),
+                day = '' + date.getDate(),
+                year = date.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        };
+
+        $('input[name="period"]').on('change', function() {
+            var diff = +$(this).val();
+            const dateTo = new Date();
+            let strDateTo = formatDate(dateTo);
+            let strDateFrom;
+            if (diff !== 1) {
+                const dateFrom = new Date(dateTo);
+                dateFrom.setDate(dateTo.getDate() + diff);
+                strDateFrom = formatDate(dateFrom);
+                $('#dateFrom').val(strDateFrom);
+            } else {
+                $('#dateFrom').val('2020-01-01');
+            }
+            if (diff === -1) {
+                $('#dateTo').val(strDateFrom);
+            } else {
+                $('#dateTo').val(strDateTo);
+            }
+        });
     });
 </script>
 </body>

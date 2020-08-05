@@ -252,6 +252,20 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-2" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="1" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-1" label="전일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="0" label="당일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-30" label="한달" />
+                                                        </label>
+                                                    </div>
                                                     <form:input path="dateFrom" class="form-control form-control-sm mr-2" />
                                                     <form:input path="dateTo" class="form-control form-control-sm" />
                                                 </div>
@@ -460,6 +474,40 @@
         var checkboxElement = $(this);
         checkboxElement.prop('checked', !checkboxElement.prop('checked'));
     });
+
+    formatDate = function (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    $('input[name="period"]').on('change', function() {
+        var diff = +$(this).val();
+        const dateTo = new Date();
+        let strDateTo = formatDate(dateTo);
+        let strDateFrom;
+        if (diff !== 1) {
+            const dateFrom = new Date(dateTo);
+            dateFrom.setDate(dateTo.getDate() + diff);
+            strDateFrom = formatDate(dateFrom);
+            $('#dateFrom').val(strDateFrom);
+        } else {
+            $('#dateFrom').val('2020-01-01');
+        }
+        if (diff === -1) {
+            $('#dateTo').val(strDateFrom);
+        } else {
+            $('#dateTo').val(strDateTo);
+        }
+    });
+
 </script>
 </body>
 </html>

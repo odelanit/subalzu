@@ -9,6 +9,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class PriceGroupController {
@@ -20,6 +22,14 @@ public class PriceGroupController {
         model.addAttribute("priceGroupForm", new PriceGroup());
         model.addAttribute("priceGroups", priceGroupRepository.findAll());
         return "price_group_list";
+    }
+
+    @GetMapping("/price-groups/data")
+    @ResponseBody
+    public Map<String, Object> getPriceGroups() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("priceGroups", priceGroupRepository.findAll());
+        return resultMap;
     }
 
     @PostMapping("/price-groups/store")

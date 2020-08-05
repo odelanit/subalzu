@@ -134,18 +134,11 @@ public class OrderController {
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("salesMan", ":", salesman)));
         }
         if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
-            if (dateField.equals("createdAt")) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
-                LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
-                Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
-                spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
-            } else if (dateField.equals("requestDate")) {
-                Date dateFrom = new SimpleDateFormat("yyyy-MM-dd").parse(strDateFrom);
-                Date dateTo = new SimpleDateFormat("yyyy-MM-dd").parse(strDateTo);
-                Pair<Date, Date> dateTimePair = Pair.of(dateFrom, dateTo);
-                spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
-            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+            LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+            Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
         }
         Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
         orderPage = orderRepository.findAll(spec, pageable);
@@ -155,14 +148,15 @@ public class OrderController {
         model.addAttribute("orders", orders);
         model.addAttribute("currentPage", page);
         model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+        model.addAttribute("localDateTimeFormat2", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return "order_list";
     }
 
     @GetMapping("/orders/create")
     public String create(Model model) {
-        model.addAttribute("orderForm", new Order());
-        model.addAttribute("searchForm", new ProductSearchForm3());
-        return "order_create";
+//        model.addAttribute("orderForm", new Order());
+//        model.addAttribute("searchForm", new ProductSearchForm3());
+        return "order_create_vue";
     }
 
     public String randomAlphaNumeric(int count) {
@@ -177,11 +171,14 @@ public class OrderController {
     @PostMapping(value = "/orders/store")
     @ResponseBody
     public Map<String, String> store(@RequestBody Map<String, Object> requestMap) throws ParseException {
-        Long shopId = Long.parseLong((String) requestMap.get("shop"));
+        Long shopId = Long.parseLong((requestMap.get("shop").toString()));
         String deliveryType = (String)requestMap.get("deliveryType");
         String strRequestDate = (String)requestMap.get("requestDate");
-        Long delivererId = Long.parseLong((String) requestMap.get("deliverer")) ;
-        Long salesmanId = Long.parseLong((String) requestMap.get("salesman")) ;
+        Long delivererId = Long.parseLong(requestMap.get("deliverer").toString());
+        long salesmanId = 0L;
+        if (requestMap.get("salesman") != null) {
+            salesmanId = Long.parseLong(requestMap.get("salesman").toString());
+        }
         String requestMemo = (String)requestMap.get("requestMemo");
         String memo = (String)requestMap.get("memo");
 
@@ -195,7 +192,8 @@ public class OrderController {
             order.setOrderCode(randomAlphaNumeric(10));
             order.setDeliveryType(deliveryType);
             if (!Strings.isNullOrEmpty(strRequestDate)) {
-                Date requestDate = new SimpleDateFormat("yyyy-MM-dd").parse(strRequestDate);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDateTime requestDate = LocalDateTime.parse(strRequestDate, formatter);
                 order.setRequestDate(requestDate);
             }
             order.setDeliverer(optionalDeliverer.get());
@@ -255,23 +253,37 @@ public class OrderController {
             model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
             model.addAttribute("order", order);
             model.addAttribute("searchForm", new ProductSearchForm3());
-            return "order_show";
+            return "order_edit_vue";
         }
         return "redirect:/orders";
     }
 
+    @GetMapping("/orders/{id}/ajax")
+    @ResponseBody
+    public Map<String, Object> getOrder(@PathVariable Long id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            resultMap.put("order", order);
+        }
+        return resultMap;
+    }
+
     @PostMapping("/orders/{id}/update")
     @ResponseBody
-    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String> requestMap) throws ParseException {
-        String field = requestMap.get("field");
-        String value = requestMap.get("value");
+    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, Object> requestMap) throws ParseException {
+        String field = requestMap.get("field").toString();
         Optional<Order> optionalOrder = orderRepository.findById(Long.valueOf(id));
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
             if (field.equals("requestDate")) {
-                Date requestDate = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+                String value = requestMap.get("value").toString();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDateTime requestDate = LocalDateTime.parse(value, formatter);
                 order.setRequestDate(requestDate);
             } else if (field.equals("deliverer")) {
+                String value = requestMap.get("value").toString();
                 if (!Strings.isNullOrEmpty(value)) {
                     Optional<User> optionalUser = userRepository.findById(Long.valueOf(value));
                     if (optionalUser.isPresent()) {
@@ -280,6 +292,7 @@ public class OrderController {
                     }
                 }
             } else if (field.equals("salesMan")) {
+                String value = requestMap.get("value").toString();
                 if (Strings.isNullOrEmpty(value)) {
                     order.setSalesMan(null);
                 } else {
@@ -290,7 +303,36 @@ public class OrderController {
                     }
                 }
             } else if (field.equals("memo")) {
+                String value = requestMap.get("value").toString();
                 order.setMemo(value);
+            } else if (field.equals("orderProducts")) {
+                List<Map<String, Object>> orderProducts = (List<Map<String, Object>>) requestMap.get("value");
+                for (Map<String, Object> orderProductMap: orderProducts) {
+                    if (orderProductMap.get("id") != null) {
+                        Long opId = Long.valueOf(orderProductMap.get("id").toString());
+                        Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findById(opId);
+                        if (optionalOrderProduct.isPresent()) {
+                            OrderProduct orderProduct = optionalOrderProduct.get();
+                            orderProduct.setQty((Integer) orderProductMap.get("qty"));
+                            orderProduct.setPrice(Long.valueOf(orderProductMap.get("price").toString()));
+                            orderProduct.setTotalAmount((int)orderProductMap.get("qty") * Long.valueOf(orderProductMap.get("price").toString()));
+                            orderProductRepository.save(orderProduct);
+                        }
+                    } else {
+                        OrderProduct orderProduct = new OrderProduct();
+                        Map<String, Object> productMap = (Map<String, Object>) orderProductMap.get("product");
+                        Long productId = Long.valueOf(productMap.get("id").toString());
+                        Optional<Product> optionalProduct = productRepository.findById(productId);
+                        if (optionalProduct.isPresent()) {
+                            orderProduct.setProduct(optionalProduct.get());
+                            orderProduct.setOrder(order);
+                            orderProduct.setPrice(Long.valueOf(orderProductMap.get("price").toString()));
+                            orderProduct.setQty((Integer) orderProductMap.get("qty"));
+                            orderProduct.setTotalAmount((int)orderProductMap.get("qty") * Long.valueOf(orderProductMap.get("price").toString()));
+                            orderProductRepository.save(orderProduct);
+                        }
+                    }
+                }
             }
             orderRepository.save(order);
         }
@@ -514,7 +556,10 @@ public class OrderController {
 
     @PostMapping("/orders/change_status")
     @ResponseBody
-    public Map<String, String> changeStatus(@RequestParam("id")Long id, @RequestParam("action")String action, @RequestParam("status")String status) {
+    public Map<String, String> changeStatus(@RequestBody Map<String, Object> payload) {
+        Long id = Long.valueOf(payload.get("id").toString());
+        String action = payload.get("action").toString();
+        String status = payload.get("status").toString();
         Optional<Order> optionalOrder = orderRepository.findById(id);
         optionalOrder.ifPresent(order -> {
             if (action.equalsIgnoreCase("release")) {
@@ -522,6 +567,21 @@ public class OrderController {
                 orderRepository.save(order);
             }
         });
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @PostMapping("/orders/complete_release_all")
+    @ResponseBody
+    public Map<String, String> completeReleaseAll(@RequestBody List<String> ids) {
+        for (String id: ids) {
+            Optional<Order> optionalOrder = orderRepository.findById(Long.parseLong(id));
+            optionalOrder.ifPresent(order -> {
+                order.setReleaseStatus("completed");
+                orderRepository.save(order);
+            });
+        }
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;

@@ -7,8 +7,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -30,7 +28,7 @@ public class Order {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern="yyyy-MM-dd")
-    Date requestDate;
+    LocalDateTime requestDate;
 
     @ManyToOne
     @JoinColumn(name="deliverer_id")
@@ -72,14 +70,8 @@ public class Order {
     String releaseStatus = "progress"; // completed, progress, rejected,
 
     public Order() {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DATE, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 0);
-        requestDate = calendar.getTime();
+        LocalDateTime today = LocalDateTime.now();
+        requestDate = today.plusDays(1);
     }
 
     public Long getId() {
@@ -106,11 +98,11 @@ public class Order {
         this.deliveryType = deliveryType;
     }
 
-    public Date getRequestDate() {
+    public LocalDateTime getRequestDate() {
         return requestDate;
     }
 
-    public void setRequestDate(Date requestDate) {
+    public void setRequestDate(LocalDateTime requestDate) {
         this.requestDate = requestDate;
     }
 
@@ -234,5 +226,13 @@ public class Order {
             }
         }
         return returnOrderProducts;
+    }
+
+    public int getTotalQty() {
+        int totalQty = 0;
+        for (OrderProduct orderProduct : this.orderProducts) {
+            totalQty += orderProduct.qty;
+        }
+        return totalQty;
     }
 }

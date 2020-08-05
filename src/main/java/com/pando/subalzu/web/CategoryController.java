@@ -163,4 +163,13 @@ public class CategoryController {
         resultMap.put("result_code", "00");
         return resultMap;
     }
+
+    @GetMapping("/categories/all")
+    @ResponseBody
+    public Map<String, Object> getCategories() {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Category> categories = categoryRepository.findByParentNull();
+        resultMap.put("categories", categories);
+        return resultMap;
+    }
 }

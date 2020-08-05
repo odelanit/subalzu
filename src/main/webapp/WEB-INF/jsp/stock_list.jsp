@@ -343,7 +343,7 @@
                                             <td><input type="checkbox" value="${product.id}"></td>
                                             <td>${product.id}</td>
                                             <td>${product.erpCode}</td>
-                                            <td><c:if test="${not empty product.imageUrl}"><img style="max-width: 150px;"
+                                            <td><c:if test="${not empty product.imageUrl}"><img style="max-width: 65px;"
                                                                                                 class="img-thumbnail"
                                                                                                 src="${product.imageUrl}"></c:if>
                                             </td>

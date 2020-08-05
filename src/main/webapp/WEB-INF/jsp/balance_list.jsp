@@ -17,6 +17,7 @@
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
     <!-- App css -->
+    <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
@@ -306,6 +307,33 @@
                                     <table class="table table-bordered form-table">
                                         <tbody class="thead-light">
                                         <tr>
+                                            <th>기간</th>
+                                            <td>
+                                                <div class="form-inline">
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-2" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="3" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="2" label="전월" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="1" label="금월" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="0" label="당일" />
+                                                        </label>
+                                                    </div>
+                                                    <form:input path="dateFrom" class="form-control form-control-sm" placeholder="" />
+                                                    <span class="px-2">-</span>
+                                                    <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
+                                                </div>
+                                            </td>
+                                            <td rowspan="2">
+                                                <button class="btn btn-outline-primary">검색</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th>키워드 검색</th>
                                             <td>
                                                 <div class="form-inline">
@@ -314,9 +342,6 @@
                                                     </form:select>
                                                     <form:input cssClass="form-control form-control-sm" path="keyword" placeholder="검색어를 입력해주세요" />
                                                 </div>
-                                            </td>
-                                            <td rowspan="2">
-                                                <button class="btn btn-outline-primary">검색</button>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -392,11 +417,56 @@
 <!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
+<script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script>
+    $('#dateFrom').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
 
+    $('#dateTo').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+
+    formatDate = function (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    $('input[name="period"]').on('change', function() {
+        var diff = +$(this).val();
+        const date = new Date();
+        if (diff === 0) {
+            var strDateFrom = formatDate(date);
+            $('#dateFrom').val(strDateFrom);
+            $('#dateTo').val(strDateFrom);
+        } else if (diff === 1) {
+            var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            $('#dateFrom').val(formatDate(firstDay));
+            $('#dateTo').val(formatDate(lastDay));
+        } else if (diff === 2) {
+            var firstDay = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+            var lastDay = new Date(date.getFullYear(), date.getMonth(), 0);
+            $('#dateFrom').val(formatDate(firstDay));
+            $('#dateTo').val(formatDate(lastDay));
+        } else {
+            $('#dateFrom').val('2020-01-01');
+            $('#dateTo').val(formatDate(date));
+        }
+    });
+</script>
 </body>
 </html>

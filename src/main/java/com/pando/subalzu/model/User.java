@@ -21,6 +21,7 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
@@ -40,6 +41,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Transient
+    @JsonIgnore
     private String passwordConfirm;
 
     @ManyToMany

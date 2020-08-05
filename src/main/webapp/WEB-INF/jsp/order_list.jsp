@@ -25,9 +25,7 @@
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/libs/flatpickr/flatpickr.min.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
 <!-- Begin page -->
@@ -269,9 +267,37 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
-                                                    <form:input path="dateFrom" class="form-control form-control-sm" placeholder="" />
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-2" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="1" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-1" label="전일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="0" label="당일" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" autocomplete="off" value="-30" label="한달" />
+                                                        </label>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <form:input path="dateFrom" class="form-control" placeholder="" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="far fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                     <span class="px-2">-</span>
-                                                    <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
+                                                    <div class="input-group input-group-sm">
+                                                        <form:input path="dateTo" class="form-control form-control-sm" placeholder="" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="far fa-calendar"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -291,12 +317,12 @@
                                             <th>즉시 검색</th>
                                             <td colspan="2">
                                                 <div class="form-inline" id="imSearch">
-                                                    <form:select path="deliveryType" class="form-control form-control-sm w-10 mr-2">
+                                                    <form:select path="deliveryType" cssClass="form-control form-control-sm w-15 mr-2">
                                                         <form:option value="" label="배송유형" />
                                                         <form:option value="direct" label="직배송" />
                                                         <form:option value="parcel" label="택배배송" />
                                                     </form:select>
-                                                    <form:select cssClass="form-control form-control-sm w-10 mr-2" path="orderStatus">
+                                                    <form:select cssClass="form-control form-control-sm w-15 mr-2" path="orderStatus">
                                                         <form:option value="" label="주문상태" />
                                                         <form:option value="completed" label="주문완료" />
                                                         <form:option value="modified" label="주문변경" />
@@ -304,17 +330,17 @@
                                                         <form:option value="return_pending" label="반품접수" />
                                                         <form:option value="return_completed" label="반품완료" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm w-10 mr-2" path="releaseStatus">
+                                                    <form:select class="form-control form-control-sm w-15 mr-2" path="releaseStatus">
                                                         <form:option value="" label="출고상태" />
                                                         <form:option value="progress" label="출고전" />
                                                         <form:option value="completed" label="출고완료" />
                                                         <form:option value="rejected" label="출고거절" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm w-10 mr-2" path="deliverer">
+                                                    <form:select class="form-control form-control-sm w-15 mr-2" path="deliverer">
                                                         <form:option value="" label="배송 담당자" />
                                                         <form:options items="${deliverers}" itemValue="id" itemLabel="fullName" />
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm w-10" path="salesman">
+                                                    <form:select class="form-control form-control-sm w-15" path="salesman">
                                                         <form:option value="" label="영업 담당자" />
                                                         <form:options items="${salesMans}" itemValue="id" itemLabel="fullName" />
                                                     </form:select>
@@ -324,7 +350,6 @@
                                         </tbody>
                                     </table>
                                 </form:form>
-                                <hr>
                                 <div class="row align-items-center mb-3">
                                     <div class="col-md-6">
                                         <button type="button" onclick="printOrder()" class="btn btn-outline-primary btn-sm">
@@ -344,7 +369,7 @@
                                 <div class="row align-items-center mb-4">
                                     <div class="col-6">
                                         <span>전체 ${orderPage.totalElements}건</span>
-<%--                                        <button class="btn btn-sm btn-outline-primary" >출고 완료</button>--%>
+                                        <button class="btn btn-sm btn-outline-primary" id="completeRelease">출고 완료</button>
                                     </div>
                                     <div class="col-6 text-right">
                                         <span>* 전일~당일까지의 주문내역이 기본으로 노출됩니다. </span>
@@ -377,11 +402,11 @@
                                                 <td><input type="checkbox" value="${order.id}" class="check"></td>
                                                 <td>${order.id}</td>
                                                 <td>${order.createdAt.format(localDateTimeFormat)}</td>
-                                                <td><fmt:formatDate value="${order.requestDate}" pattern="yyyy-MM-dd" /></td>
+                                                <td>${order.requestDate.format(localDateTimeFormat2)}</td>
                                                 <td>${order.orderCode}</td>
                                                 <td>${order.shop.name}</td>
                                                 <td>${order.deliveryType == "direct" ? "직배송" : "택배 배송" }</td>
-                                                <td>${order.orderProducts.size()}</td>
+                                                <td>${order.totalQty}</td>
                                                 <td>${order.shop.paymentMethod == "credit" ? "외상거래" : "예치금"}</td>
                                                 <td>${order.totalAmount}</td>
                                                 <td>
@@ -492,6 +517,24 @@
 
 </div>
 <!-- END wrapper -->
+<div id="overlay">
+    <div class="cv-spinner">
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
@@ -499,10 +542,10 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/libs/flatpickr/flatpickr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
+    var token = $('meta[name="_csrf"]').attr('content');
     $('#dateFrom').datepicker({
         dateFormat: 'yy-mm-dd'
     });
@@ -540,6 +583,37 @@
         checkboxElement.prop('checked', !checkboxElement.prop('checked'));
     });
 
+    $('#completeRelease').on('click', function () {
+        var ids = [];
+        $('#orders tbody input[type="checkbox"]:checked').each(function(index) {
+            ids.push($(this).val());
+        });
+        if (ids.length > 0) {
+            $.ajax({
+                type: 'POST',
+                url: '/orders/complete_release_all',
+                contentType: 'application/json',
+                accept: 'text/plain',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                data: JSON.stringify(ids),
+                beforeSend: function() {
+                    $("#overlay").fadeIn(300);
+                },
+                success: function (data) {
+                    window.location.reload();
+                }
+            }).done(function () {
+                setTimeout(function(){
+                    $("#overlay").fadeOut(300);
+                },500);
+            });
+        } else {
+            toastr.error('출고완료 처리할 주문을 선택해주세요.');
+        }
+    });
+
     function printOrder() {
         var ids = '';
         $('#orders tbody input[type="checkbox"]:checked').each(function(index) {
@@ -558,11 +632,44 @@
             ids += ($(this).val()) + ',';
         });
         if (ids) {
-            window.open('/orders/print_release?ids='+ids, "출고상품목록", "width=800, height=700, toolbar=no, menubar=no, scrollbars=yes,resizable=yes" );
+            window.open('/orders/print_release?ids='+ids, "출고상품목록", "width=1301, height=700, toolbar=no, menubar=no, scrollbars=yes,resizable=yes" );
         } else {
             toastr.error('출력할 주문을 선택해주세요');
         }
     }
+
+    formatDate = function (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    $('input[name="period"]').on('change', function() {
+        var diff = +$(this).val();
+        const dateTo = new Date();
+        let strDateTo = formatDate(dateTo);
+        let strDateFrom;
+        if (diff !== 1) {
+            const dateFrom = new Date(dateTo);
+            dateFrom.setDate(dateTo.getDate() + diff);
+            strDateFrom = formatDate(dateFrom);
+            $('#dateFrom').val(strDateFrom);
+        } else {
+            $('#dateFrom').val('2020-01-01');
+        }
+        if (diff === -1) {
+            $('#dateTo').val(strDateFrom);
+        } else {
+            $('#dateTo').val(strDateTo);
+        }
+    });
 
 </script>
 </body>

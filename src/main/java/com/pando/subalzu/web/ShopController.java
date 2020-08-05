@@ -154,7 +154,7 @@ public class ShopController {
         return "shop_list";
     }
 
-    @PostMapping("/get_shops")
+    @GetMapping("/get_shops")
     @ResponseBody
     public Map<String, Object> getShops(@RequestParam("keyword") String keyword) {
         Map<String, Object> resultMap = new HashMap<>();

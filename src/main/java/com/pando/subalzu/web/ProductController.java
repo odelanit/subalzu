@@ -138,7 +138,22 @@ public class ProductController {
     @GetMapping("/data_for_order")
     @ResponseBody
     public Map<String, Object> getProductsForOrder(ProductSearchForm form) {
-        Specification<Product> spec = new ProductSpecification(new SearchCriteria("name", ":", form.getKeyword()));
+        String keyword = form.getKeyword();
+        Category category = form.getCategory();
+        int deliveryType = form.getDeliveryType();
+
+        Specification<Product> spec = new ProductSpecification(new SearchCriteria("name", ":", keyword));
+        if (category != null) {
+            spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("category", ":", category)));
+            Category subcategory = form.getSubcategory();
+            if (subcategory != null) {
+                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
+            }
+        }
+
+        if (deliveryType != -1) {
+            spec = Specification.where(spec).and(Specification.where(new ProductSpecification(new SearchCriteria("deliveryType", ":", deliveryType))).or(new ProductSpecification(new SearchCriteria("deliveryType", ":", 0))));
+        }
         List<Product> products = productRepository.findAll(spec);
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("message", "Success");

@@ -26,11 +26,11 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name="parent_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    @JsonBackReference
+    @JsonManagedReference
     private Set<Category> children;
 
     @OneToMany(mappedBy = "category")

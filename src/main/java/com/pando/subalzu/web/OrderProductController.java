@@ -81,18 +81,11 @@ public class OrderProductController {
         }
 
         if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
-            if (dateField.equals("order_createdAt")) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
-                LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
-                Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
-                spec = Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
-            } else if (dateField.equals("order_requestDate")) {
-                Date dateFrom = new SimpleDateFormat("yyyy-MM-dd").parse(strDateFrom);
-                Date dateTo = new SimpleDateFormat("yyyy-MM-dd").parse(strDateTo);
-                Pair<Date, Date> dateTimePair = Pair.of(dateFrom, dateTo);
-                spec = Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
-            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+            LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+            Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+            spec = Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
         }
 
         Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("order.createdAt").descending());
@@ -102,6 +95,7 @@ public class OrderProductController {
         model.addAttribute("orderProducts", orderProducts);
         model.addAttribute("currentPage", page);
         model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+        model.addAttribute("localDateTimeFormat2", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return "orders_per_product";
     }
 }
