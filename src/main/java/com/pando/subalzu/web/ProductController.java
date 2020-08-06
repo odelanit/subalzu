@@ -1,6 +1,8 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
+import com.pando.subalzu.form.ProductCreationInput;
+import com.pando.subalzu.form.ProductGroupPriceInput;
 import com.pando.subalzu.form.ProductSearchForm;
 import com.pando.subalzu.form.ProductSearchForm2;
 import com.pando.subalzu.model.*;
@@ -161,41 +163,136 @@ public class ProductController {
         return resultMap;
     }
 
+//    @GetMapping("/create")
+//    public String create(Model model) {
+//        model.addAttribute("productForm", new Product());
+//        return "product_create";
+//    }
+
     @GetMapping("/create")
-    public String create(Model model) {
-        model.addAttribute("productForm", new Product());
-        return "product_create";
+    public String create() {
+        return "product_create_vue";
     }
 
-    @PostMapping("/create")
-    public String store(@ModelAttribute("productForm") Product productForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        productValidator.validate(productForm, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "product_create";
+    @PostMapping("/store")
+    @ResponseBody
+    public Map<String, String> store(@RequestBody ProductCreationInput formData) {
+        Product product = new Product();
+        product.setErpCode(formData.getErpCode());
+        product.setName(formData.getName());
+        Optional<Category> optionalCategory = categoryRepository.findById(formData.getCategoryId());
+        optionalCategory.ifPresent(product::setCategory);
+        Optional<Category> optionalSubcategory = categoryRepository.findById(formData.getSubcategoryId());
+        optionalSubcategory.ifPresent(product::setSubCategory);
+        product.setMakerName(formData.getMakerName());
+        product.setCountry(formData.getCountry());
+        product.setStandard(formData.getStandard());
+        product.setUnit(formData.getUnit());
+        product.setTax(formData.getTax());
+        product.setDeliveryType(formData.getDeliveryType());
+        product.setShippingMethod(formData.getShippingMethod());
+        product.setUseDecimal(formData.getUseDecimal());
+        product.setImageUrl(formData.getImageUrl());
+        product.setMessage(formData.getMessage());
+        Optional<Supplier> optionalSupplier = supplierRepository.findById(formData.getSupplierId());
+        optionalSupplier.ifPresent(product::setSupplier);
+        product.setBuyPrice(formData.getBuyPrice());
+        product.setDirectPrice(formData.getDirectPrice());
+        product.setParcelPrice(formData.getParcelPrice());
+        product.setSellPrice(formData.getSellPrice());
+        product = productRepository.save(product);
+
+        Set<ProductGroupPriceInput> groupPrices = formData.getGroupPrices();
+        for (ProductGroupPriceInput groupPriceInput : groupPrices) {
+            ProductGroupPrice productGroupPrice = new ProductGroupPrice();
+            Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(groupPriceInput.getPriceGroupId());
+            optionalPGPrice.ifPresent(productGroupPrice::setPriceGroup);
+            productGroupPrice.setProduct(product);
+            productGroupPrice.setPrice(groupPriceInput.getPrice());
+            productGroupPriceRepository.save(productGroupPrice);
         }
-        redirectAttributes.addFlashAttribute("message", "Product Added");
-        Product product = productRepository.save(productForm);
-        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
-        for (PriceGroup priceGroup : priceGroups) {
-            ProductGroupPrice groupPrice = new ProductGroupPrice();
-            groupPrice.setPrice(product.getBuyPrice());
-            groupPrice.setProduct(product);
-            groupPrice.setPriceGroup(priceGroup);
-            productGroupPriceRepository.save(groupPrice);
-        }
-        return "redirect:/products";
+
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
     }
 
-    @GetMapping("/{id}")
-    public String edit(@PathVariable long id, Model model) {
+    @PostMapping("/update")
+    @ResponseBody
+    public Map<String, String> update(@RequestBody ProductCreationInput formData) {
+        Long id = formData.getId();
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
+            product.setErpCode(formData.getErpCode());
+            product.setName(formData.getName());
+            Optional<Category> optionalCategory = categoryRepository.findById(formData.getCategoryId());
+            optionalCategory.ifPresent(product::setCategory);
+            Optional<Category> optionalSubcategory = categoryRepository.findById(formData.getSubcategoryId());
+            optionalSubcategory.ifPresent(product::setSubCategory);
+            product.setMakerName(formData.getMakerName());
+            product.setCountry(formData.getCountry());
+            product.setStandard(formData.getStandard());
+            product.setUnit(formData.getUnit());
+            product.setTax(formData.getTax());
+            product.setDeliveryType(formData.getDeliveryType());
+            product.setShippingMethod(formData.getShippingMethod());
+            product.setUseDecimal(formData.getUseDecimal());
+            product.setImageUrl(formData.getImageUrl());
+            product.setMessage(formData.getMessage());
+            Optional<Supplier> optionalSupplier = supplierRepository.findById(formData.getSupplierId());
+            optionalSupplier.ifPresent(product::setSupplier);
+            product.setBuyPrice(formData.getBuyPrice());
+            product.setDirectPrice(formData.getDirectPrice());
+            product.setParcelPrice(formData.getParcelPrice());
+            product.setSellPrice(formData.getSellPrice());
+            product = productRepository.save(product);
 
-            model.addAttribute("productForm", product);
-            return "product_edit";
+            Set<ProductGroupPriceInput> groupPrices = formData.getGroupPrices();
+            for (ProductGroupPriceInput groupPriceInput : groupPrices) {
+                Long gpId = groupPriceInput.getId();
+                if (gpId != null) {
+                    Optional<ProductGroupPrice> optionalProductGroupPrice = productGroupPriceRepository.findById(gpId);
+                    if (optionalProductGroupPrice.isPresent()) {
+                        ProductGroupPrice productGroupPrice = optionalProductGroupPrice.get();
+                        Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(groupPriceInput.getPriceGroupId());
+                        optionalPGPrice.ifPresent(productGroupPrice::setPriceGroup);
+                        productGroupPrice.setProduct(product);
+                        productGroupPrice.setPrice(groupPriceInput.getPrice());
+                        productGroupPriceRepository.save(productGroupPrice);
+                    }
+                } else {
+                    ProductGroupPrice productGroupPrice = new ProductGroupPrice();
+                    Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(groupPriceInput.getPriceGroupId());
+                    optionalPGPrice.ifPresent(productGroupPrice::setPriceGroup);
+                    productGroupPrice.setProduct(product);
+                    productGroupPrice.setPrice(groupPriceInput.getPrice());
+                    productGroupPriceRepository.save(productGroupPrice);
+                }
+            }
+        }
+
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @GetMapping("/{id}")
+    public String edit() {
+        return "product_edit_vue";
+    }
+
+    @GetMapping("/{id}/data")
+    @ResponseBody
+    public Map<String, Object> getProduct(@PathVariable Long id, HttpServletResponse response) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        Map<String, Object> resultMap = new HashMap<>();
+        if (optionalProduct.isPresent()) {
+            resultMap.put("product", optionalProduct.get());
+            return resultMap;
         } else {
-            return "redirect:/products";
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
         }
     }
 

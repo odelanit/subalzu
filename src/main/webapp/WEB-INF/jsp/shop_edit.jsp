@@ -621,7 +621,7 @@
                                                 </tr>
                                             </spring:bind>
                                             <spring:bind path="creditBalanceLimit">
-                                                <tr class="d-none" id="credit_balance_form_group">
+                                                <tr class="${shopForm.isCreditBalanceLimit == true ? '' : 'd-none'}" id="credit_balance_form_group">
                                                     <th>외상잔액 한도 금액</th>
                                                     <td>
                                                         <div class="input-group">

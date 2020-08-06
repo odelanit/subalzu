@@ -408,7 +408,7 @@
                                                 <td>${order.deliveryType == "direct" ? "직배송" : "택배 배송" }</td>
                                                 <td>${order.totalQty}</td>
                                                 <td>${order.shop.paymentMethod == "credit" ? "외상거래" : "예치금"}</td>
-                                                <td>${order.totalAmount}</td>
+                                                <td><fmt:formatNumber type="number" value="${order.funds}" /></td>
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${order.orderStatus == 'modified'}">

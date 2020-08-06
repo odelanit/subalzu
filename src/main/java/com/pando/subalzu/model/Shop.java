@@ -56,12 +56,12 @@ public class Shop { // 거래처
 
     @ManyToOne
     @JoinColumn(name="deliverer_id", nullable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "deliver_shops")
     User deliverer;
 
     @ManyToOne
     @JoinColumn(name="salesman_id")
-    @JsonManagedReference
+    @JsonManagedReference(value = "sales_shops")
     User salesman;
 
     @OneToOne
@@ -104,7 +104,7 @@ public class Shop { // 거래처
 
     @CreationTimestamp
     @Column(updatable = false)
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -114,6 +114,10 @@ public class Shop { // 거래처
     private LocalDateTime stoppedAt;
 
     private LocalDateTime dealtAt;
+
+    @OneToMany(mappedBy = "shop")
+    @JsonBackReference(value = "shop")
+    private Set<Order> orders;
 
     @ManyToMany(mappedBy = "shops")
     @JsonManagedReference
@@ -417,5 +421,13 @@ public class Shop { // 거래처
 
     public void setDealtAt(LocalDateTime dealtAt) {
         this.dealtAt = dealtAt;
+    }
+
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 }

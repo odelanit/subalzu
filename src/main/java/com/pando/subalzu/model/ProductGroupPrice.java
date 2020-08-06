@@ -1,5 +1,8 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,10 +17,12 @@ public class ProductGroupPrice {
 
     @ManyToOne
     @JoinColumn(name="product_id")
+    @JsonBackReference
     Product product;
 
     @ManyToOne
     @JoinColumn(name="price_group_id")
+    @JsonManagedReference
     PriceGroup priceGroup;
 
     public Long getId() {

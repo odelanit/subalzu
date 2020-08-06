@@ -320,7 +320,7 @@
                                                 <td>${order.orderCode}</td>
                                                 <td>${order.deliveryType == "direct" ? "직배송" : "택배 배송" }</td>
                                                 <td>${order.orderProducts.size()}</td>
-                                                <td>${order.totalAmount}</td>
+                                                <td>${order.funds}</td>
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${order.orderStatus == 'modified'}">

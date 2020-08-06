@@ -158,7 +158,8 @@ public class ShopController {
     @ResponseBody
     public Map<String, Object> getShops(@RequestParam("keyword") String keyword) {
         Map<String, Object> resultMap = new HashMap<>();
-        ShopSpecification spec = new ShopSpecification(new SearchCriteria("name", ":", keyword));
+        Specification<Shop> spec = new ShopSpecification(new SearchCriteria("name", ":", keyword));
+        spec = Specification.where(spec).and(new ShopSpecification(new SearchCriteria("dealStatus", ":", true)));
         List<Shop> shops = shopRepository.findAll(spec);
         resultMap.put("shops", shops);
         resultMap.put("message", "Success");

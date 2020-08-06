@@ -133,7 +133,7 @@
                             <td>${orderProduct.product.makerName}(${orderProduct.product.country})</td>
                             <td>${orderProduct.qty}</td>
                             <td class="text-right">${orderProduct.price}</td>
-                            <td class="text-right">${orderProduct.totalAmount}</td>
+                            <td class="text-right">${orderProduct.funds}</td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -152,7 +152,7 @@
                                 </div>
                                 <div class="col-6 text-right">
                                     <span class="h5 mr-3">총 주문수량: ${order.totalQty}개</span>
-                                    <span class="h5">총 금액: ${order.totalAmount}원</span>
+                                    <span class="h5">총 금액: ${order.funds}원</span>
                                 </div>
                             </div>
                         </th>
@@ -294,7 +294,7 @@
                             <td>${orderProduct.product.makerName}(${orderProduct.product.country})</td>
                             <td>${orderProduct.qty}</td>
                             <td class="text-right">${orderProduct.price}</td>
-                            <td class="text-right">${orderProduct.totalAmount}</td>
+                            <td class="text-right">${orderProduct.funds}</td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -313,7 +313,7 @@
                                 </div>
                                 <div class="col-6 text-right">
                                     <span class="h5 mr-3">총 주문수량: ${order.totalQty}개</span>
-                                    <span class="h5">총 금액: ${order.totalAmount}원</span>
+                                    <span class="h5">총 금액: ${order.funds}원</span>
                                 </div>
                             </div>
                         </th>

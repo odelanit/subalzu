@@ -1,11 +1,14 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "price_groups")
@@ -23,6 +26,14 @@ public class PriceGroup {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.ALL)
+    @JsonBackReference
+    Set<OrderProduct> orderProducts;
+
+    @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.ALL)
+    @JsonBackReference
+    Set<ProductGroupPrice> productGroupPrices;
 
     public Long getId() {
         return id;
@@ -54,5 +65,21 @@ public class PriceGroup {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<OrderProduct> getOrderProducts() {
+        return orderProducts;
+    }
+
+    public void setOrderProducts(Set<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+    }
+
+    public Set<ProductGroupPrice> getProductGroupPrices() {
+        return productGroupPrices;
+    }
+
+    public void setProductGroupPrices(Set<ProductGroupPrice> productGroupPrices) {
+        this.productGroupPrices = productGroupPrices;
     }
 }

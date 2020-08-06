@@ -115,8 +115,8 @@
                         <td>{{ orderProduct.name }}</td>
                         <td>{{ orderProduct.standard }}<br>({{ orderProduct.unit }})</td>
                         <td>{{ orderProduct.makerName }}<br>({{ orderProduct.country }})</td>
-                        <td><input class="form-control form-control-sm" type="number" v-model.number="orderProduct.qty"></td>
-                        <td><input class="form-control form-control-sm" type="number" v-model.number="orderProduct.sellPrice"></td>
+                        <td><input class="form-control form-control-sm text-center" type="number" v-model.number="orderProduct.qty"></td>
+                        <td><input class="form-control form-control-sm text-right" type="number" v-model.number="orderProduct.sellPrice"></td>
                         <td>{{ orderProduct.qty * orderProduct.sellPrice }}</td>
                         <td>
                             <button class="btn btn-outline-danger btn-sm" @click="removeOrderProduct(orderProduct)">삭제</button>

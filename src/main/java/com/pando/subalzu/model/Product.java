@@ -1,10 +1,13 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.pando.subalzu.form.ProductCreationInput;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.File;
@@ -70,14 +73,15 @@ public class Product {
     Long buyPrice = 0L;
 
     @Column(nullable = false)
-    Long sellPrice = 0L;
+    Long sellPrice = 0L; // 기본 단가
 
     @Column(nullable = false)
-    Long directPrice = 0L;
+    Long directPrice = 0L; // 직배송 단가
 
     @Column(nullable = false)
-    Long parcelPrice = 0L;
+    Long parcelPrice = 0L; // 택배송 단가
 
+    @Column(nullable = false)
     double qty = 0.0;
 
     boolean status = true;
@@ -91,20 +95,24 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JsonManagedReference
     Set<ProductGroupPrice> groupPrices;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JsonManagedReference
     Set<ShopProductPrice> shopPrices;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
-    Set<CartItem> cartItems;
+    Set<ProductRecord> productRecords;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonBackReference
+    Set<OrderProduct> orderProducts;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
-    Set<ProductRecord> productRecords;
+    Set<SupplyOrderProduct> supplyOrderProducts;
 
     public Long getId() {
         return id;
@@ -334,11 +342,27 @@ public class Product {
         this.qty = qty;
     }
 
-    public Set<CartItem> getCartItems() {
-        return cartItems;
+    public Set<ProductRecord> getProductRecords() {
+        return productRecords;
     }
 
-    public void setCartItems(Set<CartItem> cartItems) {
-        this.cartItems = cartItems;
+    public void setProductRecords(Set<ProductRecord> productRecords) {
+        this.productRecords = productRecords;
+    }
+
+    public Set<OrderProduct> getOrderProducts() {
+        return orderProducts;
+    }
+
+    public void setOrderProducts(Set<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+    }
+
+    public Set<SupplyOrderProduct> getSupplyOrderProducts() {
+        return supplyOrderProducts;
+    }
+
+    public void setSupplyOrderProducts(Set<SupplyOrderProduct> supplyOrderProducts) {
+        this.supplyOrderProducts = supplyOrderProducts;
     }
 }

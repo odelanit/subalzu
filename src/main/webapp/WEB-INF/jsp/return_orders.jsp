@@ -338,9 +338,9 @@
                                             <td>${order.orderCode}</td>
                                             <td>${order.shop.name}</td>
                                             <td>${order.orderProducts.size()}</td>
-                                            <td>${order.totalAmount}</td>
+                                            <td>${order.funds}</td>
                                             <td>${order.returnOrderProducts.size()}</td>
-                                            <td>${order.returnAmount}</td>
+                                            <td>${order.reFunds}</td>
                                             <td>
                                                 ${order.deliverer.fullName}
                                             </td>

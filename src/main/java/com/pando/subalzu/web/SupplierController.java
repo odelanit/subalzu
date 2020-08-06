@@ -17,16 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class SupplierController {
@@ -77,6 +72,15 @@ public class SupplierController {
         model.addAttribute("suppliers", suppliers);
         model.addAttribute("currentPage", page);
         return "supplier_list";
+    }
+
+    @GetMapping("/suppliers/data")
+    @ResponseBody
+    public Map<String, Object> getSuppliers() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        resultMap.put("suppliers", supplierRepository.findAll());
+        return resultMap;
     }
 
     @ModelAttribute("productSearchForm")

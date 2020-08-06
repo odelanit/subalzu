@@ -45,21 +45,32 @@ public class User {
     private String passwordConfirm;
 
     @ManyToMany
+    @JsonIgnore
     private Set<Role> roles;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Company company;
 
     @OneToMany(mappedBy = "salesman")
-    @JsonBackReference
+    @JsonIgnore
     private Set<Shop> salesShops;
 
     @OneToMany(mappedBy = "deliverer")
-    @JsonBackReference
+    @JsonIgnore
     private Set<Shop> deliverShops;
 
     @ManyToMany
+    @JsonIgnore
     private Set<Permission> permissions;
+
+    @OneToMany(mappedBy = "deliverer")
+    @JsonBackReference(value = "deliverer")
+    Set<Order> deliverOrders;
+
+    @OneToMany(mappedBy = "salesMan")
+    @JsonBackReference(value = "salesman")
+    Set<Order> salesOrders;
 
     public Long getId() {
         return id;
@@ -183,5 +194,21 @@ public class User {
         Set<Permission> permissions = new HashSet<>();
         permissions.add(permission);
         this.permissions = permissions;
+    }
+
+    public Set<Order> getDeliverOrders() {
+        return deliverOrders;
+    }
+
+    public void setDeliverOrders(Set<Order> deliverOrders) {
+        this.deliverOrders = deliverOrders;
+    }
+
+    public Set<Order> getSalesOrders() {
+        return salesOrders;
+    }
+
+    public void setSalesOrders(Set<Order> salesOrders) {
+        this.salesOrders = salesOrders;
     }
 }

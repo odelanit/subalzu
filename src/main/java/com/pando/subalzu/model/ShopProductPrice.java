@@ -1,5 +1,9 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,13 +16,16 @@ public class ShopProductPrice {
 
     @ManyToOne
     @JoinColumn(name="product_id")
+    @JsonBackReference
     Product product;
 
     @ManyToOne
     @JoinColumn(name="shop_id")
+    @JsonIdentityInfo(property = "id", generator = ObjectIdGenerators.PropertyGenerator.class)
     Shop shop;
 
-    Long price;
+    @Column(nullable = false)
+    Long price = 0L;
 
     public Long getId() {
         return id;

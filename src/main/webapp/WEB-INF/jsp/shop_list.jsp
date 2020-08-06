@@ -349,7 +349,14 @@
                                                     <a href="/shops/${shop.id}">보기</a>
                                                 </td>
                                                 <td>
-                                                    ${shop.dealStatus == true ? '거래중' : '거래중지'}
+                                                    <c:choose>
+                                                        <c:when test="${shop.dealStatus == true}">
+                                                            <span class="text-success">거래중</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="text-danger">거래중지</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </td>
                                             </tr>
                                         </c:forEach>

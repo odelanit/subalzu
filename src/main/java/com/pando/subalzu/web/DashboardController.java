@@ -39,25 +39,25 @@ public class DashboardController {
         List<Order> orders1 = orderRepository.findByCreatedAtBetween(aDayAgo, now);
         List<Order> orders30 = orderRepository.findByCreatedAtBetween(aMonthAgo, now);
 
-        Long total1 = 0L;
+        double total1 = 0L;
         int countReturnOrder1 = 0;
-        Long sumReturnAmount1 = 0L;
+        double sumReturnAmount1 = 0L;
         for (Order order : orders1) {
-            total1 += order.getTotalAmount();
+            total1 += order.getFunds();
             if (order.getReturnedAt() != null) {
                 countReturnOrder1++;
-                sumReturnAmount1 += order.getReturnAmount();
+                sumReturnAmount1 += order.getReFunds();
             }
         }
 
-        Long total30 = 0L;
+        double total30 = 0L;
         int countReturnOrder30 = 0;
-        Long sumReturnAmount30 = 0L;
+        double sumReturnAmount30 = 0L;
         for (Order order: orders30) {
-            total30 += order.getTotalAmount();
+            total30 += order.getFunds();
             if (order.getReturnedAt() != null) {
                 countReturnOrder30++;
-                sumReturnAmount30 += order.getReturnAmount();
+                sumReturnAmount30 += order.getReFunds();
             }
         }
 

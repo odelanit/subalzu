@@ -21,6 +21,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name="shop_id")
+    @JsonManagedReference(value = "shop")
     private Shop shop;
 
     @Column(nullable = false)
@@ -32,10 +33,12 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name="deliverer_id")
+    @JsonManagedReference(value = "deliverer")
     User deliverer;
 
     @ManyToOne
     @JoinColumn(name="sales_man_id")
+    @JsonManagedReference(value = "salesman")
     User salesMan;
 
     @Column(columnDefinition = "TEXT")
@@ -46,21 +49,19 @@ public class Order {
 
     @CreationTimestamp
     @Column(updatable = false)
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
     private LocalDateTime updatedAt;
 
+    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
     private LocalDateTime returnedAt;
 
     @OneToMany(mappedBy = "order")
     @JsonManagedReference
     Set<OrderProduct> orderProducts;
-
-    Long totalAmount;
-
-    Long returnAmount = 0L;
 
     @Column(columnDefinition = "TEXT")
     String releaseCancelMemo;
@@ -162,12 +163,14 @@ public class Order {
         this.orderProducts = orderProducts;
     }
 
-    public Long getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(Long totalAmount) {
-        this.totalAmount = totalAmount;
+    public double getFunds() {
+        double funds = 0;
+        for (OrderProduct orderProduct : this.orderProducts) {
+            if (orderProduct.reQty == 0) {
+                funds += orderProduct.qty * orderProduct.price;
+            }
+        }
+        return funds;
     }
 
     public String getOrderCode() {
@@ -202,12 +205,14 @@ public class Order {
         this.releaseCancelMemo = releaseCancelMemo;
     }
 
-    public Long getReturnAmount() {
-        return returnAmount;
-    }
-
-    public void setReturnAmount(Long returnAmount) {
-        this.returnAmount = returnAmount;
+    public double getReFunds() {
+        double refunds = 0.0;
+        for (OrderProduct orderProduct : this.orderProducts) {
+            if (orderProduct.reQty > 0) {
+                refunds += orderProduct.reQty * orderProduct.price;
+            }
+        }
+        return refunds;
     }
 
     public LocalDateTime getReturnedAt() {
@@ -221,7 +226,7 @@ public class Order {
     public Set<OrderProduct> getReturnOrderProducts() {
         Set<OrderProduct> returnOrderProducts = new HashSet<>();
         for (OrderProduct orderProduct : this.orderProducts) {
-            if (orderProduct.getReturnQty() > 0) {
+            if (orderProduct.reQty > 0) {
                 returnOrderProducts.add(orderProduct);
             }
         }

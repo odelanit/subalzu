@@ -32,7 +32,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class OrderController {
@@ -50,9 +53,6 @@ public class OrderController {
 
     @Autowired
     ProductRecordRepository productRecordRepository;
-
-    @Autowired
-    CartItemRepository cartItemRepository;
 
     @Autowired
     OrderRepository orderRepository;
@@ -168,6 +168,13 @@ public class OrderController {
         return builder.toString();
     }
 
+//    @PostMapping(value = "/orders/store", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseBody
+//    public Map<String, String> store2(@RequestBody OrderForm order) {
+//        Map<String, String> resultMap = new HashMap<>();
+//        return resultMap;
+//    }
+
     @PostMapping(value = "/orders/store")
     @ResponseBody
     public Map<String, String> store(@RequestBody Map<String, Object> requestMap) throws ParseException {
@@ -193,8 +200,8 @@ public class OrderController {
             order.setDeliveryType(deliveryType);
             if (!Strings.isNullOrEmpty(strRequestDate)) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDateTime requestDate = LocalDateTime.parse(strRequestDate, formatter);
-                order.setRequestDate(requestDate);
+                LocalDate requestDate = LocalDate.parse(strRequestDate, formatter);
+                order.setRequestDate(requestDate.atStartOfDay());
             }
             order.setDeliverer(optionalDeliverer.get());
             optionalSalesman.ifPresent(order::setSalesMan);
@@ -208,9 +215,9 @@ public class OrderController {
 
             for (Map<String, Object> orderProductMap: orderProductMapList) {
                 Long productId = ((Integer)orderProductMap.get("id")).longValue();
-                int qty = (int) orderProductMap.get("qty");
+                double qty = Double.parseDouble(orderProductMap.get("qty").toString());
                 long price = ((Integer) orderProductMap.get("sellPrice")).longValue();
-                long subTotal = qty * price;
+                double subTotal = qty * price;
 
                 total += subTotal;
 
@@ -222,12 +229,11 @@ public class OrderController {
                     orderProduct.setProduct(product);
                     orderProduct.setQty(qty);
                     orderProduct.setPrice(price);
-                    orderProduct.setTotalAmount(subTotal);
+                    orderProduct.setFunds(subTotal);
                     orderProduct.setOrder(order);
                     orderProductRepository.save(orderProduct);
                 }
             }
-            order.setTotalAmount(total);
             orderRepository.save(order);
 
             Transaction transaction = new Transaction();
@@ -313,9 +319,9 @@ public class OrderController {
                         Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findById(opId);
                         if (optionalOrderProduct.isPresent()) {
                             OrderProduct orderProduct = optionalOrderProduct.get();
-                            orderProduct.setQty((Integer) orderProductMap.get("qty"));
+                            orderProduct.setQty(Double.parseDouble(orderProductMap.get("qty").toString()));
                             orderProduct.setPrice(Long.valueOf(orderProductMap.get("price").toString()));
-                            orderProduct.setTotalAmount((int)orderProductMap.get("qty") * Long.valueOf(orderProductMap.get("price").toString()));
+                            orderProduct.setFunds(Double.parseDouble(orderProductMap.get("qty").toString()) * Long.valueOf(orderProductMap.get("price").toString()));
                             orderProductRepository.save(orderProduct);
                         }
                     } else {
@@ -327,8 +333,8 @@ public class OrderController {
                             orderProduct.setProduct(optionalProduct.get());
                             orderProduct.setOrder(order);
                             orderProduct.setPrice(Long.valueOf(orderProductMap.get("price").toString()));
-                            orderProduct.setQty((Integer) orderProductMap.get("qty"));
-                            orderProduct.setTotalAmount((int)orderProductMap.get("qty") * Long.valueOf(orderProductMap.get("price").toString()));
+                            orderProduct.setQty(Double.parseDouble(orderProductMap.get("qty").toString()));
+                            orderProduct.setFunds(Double.parseDouble(orderProductMap.get("qty").toString()) * Long.valueOf(orderProductMap.get("price").toString()));
                             orderProductRepository.save(orderProduct);
                         }
                     }
@@ -348,21 +354,18 @@ public class OrderController {
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
             order.setOrderStatus("return_pending");
-            long totalAmount = 0L;
             for (Map<String, Object> orderProductMap: orderProducts) {
                 Long orderProductId = ((Integer)orderProductMap.get("orderProduct")).longValue();
-                int qty = (Integer)orderProductMap.get("qty");
+                double qty = Double.parseDouble(orderProductMap.get("qty").toString());
                 Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findById(orderProductId);
                 if (optionalOrderProduct.isPresent()) {
                     OrderProduct orderProduct = optionalOrderProduct.get();
-                    orderProduct.setReturnQty(qty);
-                    long subtotal = qty * orderProduct.getPrice();
-                    orderProduct.setReturnAmount(subtotal);
+                    orderProduct.setReQty(qty);
+                    double subtotal = qty * orderProduct.getPrice();
+                    orderProduct.setRefunds(subtotal);
                     orderProductRepository.save(orderProduct);
-                    totalAmount += subtotal;
                 }
             }
-            order.setReturnAmount(totalAmount);
             order.setReturnedAt(LocalDateTime.now());
             orderRepository.save(order);
         }
@@ -483,7 +486,7 @@ public class OrderController {
                 } else {
                     dataRow.createCell(7).setCellValue("예치금");
                 }
-                dataRow.createCell(8).setCellValue(orders.get(i).getTotalAmount());
+                dataRow.createCell(8).setCellValue(orders.get(i).getFunds());
                 String orderStatus = orders.get(i).getOrderStatus();
                 if (orderStatus.equalsIgnoreCase("completed")) {
                     dataRow.createCell(9).setCellValue("주문완료");

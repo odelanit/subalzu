@@ -1,6 +1,7 @@
 package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -13,10 +14,12 @@ public class OrderProduct {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonManagedReference
     Product product;
 
     @ManyToOne
     @JoinColumn(name = "price_group_id")
+    @JsonManagedReference
     PriceGroup priceGroup;
 
     @ManyToOne
@@ -24,17 +27,20 @@ public class OrderProduct {
     @JsonBackReference
     Order order;
 
-    int qty = 0;
+    @Column(nullable = false)
+    Double qty = 0.0;
 
     @Column(nullable = false)
-    int returnQty = 0;
-
-    Long price;
-
-    Long totalAmount;
+    Double reQty = 0.0;
 
     @Column(nullable = false)
-    Long returnAmount = 0L;
+    Long price = 0L;
+
+    @Column(nullable = false)
+    Double funds = 0.0;
+
+    @Column(nullable = false)
+    Double refunds = 0.0;
 
     public Long getId() {
         return id;
@@ -60,12 +66,28 @@ public class OrderProduct {
         this.priceGroup = priceGroup;
     }
 
-    public int getQty() {
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Double getQty() {
         return qty;
     }
 
-    public void setQty(int productCount) {
-        this.qty = productCount;
+    public void setQty(Double qty) {
+        this.qty = qty;
+    }
+
+    public Double getReQty() {
+        return reQty;
+    }
+
+    public void setReQty(Double reQty) {
+        this.reQty = reQty;
     }
 
     public Long getPrice() {
@@ -76,35 +98,19 @@ public class OrderProduct {
         this.price = price;
     }
 
-    public Order getOrder() {
-        return order;
+    public Double getFunds() {
+        return funds;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setFunds(Double funds) {
+        this.funds = funds;
     }
 
-    public Long getTotalAmount() {
-        return totalAmount;
+    public Double getRefunds() {
+        return refunds;
     }
 
-    public void setTotalAmount(Long totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public int getReturnQty() {
-        return returnQty;
-    }
-
-    public void setReturnQty(int returnQty) {
-        this.returnQty = returnQty;
-    }
-
-    public Long getReturnAmount() {
-        return returnAmount;
-    }
-
-    public void setReturnAmount(Long returnAmount) {
-        this.returnAmount = returnAmount;
+    public void setRefunds(Double reFunds) {
+        this.refunds = reFunds;
     }
 }
