@@ -208,18 +208,11 @@ public class ShopController {
             Specification<Order> spec = new OrderSpecification(new SearchCriteria("shop", ":", shop));
             spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(field, ":", keyword)));
             if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
-                if (dateField.equals("createdAt")) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
-                    LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
-                    Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
-                    spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
-                } else if (dateField.equals("requestDate")) {
-                    Date dateFrom = new SimpleDateFormat("yyyy-MM-dd").parse(strDateFrom);
-                    Date dateTo = new SimpleDateFormat("yyyy-MM-dd").parse(strDateTo);
-                    Pair<Date, Date> dateTimePair = Pair.of(dateFrom, dateTo);
-                    spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
-                }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+                LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+                Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+                spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria(dateField, "<>", dateTimePair)));
             }
             Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
             orderPage = orderRepository.findAll(spec, pageable);
@@ -229,6 +222,7 @@ public class ShopController {
             model.addAttribute("orders", orders);
             model.addAttribute("currentPage", page);
             model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+            model.addAttribute("localDateTimeFormat2", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             return "shop_show";
         } else {
             return "redirect:/shops";

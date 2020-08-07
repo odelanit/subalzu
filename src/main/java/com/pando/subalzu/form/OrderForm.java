@@ -1,17 +1,15 @@
 package com.pando.subalzu.form;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-public class OrderCreationForm {
+public class OrderForm {
     Long id;
 
     Long shopId;
 
     String deliveryType;
 
-    LocalDateTime requestDate;
+    String requestDate;
 
     Long delivererId;
 
@@ -21,7 +19,7 @@ public class OrderCreationForm {
 
     String memo;
 
-    List<OrderProductForm> orderProducts;
+    Set<OrderProductForm> orderProducts;
 
     public Long getId() {
         return id;
@@ -47,11 +45,11 @@ public class OrderCreationForm {
         this.deliveryType = deliveryType;
     }
 
-    public LocalDateTime getRequestDate() {
+    public String getRequestDate() {
         return requestDate;
     }
 
-    public void setRequestDate(LocalDateTime requestDate) {
+    public void setRequestDate(String requestDate) {
         this.requestDate = requestDate;
     }
 
@@ -87,11 +85,11 @@ public class OrderCreationForm {
         this.memo = memo;
     }
 
-    public List<OrderProductForm> getOrderProducts() {
+    public Set<OrderProductForm> getOrderProducts() {
         return orderProducts;
     }
 
-    public void setOrderProducts(List<OrderProductForm> orderProducts) {
+    public void setOrderProducts(Set<OrderProductForm> orderProducts) {
         this.orderProducts = orderProducts;
     }
 }

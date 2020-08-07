@@ -7,15 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface TransactionRepository extends PagingAndSortingRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
-    @Query("SELECT SUM(amount) FROM Transaction")
+    @Query("SELECT SUM(funds) FROM Transaction")
     Long sumAmount();
 
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.transactionType = 'update'")
+    @Query("SELECT SUM(t.funds) FROM Transaction t WHERE t.transactionType = 'update'")
     Long sumUpdateAmount();
 
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.transactionType = 'input'")
+    @Query("SELECT SUM(t.funds) FROM Transaction t WHERE t.transactionType = 'input'")
     Long sumInputAmount();
 
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.shop = :shop")
-    Long sumShopAmount(Shop shop);
+    @Query("SELECT SUM(t.funds) FROM Transaction t WHERE t.shop = :shop")
+    Double sumShopAmount(Shop shop);
 }

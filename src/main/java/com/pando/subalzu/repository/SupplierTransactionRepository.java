@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SupplierTransactionRepository extends JpaRepository<SupplierTransaction, Long>, JpaSpecificationExecutor<SupplierTransaction> {
 
-    @Query("SELECT SUM(amount) FROM Transaction")
+    @Query("SELECT SUM(funds) FROM Transaction")
     Long sumAmount();
 
     @Query("SELECT SUM(t.amount) FROM SupplierTransaction t WHERE t.type = 'update'")

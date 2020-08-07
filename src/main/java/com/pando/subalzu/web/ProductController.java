@@ -180,10 +180,14 @@ public class ProductController {
         Product product = new Product();
         product.setErpCode(formData.getErpCode());
         product.setName(formData.getName());
-        Optional<Category> optionalCategory = categoryRepository.findById(formData.getCategoryId());
-        optionalCategory.ifPresent(product::setCategory);
-        Optional<Category> optionalSubcategory = categoryRepository.findById(formData.getSubcategoryId());
-        optionalSubcategory.ifPresent(product::setSubCategory);
+        if (formData.getCategoryId() != null) {
+            Optional<Category> optionalCategory = categoryRepository.findById(formData.getCategoryId());
+            optionalCategory.ifPresent(product::setCategory);
+        }
+        if (formData.getSubcategoryId() != null) {
+            Optional<Category> optionalSubcategory = categoryRepository.findById(formData.getSubcategoryId());
+            optionalSubcategory.ifPresent(product::setSubCategory);
+        }
         product.setMakerName(formData.getMakerName());
         product.setCountry(formData.getCountry());
         product.setStandard(formData.getStandard());
@@ -194,8 +198,10 @@ public class ProductController {
         product.setUseDecimal(formData.getUseDecimal());
         product.setImageUrl(formData.getImageUrl());
         product.setMessage(formData.getMessage());
-        Optional<Supplier> optionalSupplier = supplierRepository.findById(formData.getSupplierId());
-        optionalSupplier.ifPresent(product::setSupplier);
+        if (formData.getSupplierId() != null) {
+            Optional<Supplier> optionalSupplier = supplierRepository.findById(formData.getSupplierId());
+            optionalSupplier.ifPresent(product::setSupplier);
+        }
         product.setBuyPrice(formData.getBuyPrice());
         product.setDirectPrice(formData.getDirectPrice());
         product.setParcelPrice(formData.getParcelPrice());
@@ -226,10 +232,14 @@ public class ProductController {
             Product product = optionalProduct.get();
             product.setErpCode(formData.getErpCode());
             product.setName(formData.getName());
-            Optional<Category> optionalCategory = categoryRepository.findById(formData.getCategoryId());
-            optionalCategory.ifPresent(product::setCategory);
-            Optional<Category> optionalSubcategory = categoryRepository.findById(formData.getSubcategoryId());
-            optionalSubcategory.ifPresent(product::setSubCategory);
+            if (formData.getCategoryId() != null) {
+                Optional<Category> optionalCategory = categoryRepository.findById(formData.getCategoryId());
+                optionalCategory.ifPresent(product::setCategory);
+            }
+            if (formData.getSubcategoryId() != null) {
+                Optional<Category> optionalSubcategory = categoryRepository.findById(formData.getSubcategoryId());
+                optionalSubcategory.ifPresent(product::setSubCategory);
+            }
             product.setMakerName(formData.getMakerName());
             product.setCountry(formData.getCountry());
             product.setStandard(formData.getStandard());
@@ -240,8 +250,10 @@ public class ProductController {
             product.setUseDecimal(formData.getUseDecimal());
             product.setImageUrl(formData.getImageUrl());
             product.setMessage(formData.getMessage());
-            Optional<Supplier> optionalSupplier = supplierRepository.findById(formData.getSupplierId());
-            optionalSupplier.ifPresent(product::setSupplier);
+            if (formData.getSupplierId() != null) {
+                Optional<Supplier> optionalSupplier = supplierRepository.findById(formData.getSupplierId());
+                optionalSupplier.ifPresent(product::setSupplier);
+            }
             product.setBuyPrice(formData.getBuyPrice());
             product.setDirectPrice(formData.getDirectPrice());
             product.setParcelPrice(formData.getParcelPrice());

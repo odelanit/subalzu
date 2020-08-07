@@ -93,9 +93,6 @@ public class Shop { // 거래처
     String memo;
 
     @Column(nullable = false)
-    Long totalSales = 0L;
-
-    @Column(nullable = false)
     Long prevTotalBalance = 0L;
 
     @ManyToOne
@@ -367,44 +364,47 @@ public class Shop { // 거래처
         this.transactions = transactions;
     }
 
-    public Long getTotalBalance() {
+    public double getTotalBalance() {
         Iterator<Transaction> iterator = this.transactions.iterator();
-        Long total = 0L;
+        double total = 0.0;
         while (iterator.hasNext()) {
             Transaction transaction = iterator.next();
-            total += transaction.getAmount();
+            total += transaction.getFunds();
         }
         return total;
     }
 
-    public Long getTotalInput() {
+    public double getTotalInput() {
         Iterator<Transaction> iterator = this.transactions.iterator();
-        Long total = 0L;
+        double total = 0L;
         while (iterator.hasNext()) {
             Transaction transaction = iterator.next();
             if (transaction.getTransactionType().equalsIgnoreCase("input"))
-                total += transaction.getAmount();
+                total += transaction.getFunds();
         }
         return total;
     }
 
-    public Long getTotalUpdate() {
+    public double getTotalUpdate() {
         Iterator<Transaction> iterator = this.transactions.iterator();
-        Long total = 0L;
+        double total = 0.0;
         while (iterator.hasNext()) {
             Transaction transaction = iterator.next();
             if (transaction.getTransactionType().equalsIgnoreCase("update"))
-                total += transaction.getAmount();
+                total += transaction.getFunds();
         }
         return total;
     }
 
-    public Long getTotalSales() {
-        return totalSales;
-    }
-
-    public void setTotalSales(Long totalSales) {
-        this.totalSales = totalSales;
+    public double getTotalSales() {
+        Iterator<Transaction> iterator = this.transactions.iterator();
+        double total = 0.0;
+        while (iterator.hasNext()) {
+            Transaction transaction = iterator.next();
+            if (transaction.getTransactionType().equalsIgnoreCase("sale"))
+                total += transaction.getFunds();
+        }
+        return total;
     }
 
     public Long getPrevTotalBalance() {

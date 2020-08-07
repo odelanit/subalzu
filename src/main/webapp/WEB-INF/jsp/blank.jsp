@@ -25,8 +25,6 @@
 
     <link href="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
 
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
-
     <link href="${contextPath}/resources/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
           type="text/css"/>
     <link href="${contextPath}/resources/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"

@@ -13,19 +13,14 @@ public class OrderProduct {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    @JsonManagedReference
-    Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "price_group_id")
-    @JsonManagedReference
-    PriceGroup priceGroup;
-
-    @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonBackReference
     Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    @JsonManagedReference
+    Product product;
 
     @Column(nullable = false)
     Double qty = 0.0;
@@ -35,12 +30,6 @@ public class OrderProduct {
 
     @Column(nullable = false)
     Long price = 0L;
-
-    @Column(nullable = false)
-    Double funds = 0.0;
-
-    @Column(nullable = false)
-    Double refunds = 0.0;
 
     public Long getId() {
         return id;
@@ -56,14 +45,6 @@ public class OrderProduct {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public PriceGroup getPriceGroup() {
-        return priceGroup;
-    }
-
-    public void setPriceGroup(PriceGroup priceGroup) {
-        this.priceGroup = priceGroup;
     }
 
     public Order getOrder() {
@@ -96,21 +77,5 @@ public class OrderProduct {
 
     public void setPrice(Long price) {
         this.price = price;
-    }
-
-    public Double getFunds() {
-        return funds;
-    }
-
-    public void setFunds(Double funds) {
-        this.funds = funds;
-    }
-
-    public Double getRefunds() {
-        return refunds;
-    }
-
-    public void setRefunds(Double reFunds) {
-        this.refunds = reFunds;
     }
 }

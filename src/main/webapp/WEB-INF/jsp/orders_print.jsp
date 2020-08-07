@@ -24,7 +24,6 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
@@ -47,7 +46,7 @@
                         </span>
                         <span>
                             배송 요청일:
-                            <fmt:formatDate value="${order.requestDate}" pattern="yyyy-MM-dd"/>
+                            ${order.requestDate.format(localDateTimeFormat)}
                         </span>
                     </div>
                 </div>
@@ -133,7 +132,7 @@
                             <td>${orderProduct.product.makerName}(${orderProduct.product.country})</td>
                             <td>${orderProduct.qty}</td>
                             <td class="text-right">${orderProduct.price}</td>
-                            <td class="text-right">${orderProduct.funds}</td>
+                            <td class="text-right">${orderProduct.price * orderProduct.qty}</td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -208,7 +207,7 @@
                         </span>
                         <span>
                             배송 요청일:
-                            <fmt:formatDate value="${order.requestDate}" pattern="yyyy-MM-dd"/>
+                            ${order.requestDate.format(localDateTimeFormat)}
                         </span>
                     </div>
                 </div>
@@ -294,7 +293,7 @@
                             <td>${orderProduct.product.makerName}(${orderProduct.product.country})</td>
                             <td>${orderProduct.qty}</td>
                             <td class="text-right">${orderProduct.price}</td>
-                            <td class="text-right">${orderProduct.funds}</td>
+                            <td class="text-right">${orderProduct.price * orderProduct.qty}</td>
                         </tr>
                     </c:forEach>
                     </tbody>

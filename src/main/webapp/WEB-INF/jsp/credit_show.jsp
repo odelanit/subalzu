@@ -23,7 +23,6 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/libs/flatpickr/flatpickr.min.css" rel="stylesheet" type="text/css"/>
@@ -318,12 +317,14 @@
                                                 <div class="d-flex" id="imSearch">
                                                     <form:select path="transactionType" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="구분" />
-                                                        <form:option value="order" label="입금" />
-                                                        <form:option value="output" label="매출" />
+                                                        <form:option value="input" label="입금" />
+                                                        <form:option value="sale" label="매출" />
                                                         <form:option value="update" label="수정" />
                                                     </form:select>
                                                     <form:select path="processingMethod" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="처리방식" />
+                                                        <form:option value="credit_minus" label="외상거래" />
+                                                        <form:option value="prepaid_minus" label="예치금" />
                                                         <form:option value="manual_minus" label="직접입금" />
                                                         <form:option value="fund_minus" label="금액차감" />
                                                         <form:option value="fund_plus" label="금액추가" />
@@ -384,8 +385,8 @@
                                                     </c:when>
                                                 </c:choose>
                                             </td>
-                                            <td>${transaction.amount}원</td>
-                                            <td>${transaction.totalAmount}원</td>
+                                            <td>${transaction.funds}원</td>
+                                            <td>${transaction.totalFunds}원</td>
                                             <td>${transaction.description}</td>
                                         </tr>
                                     </c:forEach>
@@ -454,7 +455,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">입금 금액</label>
                         <div class="col-8 text-right">
-                            <form:input type="number" class="form-control text-right form-control-sm" path="amount" />
+                            <form:input type="number" class="form-control text-right form-control-sm" path="funds" />
                         </div>
                     </div>
                     <hr>
@@ -462,7 +463,7 @@
                         <label class="col-form-label col-4">입금 후 잔액</label>
                         <div class="col-8 text-right text-danger">
                             <span class="totalAmount">${shop.totalBalance}</span> 원
-                            <form:hidden path="totalAmount" />
+                            <form:hidden path="totalFunds" />
                         </div>
                     </div>
                     <hr>
@@ -525,7 +526,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 금액</label>
                         <div class="col-8 text-right">
-                            <form:input type="number" class="form-control text-right form-control-sm" path="amount" />
+                            <form:input type="number" class="form-control text-right form-control-sm" path="funds" />
                         </div>
                     </div>
                     <hr>
@@ -533,7 +534,7 @@
                         <label class="col-form-label col-4">수정 후 잔액</label>
                         <div class="col-8 text-right text-danger">
                             <span class="totalBalance">${shop.totalBalance}</span> 원
-                            <form:hidden path="totalAmount" />
+                            <form:hidden path="totalFunds" />
                         </div>
                     </div>
                     <hr>

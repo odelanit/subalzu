@@ -22,7 +22,6 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -342,7 +341,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                <table class="table table-sm table-hover text-center table-middle" id="products">
+                                <table class="table table-hover text-center table-middle" id="products">
                                     <thead class="thead-light">
                                     <tr>
                                         <th><input type="checkbox" id="selectAll"></th>
@@ -367,9 +366,15 @@
                                             <td><input type="checkbox" name="product" value="${product.id}"></td>
                                             <td>${product.id}</td>
                                             <td>${product.erpCode}</td>
-                                            <td><c:if test="${not empty product.imageUrl}"><img style="max-width: 65px;"
-                                                                                              class="img-thumbnail"
-                                                                                              src="${product.imageUrl}"></c:if>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty product.imageUrl}">
+                                                        <img style="max-width: 65px;" class="img-thumbnail" src="${product.imageUrl}">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img style="max-width: 65px;" class="img-thumbnail" src="${contextPath}/resources/images/product-default.png">
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                             <td>${product.name}</td>
                                             <td>${product.category.name}</td>
@@ -399,9 +404,15 @@
                                                     </c:when>
                                                 </c:choose>
                                             </td>
-                                            <td>${product.buyPrice}</td>
-                                            <td>${product.directPrice}</td>
-                                            <td>${product.parcelPrice}</td>
+                                            <td>
+                                                <fmt:formatNumber type="number" value="${product.buyPrice}" />
+                                            </td>
+                                            <td>
+                                                <fmt:formatNumber type="number" value="${product.directPrice}" />
+                                            </td>
+                                            <td>
+                                                <fmt:formatNumber type="number" value="${product.parcelPrice}" />
+                                            </td>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${product.useDecimal == true}">

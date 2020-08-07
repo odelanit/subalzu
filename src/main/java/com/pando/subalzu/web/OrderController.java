@@ -1,8 +1,7 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
-import com.pando.subalzu.form.OrderSearchForm;
-import com.pando.subalzu.form.ProductSearchForm3;
+import com.pando.subalzu.form.*;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
 import com.pando.subalzu.specification.OrderSpecification;
@@ -26,16 +25,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class OrderController {
@@ -153,9 +150,7 @@ public class OrderController {
     }
 
     @GetMapping("/orders/create")
-    public String create(Model model) {
-//        model.addAttribute("orderForm", new Order());
-//        model.addAttribute("searchForm", new ProductSearchForm3());
+    public String create() {
         return "order_create_vue";
     }
 
@@ -168,86 +163,59 @@ public class OrderController {
         return builder.toString();
     }
 
-//    @PostMapping(value = "/orders/store", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ResponseBody
-//    public Map<String, String> store2(@RequestBody OrderForm order) {
-//        Map<String, String> resultMap = new HashMap<>();
-//        return resultMap;
-//    }
-
     @PostMapping(value = "/orders/store")
     @ResponseBody
-    public Map<String, String> store(@RequestBody Map<String, Object> requestMap) throws ParseException {
-        Long shopId = Long.parseLong((requestMap.get("shop").toString()));
-        String deliveryType = (String)requestMap.get("deliveryType");
-        String strRequestDate = (String)requestMap.get("requestDate");
-        Long delivererId = Long.parseLong(requestMap.get("deliverer").toString());
-        long salesmanId = 0L;
-        if (requestMap.get("salesman") != null) {
-            salesmanId = Long.parseLong(requestMap.get("salesman").toString());
-        }
-        String requestMemo = (String)requestMap.get("requestMemo");
-        String memo = (String)requestMap.get("memo");
-
+    public Map<String, String> store(@RequestBody OrderForm formData, HttpServletResponse response) {
+        Order order = new Order();
+        order.setOrderCode(randomAlphaNumeric(10));
+        Long shopId = formData.getShopId();
         Optional<Shop> optionalShop = shopRepository.findById(shopId);
-        Optional<User> optionalDeliverer = userRepository.findById(delivererId);
-        Optional<User> optionalSalesman = userRepository.findById(salesmanId);
-        if (optionalShop.isPresent() && optionalDeliverer.isPresent()) {
+        if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
-            Order order = new Order();
             order.setShop(shop);
-            order.setOrderCode(randomAlphaNumeric(10));
-            order.setDeliveryType(deliveryType);
-            if (!Strings.isNullOrEmpty(strRequestDate)) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate requestDate = LocalDate.parse(strRequestDate, formatter);
-                order.setRequestDate(requestDate.atStartOfDay());
+            order.setDeliveryType(formData.getDeliveryType());
+            order.setRequestDate(formData.getRequestDate());
+            Optional<User> optionalDeliverer = userRepository.findById(formData.getDelivererId());
+            optionalDeliverer.ifPresent(order::setDeliverer);
+            if (formData.getSalesmanId() != null) {
+                Optional<User> optionalSalesman = userRepository.findById(formData.getSalesmanId());
+                optionalSalesman.ifPresent(order::setSalesMan);
             }
-            order.setDeliverer(optionalDeliverer.get());
-            optionalSalesman.ifPresent(order::setSalesMan);
-            order.setRequestMemo(requestMemo);
-            order.setMemo(memo);
+            order.setRequestMemo(formData.getRequestMemo());
+            order.setMemo(formData.getMemo());
             order = orderRepository.save(order);
 
-            List<Map<String, Object>> orderProductMapList = (List<Map<String, Object>>) requestMap.get("products");
+            shop.setDealtAt(LocalDateTime.now());
+            shopRepository.save(shop);
 
-            long total = 0L;
-
-            for (Map<String, Object> orderProductMap: orderProductMapList) {
-                Long productId = ((Integer)orderProductMap.get("id")).longValue();
-                double qty = Double.parseDouble(orderProductMap.get("qty").toString());
-                long price = ((Integer) orderProductMap.get("sellPrice")).longValue();
-                double subTotal = qty * price;
-
-                total += subTotal;
-
+            Set<OrderProductForm> orderProductFormSet = formData.getOrderProducts();
+            double total = 0.0;
+            for (OrderProductForm orderProductForm : orderProductFormSet) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrder(order);
+                Long productId = orderProductForm.getProductId();
                 Optional<Product> optionalProduct = productRepository.findById(productId);
-
-                if (optionalProduct.isPresent()) {
-                    Product product = optionalProduct.get();
-                    OrderProduct orderProduct = new OrderProduct();
-                    orderProduct.setProduct(product);
-                    orderProduct.setQty(qty);
-                    orderProduct.setPrice(price);
-                    orderProduct.setFunds(subTotal);
-                    orderProduct.setOrder(order);
-                    orderProductRepository.save(orderProduct);
-                }
+                optionalProduct.ifPresent(orderProduct::setProduct);
+                orderProduct.setQty(orderProductForm.getQty());
+                orderProduct.setPrice(orderProductForm.getPrice());
+                orderProductRepository.save(orderProduct);
+                total += orderProductForm.getQty() * orderProductForm.getPrice();
             }
-            orderRepository.save(order);
 
             Transaction transaction = new Transaction();
             transaction.setShop(shop);
             transaction.setTransactionType("sale");
             transaction.setProcessingMethod("order_minus");
-            transaction.setAmount(total);
-            transaction.setTotalAmount(transactionRepository.sumShopAmount(shop));
-            transaction.setDescription(order.getOrderCode() + " 주문 변경");
+            transaction.setFunds(total);
+            Double prevTotal = transactionRepository.sumShopAmount(shop);
+            if (prevTotal == null) prevTotal = 0.0;
+            transaction.setTotalFunds(prevTotal + total);
+            transaction.setDescription(order.getOrderCode() + " 주문 완료");
             transactionRepository.save(transaction);
         }
 
         Map<String, String> resultMap = new HashMap<>();
-        requestMap.put("message", "Success");
+        resultMap.put("message", "Success");
         return resultMap;
     }
 
@@ -255,10 +223,6 @@ public class OrderController {
     public String show(@PathVariable Long id, Model model) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
-            model.addAttribute("order", order);
-            model.addAttribute("searchForm", new ProductSearchForm3());
             return "order_edit_vue";
         }
         return "redirect:/orders";
@@ -276,98 +240,103 @@ public class OrderController {
         return resultMap;
     }
 
-    @PostMapping("/orders/{id}/update")
+    @PostMapping(value = "/orders/update")
     @ResponseBody
-    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, Object> requestMap) throws ParseException {
-        String field = requestMap.get("field").toString();
-        Optional<Order> optionalOrder = orderRepository.findById(Long.valueOf(id));
+    public Map<String, String> update(@RequestBody OrderForm formData, HttpServletResponse response) {
+        Long orderId = formData.getId();
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            if (field.equals("requestDate")) {
-                String value = requestMap.get("value").toString();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDateTime requestDate = LocalDateTime.parse(value, formatter);
-                order.setRequestDate(requestDate);
-            } else if (field.equals("deliverer")) {
-                String value = requestMap.get("value").toString();
-                if (!Strings.isNullOrEmpty(value)) {
-                    Optional<User> optionalUser = userRepository.findById(Long.valueOf(value));
-                    if (optionalUser.isPresent()) {
-                        User user = optionalUser.get();
-                        order.setDeliverer(user);
-                    }
-                }
-            } else if (field.equals("salesMan")) {
-                String value = requestMap.get("value").toString();
-                if (Strings.isNullOrEmpty(value)) {
-                    order.setSalesMan(null);
-                } else {
-                    Optional<User> optionalUser = userRepository.findById(Long.valueOf(value));
-                    if (optionalUser.isPresent()) {
-                        User user = optionalUser.get();
-                        order.setSalesMan(user);
-                    }
-                }
-            } else if (field.equals("memo")) {
-                String value = requestMap.get("value").toString();
-                order.setMemo(value);
-            } else if (field.equals("orderProducts")) {
-                List<Map<String, Object>> orderProducts = (List<Map<String, Object>>) requestMap.get("value");
-                for (Map<String, Object> orderProductMap: orderProducts) {
-                    if (orderProductMap.get("id") != null) {
-                        Long opId = Long.valueOf(orderProductMap.get("id").toString());
-                        Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findById(opId);
-                        if (optionalOrderProduct.isPresent()) {
-                            OrderProduct orderProduct = optionalOrderProduct.get();
-                            orderProduct.setQty(Double.parseDouble(orderProductMap.get("qty").toString()));
-                            orderProduct.setPrice(Long.valueOf(orderProductMap.get("price").toString()));
-                            orderProduct.setFunds(Double.parseDouble(orderProductMap.get("qty").toString()) * Long.valueOf(orderProductMap.get("price").toString()));
-                            orderProductRepository.save(orderProduct);
-                        }
-                    } else {
-                        OrderProduct orderProduct = new OrderProduct();
-                        Map<String, Object> productMap = (Map<String, Object>) orderProductMap.get("product");
-                        Long productId = Long.valueOf(productMap.get("id").toString());
-                        Optional<Product> optionalProduct = productRepository.findById(productId);
-                        if (optionalProduct.isPresent()) {
-                            orderProduct.setProduct(optionalProduct.get());
-                            orderProduct.setOrder(order);
-                            orderProduct.setPrice(Long.valueOf(orderProductMap.get("price").toString()));
-                            orderProduct.setQty(Double.parseDouble(orderProductMap.get("qty").toString()));
-                            orderProduct.setFunds(Double.parseDouble(orderProductMap.get("qty").toString()) * Long.valueOf(orderProductMap.get("price").toString()));
-                            orderProductRepository.save(orderProduct);
-                        }
-                    }
-                }
+            order.setRequestDate(formData.getRequestDate());
+            Optional<User> optionalDeliverer = userRepository.findById(formData.getDelivererId());
+            optionalDeliverer.ifPresent(order::setDeliverer);
+            if (formData.getSalesmanId() != null) {
+                Optional<User> optionalSalesman = userRepository.findById(formData.getSalesmanId());
+                optionalSalesman.ifPresent(order::setSalesMan);
             }
-            orderRepository.save(order);
+            order.setOrderStatus("modified");
+            order.setMemo(formData.getMemo());
+            order = orderRepository.save(order);
+
+            double funds = order.getFunds();
+            orderProductRepository.deleteAll(order.getOrderProducts());
+
+            Set<OrderProductForm> orderProductFormSet = formData.getOrderProducts();
+            double total = 0.0;
+            for (OrderProductForm orderProductForm : orderProductFormSet) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrder(order);
+                Long productId = orderProductForm.getProductId();
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+                optionalProduct.ifPresent(orderProduct::setProduct);
+                orderProduct.setQty(orderProductForm.getQty());
+                orderProduct.setPrice(orderProductForm.getPrice());
+                orderProductRepository.save(orderProduct);
+                total += orderProductForm.getQty() * orderProductForm.getPrice();
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setShop(order.getShop());
+            transaction.setTransactionType("sale");
+            transaction.setProcessingMethod("modify_minus");
+            transaction.setFunds(total - funds);
+            transaction.setTotalFunds(transactionRepository.sumShopAmount(order.getShop()) + total - funds);
+            transaction.setDescription(order.getOrderCode() + " 주문 변경");
+            transactionRepository.save(transaction);
+
+            order.getShop().setDealtAt(LocalDateTime.now());
+            shopRepository.save(order.getShop());
         }
+
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;
     }
 
-    @PostMapping("/orders/{id}/return")
+    @PostMapping("/orders/receive_return")
     @ResponseBody
-    public Map<String, String> createReturn(@PathVariable String id, @RequestBody List<Map<String, Object>> orderProducts) {
-        Optional<Order> optionalOrder = orderRepository.findById(Long.valueOf(id));
+    public Map<String, String> createReturn(@RequestBody OrderReturnFom formData, Principal principal) {
+        Long orderId = formData.getId();
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            order.setOrderStatus("return_pending");
-            for (Map<String, Object> orderProductMap: orderProducts) {
-                Long orderProductId = ((Integer)orderProductMap.get("orderProduct")).longValue();
-                double qty = Double.parseDouble(orderProductMap.get("qty").toString());
-                Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findById(orderProductId);
-                if (optionalOrderProduct.isPresent()) {
-                    OrderProduct orderProduct = optionalOrderProduct.get();
-                    orderProduct.setReQty(qty);
-                    double subtotal = qty * orderProduct.getPrice();
-                    orderProduct.setRefunds(subtotal);
-                    orderProductRepository.save(orderProduct);
-                }
-            }
+            order.setOrderStatus("return_received");
             order.setReturnedAt(LocalDateTime.now());
-            orderRepository.save(order);
+            order = orderRepository.save(order);
+            Set<OrderProduct> orderProducts = order.getOrderProducts();
+            orderProductRepository.deleteAll(orderProducts);
+            Set<OrderProductForm> orderProductsData = formData.getOrderProducts();
+            double funds = 0.0;
+            for (OrderProductForm orderProductForm : orderProductsData) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrder(order);
+                Long productId = orderProductForm.getProductId();
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+                optionalProduct.ifPresent(orderProduct::setProduct);
+                orderProduct.setQty(orderProductForm.getQty());
+                orderProduct.setReQty(orderProductForm.getReQty());
+                orderProduct.setPrice(orderProductForm.getPrice());
+                funds += orderProductForm.getReQty() * orderProductForm.getPrice();
+                orderProduct = orderProductRepository.save(orderProduct);
+
+                ProductRecord productRecord = new ProductRecord();
+                productRecord.setAction("output");
+                productRecord.setProduct(orderProduct.getProduct());
+                productRecord.setDiff(orderProduct.getReQty());
+                productRecord.setPreviousQty(orderProduct.getProduct().getQty());
+                Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                optionalUser.ifPresent(productRecord::setUser);
+                productRecordRepository.save(productRecord);
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setShop(order.getShop());
+            transaction.setTransactionType("sale");
+            transaction.setProcessingMethod("return_plus");
+            transaction.setFunds(-funds);
+            transaction.setTotalFunds(transactionRepository.sumShopAmount(order.getShop()) - funds);
+            transaction.setDescription(order.getOrderCode() + " 반품 접수");
+            transactionRepository.save(transaction);
         }
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
@@ -559,7 +528,7 @@ public class OrderController {
 
     @PostMapping("/orders/change_status")
     @ResponseBody
-    public Map<String, String> changeStatus(@RequestBody Map<String, Object> payload) {
+    public Map<String, String> changeStatus(@RequestBody Map<String, Object> payload, Principal principal) {
         Long id = Long.valueOf(payload.get("id").toString());
         String action = payload.get("action").toString();
         String status = payload.get("status").toString();
@@ -568,6 +537,23 @@ public class OrderController {
             if (action.equalsIgnoreCase("release")) {
                 order.setReleaseStatus(status);
                 orderRepository.save(order);
+
+                Set<OrderProduct> orderProducts = order.getOrderProducts();
+                for(OrderProduct orderProduct : orderProducts) {
+                    Product product = orderProduct.getProduct();
+
+                    ProductRecord productRecord = new ProductRecord();
+                    productRecord.setAction("output");
+                    productRecord.setProduct(product);
+                    productRecord.setDiff(-orderProduct.getQty());
+                    productRecord.setPreviousQty(product.getQty());
+                    Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                    optionalUser.ifPresent(productRecord::setUser);
+                    productRecordRepository.save(productRecord);
+
+                    product.setQty(product.getQty() - orderProduct.getQty());
+                    productRepository.save(product);
+                }
             }
         });
         Map<String, String> resultMap = new HashMap<>();

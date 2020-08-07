@@ -2,7 +2,6 @@ package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,10 +25,6 @@ public class PriceGroup {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.ALL)
-    @JsonBackReference
-    Set<OrderProduct> orderProducts;
 
     @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.ALL)
     @JsonBackReference
@@ -65,14 +60,6 @@ public class PriceGroup {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Set<OrderProduct> getOrderProducts() {
-        return orderProducts;
-    }
-
-    public void setOrderProducts(Set<OrderProduct> orderProducts) {
-        this.orderProducts = orderProducts;
     }
 
     public Set<ProductGroupPrice> getProductGroupPrices() {

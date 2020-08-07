@@ -1,6 +1,5 @@
 package com.pando.subalzu.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,14 +19,16 @@ public class Transaction {
     Shop shop;
 
     @Column(nullable = false)
-    String transactionType; // input: 입금, output: 매출, update: 수정
+    String transactionType; // input: 입금, sale: 매출, update: 수정
 
     @Column(nullable = false)
-    String processingMethod; // manual_minus: 직접 입금, fund_minus: 금액 차감, fund_plus: 금액 추가
+    String processingMethod; // manual_minus: 직접 입금, fund_minus: 금액 차감, fund_plus: 금액 추가, order_minus: 주문 완료
 
-    Long amount = 0L;
+    @Column(nullable = false)
+    Double funds = 0.0; // 한개 트랜잭션 자금
 
-    Long totalAmount = 0L;
+    @Column(nullable = false)
+    Double totalFunds = 0.0; // 누적 트랜잭션 자금
 
     @Column(columnDefinition = "TEXT")
     String description;
@@ -74,12 +75,12 @@ public class Transaction {
         this.processingMethod = processingMethod;
     }
 
-    public Long getAmount() {
-        return amount;
+    public Double getFunds() {
+        return funds;
     }
 
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setFunds(Double amount) {
+        this.funds = amount;
     }
 
     public String getDescription() {
@@ -106,12 +107,12 @@ public class Transaction {
         this.updatedAt = updatedAt;
     }
 
-    public Long getTotalAmount() {
-        return totalAmount;
+    public Double getTotalFunds() {
+        return totalFunds;
     }
 
-    public void setTotalAmount(Long totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setTotalFunds(Double totalAmount) {
+        this.totalFunds = totalAmount;
     }
 
     public Long getPrevTotal() {

@@ -76,7 +76,7 @@ public class CreditController {
         model.addAttribute("sumAmount", transactionRepository.sumAmount());
         model.addAttribute("sumUpdateAmount", transactionRepository.sumUpdateAmount());
         model.addAttribute("sumInputAmount", transactionRepository.sumInputAmount());
-        model.addAttribute("sumTotalSales", shopRepository.sumTotalSales());
+//        model.addAttribute("sumTotalSales", shopRepository.sumTotalSales());
 
         return "credit_list";
     }
@@ -139,7 +139,7 @@ public class CreditController {
         Map<String, String> resultMap = new HashMap<>();
         String method = transaction.getProcessingMethod();
         if (method.contains("minus")) {
-            transaction.setAmount(-transaction.getAmount());
+            transaction.setFunds(-transaction.getFunds());
         }
         Long prevTotal = transaction.getPrevTotal();
         transaction = transactionRepository.save(transaction);

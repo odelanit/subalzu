@@ -14,7 +14,4 @@ public interface ShopRepository extends JpaRepository<Shop, Long>, JpaSpecificat
 
     @Query("SELECT SUM(prevTotalBalance) FROM Shop")
     Long sumPrevTotal();
-
-    @Query("SELECT SUM(s.totalSales) FROM Shop s")
-    Long sumTotalSales();
 }

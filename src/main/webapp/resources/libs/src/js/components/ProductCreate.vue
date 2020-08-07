@@ -57,11 +57,11 @@
                     <th class="required"><span>과세구분</span></th>
                     <td>
                         <div class="custom-control custom-control-inline custom-radio">
-                            <input type="radio" class="custom-control-input" v-model="tax" value="1" id="tax-radio1"/>
+                            <input type="radio" class="custom-control-input" v-model="tax" value="true" id="tax-radio1"/>
                             <label class="custom-control-label" for="tax-radio1">과세</label>
                         </div>
                         <div class="custom-control custom-control-inline custom-radio">
-                            <input type="radio" class="custom-control-input" v-model="tax" value="0" id="tax-radio2"/>
+                            <input type="radio" class="custom-control-input" v-model="tax" value="false" id="tax-radio2"/>
                             <label class="custom-control-label" for="tax-radio2">면세</label>
                         </div>
                     </td>
@@ -226,7 +226,7 @@
                 country: '',
                 standard: '',
                 unit: '',
-                tax: 0,
+                tax: false,
                 deliveryType: 0,
                 shippingMethod: 'manual',
                 useDecimal: false,
@@ -365,7 +365,7 @@
                 })
                     .then(res => res.data)
                     .then(data => {
-                        console.log(data);
+                        window.location.href = '/products';
                     })
                     .catch(error => {
                         console.log(error);

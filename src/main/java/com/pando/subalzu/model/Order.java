@@ -7,7 +7,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Entity
@@ -66,7 +68,7 @@ public class Order {
     @Column(columnDefinition = "TEXT")
     String releaseCancelMemo;
 
-    String orderStatus = "completed" ; // completed, modified, canceled,
+    String orderStatus = "completed" ; // completed, modified, canceled, return_received, return_completed
 
     String releaseStatus = "progress"; // completed, progress, rejected,
 
@@ -239,5 +241,11 @@ public class Order {
             totalQty += orderProduct.qty;
         }
         return totalQty;
+    }
+
+    public void setRequestDate(String strRequestDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate requestDate = LocalDate.parse(strRequestDate, formatter);
+        this.requestDate = requestDate.atStartOfDay();
     }
 }

@@ -24,7 +24,6 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
@@ -316,10 +315,10 @@
                                             <tr onclick="window.location.href='/orders/${order.id}'">
                                                 <td>${order.id}</td>
                                                 <td>${order.createdAt.format(localDateTimeFormat)}</td>
-                                                <td><fmt:formatDate value="${order.requestDate}" pattern="yyyy-MM-dd" /></td>
+                                                <td>${order.requestDate.format(localDateTimeFormat2)}</td>
                                                 <td>${order.orderCode}</td>
                                                 <td>${order.deliveryType == "direct" ? "직배송" : "택배 배송" }</td>
-                                                <td>${order.orderProducts.size()}</td>
+                                                <td>${order.totalQty}</td>
                                                 <td>${order.funds}</td>
                                                 <td>
                                                     <c:choose>

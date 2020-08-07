@@ -389,7 +389,7 @@
                 })
                     .then(res => res.data)
                     .then(data => {
-                        console.log(data);
+                        window.location.href = '/products';
                     })
                     .catch(error => {
                         console.log(error);

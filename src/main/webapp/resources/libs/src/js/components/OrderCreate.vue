@@ -8,7 +8,7 @@
                     <tr>
                         <th class="required"><span>거래처 선택</span></th>
                         <td colspan="3">
-                            <div class="input-group input-group-sm">
+                            <div class="input-group input-group-sm w-25">
                                 <input type="text" class="form-control" v-model="selected_shop_name">
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-primary" @click="showShopModal">거래처 선택</button>
@@ -32,7 +32,7 @@
                         </td>
                         <th>배송요청일</th>
                         <td>
-                            <div class="input-group input-group-sm">
+                            <div class="input-group input-group-sm w-75">
                                 <input type="text" class="form-control" v-model="requestDate"
                                        id="requestDate"/>
                                 <div class="input-group-append">
@@ -46,16 +46,16 @@
                     <tr>
                         <th class="required"><span>배송 담당자</span></th>
                         <td>
-                            <select v-model="selected_deliverer_id" class="form-control form-control-sm">
+                            <select v-model="selected_deliverer_id" class="form-control form-control-sm w-75">
                                 <option v-bind:value="null">-- 선택 --</option>
-                                <option v-for="deliverer in deliverers" v-bind:value="deliverer.id">{{
-                                    deliverer.fullName }}
+                                <option v-for="deliverer in deliverers" v-bind:value="deliverer.id">
+                                    {{ deliverer.fullName }}
                                 </option>
                             </select>
                         </td>
                         <th>영업 담당자</th>
                         <td>
-                            <select class="form-control form-control-sm" v-model="selected_salesman_id">
+                            <select class="form-control form-control-sm w-75" v-model="selected_salesman_id">
                                 <option v-bind:value="null">-- 선택 --</option>
                                 <option v-for="salesman in salesMans" v-bind:value="salesman.id">
                                     {{ salesman.fullName }}
@@ -66,13 +66,13 @@
                     <tr>
                         <th>요청사항</th>
                         <td colspan="3">
-                            <textarea class="form-control" rows="3" v-model="requestMemo"></textarea>
+                            <textarea class="form-control w-50" rows="3" v-model="requestMemo"></textarea>
                         </td>
                     </tr>
                     <tr>
                         <th>메모</th>
                         <td colspan="3">
-                            <textarea class="form-control" rows="3" v-model="memo"/>
+                            <textarea class="form-control w-50" rows="3" v-model="memo"/>
                         </td>
                     </tr>
                     </tbody>
@@ -93,8 +93,9 @@
                         <col>
                         <col>
                         <col>
-                        <col style="width: 10%">
-                        <col style="width: 10%">
+                        <col style="width: 8%">
+                        <col style="width: 12%">
+                        <col style="width: 12%">
                         <col style="width: 8%">
                     </colgroup>
                     <thead class="thead-light">
@@ -110,16 +111,16 @@
                     </tr>
                     </thead>
                     <tbody v-if="showCartTable">
-                    <tr v-for="(orderProduct, index) in order_products">
+                    <tr v-for="(orderProduct, index) in orderProducts">
                         <td>{{ index + 1 }}</td>
-                        <td>{{ orderProduct.name }}</td>
-                        <td>{{ orderProduct.standard }}<br>({{ orderProduct.unit }})</td>
-                        <td>{{ orderProduct.makerName }}<br>({{ orderProduct.country }})</td>
+                        <td>{{ orderProduct.product.name }}</td>
+                        <td>{{ orderProduct.product.standard }}<br>({{ orderProduct.product.unit }})</td>
+                        <td>{{ orderProduct.product.makerName }}<br>({{ orderProduct.product.country }})</td>
                         <td><input class="form-control form-control-sm text-center" type="number" v-model.number="orderProduct.qty"></td>
-                        <td><input class="form-control form-control-sm text-right" type="number" v-model.number="orderProduct.sellPrice"></td>
-                        <td>{{ orderProduct.qty * orderProduct.sellPrice }}</td>
+                        <td><NumberInput class="form-control form-control-sm text-right" v-model.number="orderProduct.price" /></td>
+                        <td>{{ Number(orderProduct.qty * orderProduct.price).toLocaleString() }}</td>
                         <td>
-                            <button class="btn btn-outline-danger btn-sm" @click="removeOrderProduct(orderProduct)">삭제</button>
+                            <button class="btn btn-outline-danger btn-sm" @click="removeOrderProduct(index)">삭제</button>
                         </td>
                     </tr>
                     </tbody>
@@ -131,7 +132,7 @@
                         <td></td>
                         <td>{{ total_qty }}</td>
                         <td></td>
-                        <td>{{ total_amount }}</td>
+                        <td>{{ Number(total_amount).toLocaleString() }}</td>
                         <td></td>
                     </tr>
                     </tfoot>
@@ -280,8 +281,8 @@
                                         <tr v-for="product in products" @click="selectedProduct(product)">
                                             <td>{{ product.name }}</td>
                                             <td>{{ product.qty }}</td>
-                                            <td>{{ product.buyPrice }}</td>
-                                            <td>{{ product.sellPrice }}</td>
+                                            <td>{{ Number(product.buyPrice).toLocaleString() }}</td>
+                                            <td>{{ Number(product.sellPrice).toLocaleString() }}</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -289,7 +290,7 @@
                             </div>
                             <div class="col-lg-5">
                                 <div class="row mb-3">
-                                    <div class="col-6">선택상품 목록<span>(전체 {{ order_products.length }}건)</span></div>
+                                    <div class="col-6">선택상품 목록<span>(전체 {{ orderProducts.length }}건)</span></div>
                                     <div class="col-6 text-right">
                                         <button class="btn btn-sm btn-outline-primary" @click="resetOrderProducts"><i class="fa fa-undo"></i></button>
                                     </div>
@@ -297,18 +298,18 @@
                                 <div id="goods_select_wrap">
                                     <div style="height:420px; overflow: auto;">
                                         <ul class="list-group" id="shopping_cart">
-                                            <li class="list-group-item" v-for="order_product in order_products">
-                                                <button class="close" @click="removeOrderProduct(order_product)">&times;</button>
-                                                <h6>{{ order_product.name }}</h6>
-                                                <p><span class="unit">{{ order_product.unit }}</span> / <span class="country">{{ order_product.country }}</span></p>
+                                            <li class="list-group-item" v-for="(orderProduct, index) in orderProducts">
+                                                <button class="close" @click="removeOrderProduct(index)">&times;</button>
+                                                <h6>{{ orderProduct.product.name }}</h6>
+                                                <p><span class="unit">{{ orderProduct.product.unit }}</span> / <span class="country">{{ orderProduct.product.country }}</span></p>
                                                 <div class="form-inline">
-                                                    <select class="form-control form-control-sm" style="width: 37%;">
-                                                        <option v-bind:value="null">--단가 그룹 선택 --</option>
-                                                        <option v-for="priceGroup in priceGroups" v-bind:value="priceGroup.id">{{ priceGroup.name }}</option>
+                                                    <select class="form-control form-control-sm" v-model="orderProduct.price" style="width: 37%;">
+                                                        <option v-bind:value="orderProduct.primaryPrice">기본 단가</option>
+                                                        <option v-for="groupPrice in orderProduct.product.groupPrices" v-bind:value="groupPrice.price">{{ groupPrice.priceGroup.name }}</option>
                                                     </select>
-                                                    <input class="form-control form-control-sm text-center mx-2" style="width: 20%;" type="number" v-model.number="order_product.qty">
+                                                    <input class="form-control form-control-sm text-center mx-2" style="width: 20%;" type="number" v-model.number="orderProduct.qty">
                                                     <div class="input-group input-group-sm" style="width: 35%">
-                                                        <input class="form-control form-control-sm text-right" type="number" v-model.number="order_product.sellPrice">
+                                                        <NumberInput class="form-control form-control-sm text-right" v-model.number="orderProduct.price" />
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">원</span>
                                                         </div>
@@ -320,7 +321,7 @@
                                     <div class="bg-light p-4">
                                         <div class="row">
                                             <div class="col-6">합계금액</div>
-                                            <div class="col-6 text-right">{{ total_amount }}원</div>
+                                            <div class="col-6 text-right">{{ Number(total_amount).toLocaleString() }}원</div>
                                         </div>
                                     </div>
                                 </div>
@@ -338,7 +339,9 @@
 </template>
 
 <script>
+    import NumberInput from "./NumberInput";
     export default {
+        components: {NumberInput},
         data() {
             return {
                 shops: [],
@@ -360,10 +363,9 @@
                 selected_subcategory_id: null,
                 product_keyword: '',
                 products: [],
-                order_products: [],
+                orderProducts: [],
                 total_amount: 0,
                 total_qty: 0,
-                priceGroups: [],
                 showCartTable: false
             }
         },
@@ -398,14 +400,6 @@
                 .catch(err => {
                     console.log(err);
                 });
-            axios.get('/price-groups/data')
-                .then(res => res.data)
-                .then(data => {
-                    this.priceGroups = data.priceGroups;
-                })
-                .catch(err => {
-                    console.log(err);
-                })
         },
         methods: {
             showShopModal: function () {
@@ -477,22 +471,30 @@
                     })
             },
             selectedProduct: function (product) {
-                let orderProductId = this.order_products.findIndex(x => x.id === product.id);
+                let opId = this.orderProducts.findIndex(x => x.product.id === product.id);
                 let orderProduct = {};
-                if (orderProductId !== -1) {
-                    orderProduct = this.order_products[orderProductId];
+                if (opId !== -1) {
+                    orderProduct = this.orderProducts[opId];
                     orderProduct.qty = orderProduct.qty + 1;
                 } else {
-                    orderProduct = Object.assign({}, product);
+                    orderProduct.product = Object.assign({}, product);
+                    orderProduct.productId = orderProduct.product.id;
+                    let spIdx = product.shopPrices.findIndex(x => x.shop.id === this.selected_shop.id);
+                    if (spIdx === -1) {
+                        orderProduct.primaryPrice = product.sellPrice;
+                    } else {
+                        orderProduct.primaryPrice = product.shopPrices[spIdx].price;
+                    }
+                    orderProduct.price = orderProduct.primaryPrice;
                     orderProduct.qty = 1;
-                    this.order_products.push(orderProduct);
+                    this.orderProducts.push(orderProduct);
                 }
             },
             resetOrderProducts: function () {
-                this.order_products = [];
+                this.orderProducts = [];
             },
-            removeOrderProduct: function (order_product) {
-                this.order_products.splice(this.order_products.indexOf(order_product), 1);
+            removeOrderProduct: function (index) {
+                this.orderProducts.splice(index, 1);
             },
             saveOrderProducts: function () {
                 this.showCartTable = true;
@@ -501,20 +503,20 @@
             submitForm: function () {
                 let token = $("meta[name='_csrf']").attr("content");
 
-                if (!this.selected_shop || !this.selected_deliverer_id || this.order_products.length === 0) {
+                if (!this.selected_shop || !this.selected_deliverer_id || this.orderProducts.length === 0) {
                     toastr.error('필수 입력 사항들을 입력하세요.');
                     return false;
                 }
 
                 axios.post('/orders/store', {
-                    shop: this.selected_shop.id,
+                    shopId: this.selected_shop.id,
                     deliveryType: this.deliveryType,
                     requestDate: this.requestDate,
-                    deliverer: this.selected_deliverer_id,
-                    salesman: this.selected_salesman_id,
+                    delivererId: this.selected_deliverer_id,
+                    salesmanId: this.selected_salesman_id,
                     requestMemo: this.requestMemo,
                     memo: this.memo,
-                    products: this.order_products
+                    orderProducts: this.orderProducts
                 }, {
                     headers: {
                         'X-CSRF-TOKEN': token,
@@ -530,13 +532,13 @@
             }
         },
         watch: {
-            order_products: {
+            orderProducts: {
                 deep: true,
                 handler(items) {
                     let total_funds = 0;
                     let total_qty = 0;
                     items.forEach(item => {
-                        total_funds += item.sellPrice * item.qty;
+                        total_funds += item.price * item.qty;
                         total_qty += item.qty;
                     });
                     this.total_qty = total_qty;
@@ -544,7 +546,7 @@
                 }
             },
             deliveryType: function (val) {
-                this.order_products = [];
+                this.orderProducts = [];
             }
         }
     }

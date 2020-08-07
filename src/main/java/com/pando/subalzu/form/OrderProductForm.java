@@ -5,8 +5,6 @@ public class OrderProductForm {
 
     Long productId;
 
-    Long priceGroupId;
-
     Long orderId;
 
     Double qty;
@@ -14,10 +12,6 @@ public class OrderProductForm {
     Double reQty;
 
     Long price;
-
-    Double funds;
-
-    Double refunds;
 
     public Long getId() {
         return id;
@@ -33,14 +27,6 @@ public class OrderProductForm {
 
     public void setProductId(Long productId) {
         this.productId = productId;
-    }
-
-    public Long getPriceGroupId() {
-        return priceGroupId;
-    }
-
-    public void setPriceGroupId(Long priceGroupId) {
-        this.priceGroupId = priceGroupId;
     }
 
     public Long getOrderId() {
@@ -73,21 +59,5 @@ public class OrderProductForm {
 
     public void setPrice(Long price) {
         this.price = price;
-    }
-
-    public Double getFunds() {
-        return funds;
-    }
-
-    public void setFunds(Double funds) {
-        this.funds = funds;
-    }
-
-    public Double getRefunds() {
-        return refunds;
-    }
-
-    public void setRefunds(Double refunds) {
-        this.refunds = refunds;
     }
 }

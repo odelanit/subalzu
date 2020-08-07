@@ -22,9 +22,7 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/libs/flatpickr/flatpickr.min.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
 <!-- Begin page -->
@@ -476,13 +474,9 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/libs/flatpickr/flatpickr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>
-    $('#range-datepicker').flatpickr({
-        mode: 'range'
-    });
     $(document).ready(function() {
         var token = $("meta[name='_csrf']").attr("content");
         $('#imSearch').on('change', function() {

@@ -417,7 +417,10 @@
                                                         <c:when test="${order.orderStatus == 'completed'}">
                                                             주문완료
                                                         </c:when>
-                                                        <c:when test="${order.orderStatus == 'return_pending'}">
+                                                        <c:when test="${order.orderStatus == 'canceled'}">
+                                                            <span class="text-danger">주문취소</span>
+                                                        </c:when>
+                                                        <c:when test="${order.orderStatus == 'return_received'}">
                                                             반품접수
                                                         </c:when>
                                                     </c:choose>
