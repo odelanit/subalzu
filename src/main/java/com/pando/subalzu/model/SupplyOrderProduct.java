@@ -1,5 +1,7 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -15,13 +17,14 @@ public class SupplyOrderProduct {
 
     @ManyToOne
     @JoinColumn(name = "shipping_id")
+    @JsonBackReference
     SupplyOrder supplyOrder;
 
-    int qty = 0;
+    @Column(nullable = false)
+    Double qty;
 
+    @Column(nullable = false)
     Long price;
-
-    Long totalAmount;
 
     public Long getId() {
         return id;
@@ -39,12 +42,12 @@ public class SupplyOrderProduct {
         this.product = product;
     }
 
-    public int getQty() {
+    public Double getQty() {
         return qty;
     }
 
-    public void setQty(int productCount) {
-        this.qty = productCount;
+    public void setQty(Double qty) {
+        this.qty = qty;
     }
 
     public Long getPrice() {
@@ -53,14 +56,6 @@ public class SupplyOrderProduct {
 
     public void setPrice(Long price) {
         this.price = price;
-    }
-
-    public Long getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(Long totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public SupplyOrder getSupplyOrder() {

@@ -1,5 +1,7 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +19,7 @@ public class SupplyOwner {
     String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     String password;
 
     String fullName;
@@ -27,6 +30,7 @@ public class SupplyOwner {
     String bio;
 
     @OneToOne(mappedBy = "owner")
+    @JsonBackReference
     Supplier supplier;
 
     @CreationTimestamp

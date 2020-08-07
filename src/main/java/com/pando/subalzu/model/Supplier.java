@@ -2,6 +2,8 @@ package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -54,21 +56,27 @@ public class Supplier { // 매입처
     private LocalDateTime dealtAt;
 
     @Transient
+    @JsonIgnore
     private String fullName;
 
     @Transient
+    @JsonIgnore
     private String phone;
 
     @Transient
+    @JsonIgnore
     private String username;
 
     @Transient
+    @JsonIgnore
     private String password;
 
     @Transient
+    @JsonIgnore
     private String passwordConfirm;
 
     @Transient
+    @JsonIgnore
     private String bio;
 
     @OneToMany(mappedBy = "supplier")
@@ -79,10 +87,14 @@ public class Supplier { // 매입처
     @JsonBackReference
     private Set<SupplierTransaction> supplierTransactions;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "owner_id")
-    @JsonBackReference
+    @JsonManagedReference
     private SupplyOwner owner;
+
+    @OneToMany(mappedBy = "supplier")
+    @JsonBackReference
+    Set<SupplyOrder> supplyOrders;
 
     public Long getId() {
         return id;
@@ -292,9 +304,9 @@ public class Supplier { // 매입처
         this.totalPrevBalance = totalPrevFunds;
     }
 
-    public Long getTotalBalance() {
+    public double getTotalFunds() {
         Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
-        Long total = 0L;
+        double total = 0;
         while (iterator.hasNext()) {
             SupplierTransaction supplierTransaction = iterator.next();
             total += supplierTransaction.getAmount();
@@ -302,9 +314,9 @@ public class Supplier { // 매입처
         return total;
     }
 
-    public Long getTotalInput() {
+    public double getTotalInputFunds() {
         Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
-        Long total = 0L;
+        double total = 0;
         while (iterator.hasNext()) {
             SupplierTransaction supplierTransaction = iterator.next();
             if (supplierTransaction.getType().equalsIgnoreCase("shipping"))
@@ -313,9 +325,9 @@ public class Supplier { // 매입처
         return total;
     }
 
-    public Long getTotalOutput() {
+    public double getTotalOutputFunds() {
         Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
-        Long total = 0L;
+        double total = 0;
         while (iterator.hasNext()) {
             SupplierTransaction supplierTransaction = iterator.next();
             if (supplierTransaction.getType().equalsIgnoreCase("output"))
@@ -324,14 +336,26 @@ public class Supplier { // 매입처
         return total;
     }
 
-    public Long getTotalUpdate() {
+    public double getTotalUpdateFunds() {
         Iterator<SupplierTransaction> iterator = this.supplierTransactions.iterator();
-        Long total = 0L;
+        double total = 0;
         while (iterator.hasNext()) {
             SupplierTransaction supplierTransaction = iterator.next();
             if (supplierTransaction.getType().equalsIgnoreCase("update"))
                 total += supplierTransaction.getAmount();
         }
         return total;
+    }
+
+    public Long getProductsCount() {
+        return (long) this.products.size();
+    }
+
+    public Set<SupplyOrder> getSupplyOrders() {
+        return supplyOrders;
+    }
+
+    public void setSupplyOrders(Set<SupplyOrder> supplyOrders) {
+        this.supplyOrders = supplyOrders;
     }
 }

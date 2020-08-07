@@ -250,7 +250,7 @@
                                                 <span class="text-muted text-uppercase font-weight-bold">현재 잔액</span>
                                             </div>
                                             <div class="align-self-center">
-                                                <span class="h3 text-danger">${supplier.totalBalance}원</span>
+                                                <span class="h3 text-danger">${supplier.totalFunds}원</span>
                                             </div>
                                         </div>
                                     </div>
@@ -431,8 +431,8 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                                ${supplier.totalBalance} 원
-                            <form:hidden path="prevTotal" value="${supplier.totalBalance}" />
+                                ${supplier.totalFunds} 원
+                            <form:hidden path="prevTotal" value="${supplier.totalFunds}" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -445,7 +445,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">입금 후 잔액</label>
                         <div class="col-8 text-right text-danger">
-                            <span class="totalAmount">${supplier.totalBalance}</span> 원
+                            <span class="totalAmount">${supplier.totalFunds}</span> 원
                             <form:hidden path="totalAmount" />
                         </div>
                     </div>
@@ -489,7 +489,7 @@
                                 <label class="custom-control-label" for="transactionType2">금액 추가</label>
                             </div>
                         </div>
-                        <form:hidden path="prevTotal" value="${supplier.totalBalance}" />
+                        <form:hidden path="prevTotal" value="${supplier.totalFunds}" />
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
@@ -502,8 +502,8 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                                ${supplier.totalBalance} 원
-                            <input type="hidden" name="prevTotal" value="${supplier.totalBalance}">
+                                ${supplier.totalFunds} 원
+                            <input type="hidden" name="prevTotal" value="${supplier.totalFunds}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -516,7 +516,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 후 잔액</label>
                         <div class="col-8 text-right text-danger">
-                            <span class="totalBalance">${supplier.totalBalance}</span> 원
+                            <span class="totalBalance">${supplier.totalFunds}</span> 원
                             <form:hidden path="totalAmount" />
                         </div>
                     </div>

@@ -22,9 +22,10 @@ public class SupplierTransaction {
     String type; // 매입: shipping, 수정: update, 출금: output
 
     @Column(nullable = false)
-    Long amount = 0L;
+    Double amount = 0.0;
 
-    Long totalAmount = 0L;
+    @Column(nullable = false)
+    Double totalAmount = 0.0;
 
     @Column(columnDefinition = "TEXT")
     String description;
@@ -94,11 +95,11 @@ public class SupplierTransaction {
         this.updatedAt = updatedAt;
     }
 
-    public Long getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Long funds) {
+    public void setAmount(Double funds) {
         this.amount = funds;
     }
 
@@ -118,11 +119,11 @@ public class SupplierTransaction {
         this.prevTotal = prevTotal;
     }
 
-    public Long getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Long totalAmount) {
+    public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 }

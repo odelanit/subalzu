@@ -1,10 +1,7 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
-import com.pando.subalzu.form.ProductCreationInput;
-import com.pando.subalzu.form.ProductGroupPriceInput;
-import com.pando.subalzu.form.ProductSearchForm;
-import com.pando.subalzu.form.ProductSearchForm2;
+import com.pando.subalzu.form.*;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
 import com.pando.subalzu.specification.ProductSpecification;
@@ -126,17 +123,6 @@ public class ProductController {
         return "product_list";
     }
 
-    @GetMapping("/data")
-    @ResponseBody
-    public Map<String, Object> getProducts(@RequestParam("supplier") Supplier supplier) {
-        Specification<Product> spec = new ProductSpecification(new SearchCriteria("supplier", ":", supplier));
-        List<Product> products = productRepository.findAll(spec);
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("message", "Success");
-        resultMap.put("products", products);
-        return resultMap;
-    }
-
     @GetMapping("/data_for_order")
     @ResponseBody
     public Map<String, Object> getProductsForOrder(ProductSearchForm form) {
@@ -163,11 +149,22 @@ public class ProductController {
         return resultMap;
     }
 
-//    @GetMapping("/create")
-//    public String create(Model model) {
-//        model.addAttribute("productForm", new Product());
-//        return "product_create";
-//    }
+    @GetMapping("/data_for_supply_order")
+    @ResponseBody
+    public Map<String, Object> getProducts(ProductSearchForm5 form5) {
+        Long supplierId = form5.getSupplierId();
+        Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        if (optionalSupplier.isPresent()) {
+            Supplier supplier = optionalSupplier.get();
+            Specification<Product> spec = new ProductSpecification(new SearchCriteria("supplier", ":", supplier));
+            List<Product> products = productRepository.findAll(spec);
+            resultMap.put("products", products);
+        }
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
 
     @GetMapping("/create")
     public String create() {

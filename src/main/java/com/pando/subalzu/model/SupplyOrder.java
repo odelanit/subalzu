@@ -1,14 +1,12 @@
 package com.pando.subalzu.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Set;
 
 @Entity
@@ -22,21 +20,20 @@ public class SupplyOrder {
 
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
+    @JsonManagedReference
     Supplier supplier;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonManagedReference
     User user;
 
     @Column(nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    Date deliverBy;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDateTime deliverBy;
 
     @Column(columnDefinition = "TEXT")
     String description;
-
-    @Column(nullable = false)
-    Long totalAmount = 0L;
 
     String shippingStatus = "standby"; // standby: 발주 대기, completed: 발주 완료, canceled: 발주 취소
 
@@ -50,17 +47,11 @@ public class SupplyOrder {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "supplyOrder")
+    @JsonManagedReference
     Set<SupplyOrderProduct> supplyOrderProducts;
 
     public SupplyOrder() {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DATE, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 0);
-        deliverBy = calendar.getTime();
+        deliverBy = LocalDateTime.now().plusDays(1);
     }
 
     public Long getId() {
@@ -87,11 +78,11 @@ public class SupplyOrder {
         this.user = user;
     }
 
-    public Date getDeliverBy() {
+    public LocalDateTime getDeliverBy() {
         return deliverBy;
     }
 
-    public void setDeliverBy(Date deliverBy) {
+    public void setDeliverBy(LocalDateTime deliverBy) {
         this.deliverBy = deliverBy;
     }
 
@@ -135,14 +126,6 @@ public class SupplyOrder {
         this.orderCode = shippingCode;
     }
 
-    public Long getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(Long totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
     public String getShippingStatus() {
         return shippingStatus;
     }
@@ -157,5 +140,21 @@ public class SupplyOrder {
 
     public void setInputStatus(String inputStatus) {
         this.inputStatus = inputStatus;
+    }
+
+    public Double getTotalQty() {
+        double totalQty = 0;
+        for (SupplyOrderProduct orderProduct : supplyOrderProducts) {
+            totalQty += orderProduct.getQty();
+        }
+        return totalQty;
+    }
+
+    public Double getTotalFunds() {
+        double totalFunds = 0;
+        for (SupplyOrderProduct orderProduct : supplyOrderProducts) {
+            totalFunds += orderProduct.getQty() * orderProduct.getPrice();
+        }
+        return totalFunds;
     }
 }

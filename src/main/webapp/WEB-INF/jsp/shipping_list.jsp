@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -342,8 +343,8 @@
                                             <td>${order.orderCode}</td>
                                             <td>${order.supplier.name}</td>
                                             <td>${order.createdAt.format(localDateTimeFormat)}</td>
-                                            <td>${order.supplyOrderProducts.size()}</td>
-                                            <td>${order.totalAmount}</td>
+                                            <td><fmt:formatNumber value="${order.totalQty}" type="number" /></td>
+                                            <td><fmt:formatNumber value="${order.totalFunds}" type="number" /> </td>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${order.shippingStatus == 'standby'}">
@@ -352,20 +353,19 @@
                                                     <c:when test="${order.shippingStatus == 'completed'}">
                                                         발주 완료
                                                     </c:when>
-                                                    <c:when test="${order.shippingStatus == 'canceled'}">
-                                                        발주 취소
-                                                    </c:when>
                                                 </c:choose>
                                             </td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${order.inputStatus == 'standby'}">
-                                                        입고 대기
-                                                    </c:when>
-                                                    <c:when test="${order.inputStatus == 'canceled'}">
-                                                        입고 완료
-                                                    </c:when>
-                                                </c:choose>
+                                                <c:if test="${order.shippingStatus == 'completed'}">
+                                                    <c:choose>
+                                                        <c:when test="${order.inputStatus == 'standby'}">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary input-complete">입고완료</button>
+                                                        </c:when>
+                                                        <c:when test="${order.inputStatus == 'completed'}">
+                                                            입고 완료
+                                                        </c:when>
+                                                    </c:choose>
+                                                </c:if>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -429,7 +429,8 @@
         dateFormat: 'yy-mm-dd'
     });
 
-    $('.complete').on('click', function() {
+    $('.complete').on('click', function(e) {
+        e.preventDefault();
         var orderId = $(this).closest('tr').data('id');
         $.ajax({
             type: 'POST',
@@ -447,7 +448,35 @@
             },
             success: function(data) {
                 toastr.success(data.message);
-                window.location.reload();
+                window.location.href = '/shipping';
+            }
+        }).done(function () {
+            setTimeout(function(){
+                $("#overlay").fadeOut(300);
+            }, 500);
+        });
+    });
+
+    $('.input-complete').on('click', function(e) {
+        e.preventDefault();
+        var orderId = $(this).closest('tr').data('id');
+        $.ajax({
+            type: 'POST',
+            url: '/shipping/input_complete',
+            contentType: 'application/json',
+            accept: 'text/plain',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            data: JSON.stringify({
+                id: orderId.toString()
+            }),
+            beforeSend: function() {
+                $("#overlay").fadeIn(300);
+            },
+            success: function(data) {
+                toastr.success(data.message);
+                window.location.href = '/shipping';
             }
         }).done(function () {
             setTimeout(function(){

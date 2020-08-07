@@ -675,7 +675,7 @@
                         '<td><input type="checkbox" class="check" value="' + product.id + '" /></td>' +
                         '<td>' + product.erpCode + '</td>' +
                         '<td>' + product.name + '</td>' +
-                        '<td>' + product.category.name + '</td>' +
+                        '<td>' + (product.category ? product.category.name : '') + '</td>' +
                         '<td>' + product.standard + '(' + product.unit + ')' + '</td>' +
                         '<td>' + product.makerName + '(' + product.country + ')' + '</td>' +
                         '<td>' + product.buyPrice + '</td>' +
@@ -711,7 +711,7 @@
                 '<td>' + product.id + '<input type="hidden" name="products" value="' + product.id + '" /></td>' +
                 '<td>' + product.erpCode + '</td>' +
                 '<td>' + product.name + '</td>' +
-                '<td>' + product.category.name + '</td>' +
+                '<td>' + (product.category ? product.category.name : '') + '</td>' +
                 '<td>' + product.standard + '(' + product.unit + ')' + '</td>' +
                 '<td>' + product.makerName + '(' + product.country + ')' + '</td>' +
                 '<td>' + product.buyPrice + '</td>' +

@@ -61,6 +61,7 @@ public class OrderProductController {
         int page = form.getPage();
 
         Specification<OrderProduct> spec = new OrderProductSpecification(new SearchCriteria(field, ":", keyword));
+        Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria("reQty", ":", 0)));
         if (!Strings.isNullOrEmpty(deliveryType)) {
             spec = Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria("order_deliveryType", ":", deliveryType)));
         }

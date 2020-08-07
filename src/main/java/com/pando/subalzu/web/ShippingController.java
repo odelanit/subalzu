@@ -2,6 +2,8 @@ package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
 import com.pando.subalzu.form.ShippingSearchForm;
+import com.pando.subalzu.form.SupplyOrderForm;
+import com.pando.subalzu.form.SupplyOrderProductForm;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
 import com.pando.subalzu.specification.SearchCriteria;
@@ -20,8 +22,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,7 +46,7 @@ public class ShippingController {
     SupplyOrderRepository supplyOrderRepository;
 
     @Autowired
-    ShippingProductRepository shippingProductRepository;
+    SupplyOrderProductRepository supplyOrderProductRepository;
 
     @Autowired
     ProductRecordRepository productRecordRepository;
@@ -107,45 +107,38 @@ public class ShippingController {
     }
 
     @GetMapping("/create")
-    public String create(Model model) {
-        SupplyOrder supplyOrder = new SupplyOrder();
-        model.addAttribute("shippingForm", supplyOrder);
-        return "shipping_create";
+    public String create() {
+        return "shipping_create_vue";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/store")
     @ResponseBody
-    public Map<String, String> store(@RequestBody Map<String, Object> requestMap) throws ParseException {
-        Long supplierId = Long.parseLong((String) requestMap.get("supplier"));
-        Long userId = Long.parseLong((String) requestMap.get("user"));
-        String strDeliverBy = (String) requestMap.get("deliverBy");
-        String description = (String) requestMap.get("description");
-        Date deliverBy = new SimpleDateFormat("yyyy-MM-dd").parse(strDeliverBy);
+    public Map<String, String> store(@RequestBody SupplyOrderForm payload) {
+        Long supplierId = payload.getSupplierId();
+        String strDeliverBy = payload.getDeliverBy();
+        Long salesmanId = payload.getSalesmanId();
+        String description = payload.getDescription();
 
         Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<User> optionalUser = userRepository.findById(salesmanId);
         if (optionalSupplier.isPresent() && optionalUser.isPresent()) {
             Supplier supplier = optionalSupplier.get();
             User user = optionalUser.get();
             SupplyOrder supplyOrder = new SupplyOrder();
             supplyOrder.setSupplier(supplier);
             supplyOrder.setUser(user);
-            supplyOrder.setDeliverBy(deliverBy);
+            LocalDate deliverBy = LocalDate.parse(strDeliverBy, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            supplyOrder.setDeliverBy(deliverBy.atStartOfDay());
             supplyOrder.setDescription(description);
             supplyOrder.setOrderCode(randomAlphaNumeric(10));
             supplyOrder = supplyOrderRepository.save(supplyOrder);
 
-            List<Map<String, Object>> orderProductMapList = (List<Map<String, Object>>) requestMap.get("supplyOrderProducts");
+            Set<SupplyOrderProductForm> orderProductFormSet = payload.getOrderProducts();
 
-            long total = 0L;
-
-            for (Map<String, Object> orderProductMap : orderProductMapList) {
-                Long productId = Long.parseLong((String) orderProductMap.get("product"));
-                int qty = Integer.parseInt((String) orderProductMap.get("qty"));
-                Long price = Long.parseLong((String) orderProductMap.get("price"));
-                long subTotal = Long.parseLong((String) orderProductMap.get("totalAmount"));
-
-                total += subTotal;
+            for (SupplyOrderProductForm orderProductForm : orderProductFormSet) {
+                Long productId = orderProductForm.getProductId();
+                double qty = orderProductForm.getQty();
+                Long price = orderProductForm.getPrice();
 
                 Optional<Product> optionalProduct = productRepository.findById(productId);
 
@@ -155,14 +148,10 @@ public class ShippingController {
                     supplyOrderProduct.setProduct(product);
                     supplyOrderProduct.setQty(qty);
                     supplyOrderProduct.setPrice(price);
-                    supplyOrderProduct.setTotalAmount(subTotal);
                     supplyOrderProduct.setSupplyOrder(supplyOrder);
-                    shippingProductRepository.save(supplyOrderProduct);
+                    supplyOrderProductRepository.save(supplyOrderProduct);
                 }
             }
-
-            supplyOrder.setTotalAmount(total);
-            supplyOrderRepository.save(supplyOrder);
         }
 
         Map<String, String> resultMap = new HashMap<>();
@@ -177,14 +166,26 @@ public class ShippingController {
         Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
         if (optionalSupplyOrder.isPresent()) {
             SupplyOrder supplyOrder = optionalSupplyOrder.get();
-            Set<SupplyOrderProduct> supplyOrderProducts = supplyOrder.getSupplyOrderProducts();
-            Long total = 0L;
-            for (SupplyOrderProduct supplyOrderProduct : supplyOrderProducts) {
-                total += supplyOrderProduct.getTotalAmount();
+            supplyOrder.setShippingStatus("completed");
+            supplyOrderRepository.save(supplyOrder);
+        }
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
 
+    @PostMapping("/input_complete")
+    @ResponseBody
+    public Map<String, String> inputComplete(@RequestBody Map<String, Long> requestMap, Principal principal) {
+        Long id = requestMap.get("id");
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
+        if (optionalSupplyOrder.isPresent()) {
+            SupplyOrder supplyOrder = optionalSupplyOrder.get();
+            Set<SupplyOrderProduct> supplyOrderProducts = supplyOrder.getSupplyOrderProducts();
+            double total = 0L;
+            for (SupplyOrderProduct supplyOrderProduct : supplyOrderProducts) {
                 Product product = supplyOrderProduct.getProduct();
                 double previousQty = product.getQty();
-
                 product.setQty(previousQty + supplyOrderProduct.getQty());
                 productRepository.save(product);
 
@@ -197,7 +198,10 @@ public class ShippingController {
                 optionalUser.ifPresent(productRecord::setUser);
                 productRecord.setPreviousQty(previousQty);
                 productRecordRepository.save(productRecord);
+
+                total += supplyOrderProduct.getPrice() * supplyOrderProduct.getQty();
             }
+
             SupplierTransaction transaction = new SupplierTransaction();
             transaction.setSupplier(supplyOrder.getSupplier());
             transaction.setType("shipping");
@@ -208,7 +212,7 @@ public class ShippingController {
             transaction.setTotalAmount(prevSumTotal + total);
             transaction.setDescription(supplyOrder.getOrderCode() + " 발주 확정");
             supplierTransactionRepository.save(transaction);
-            supplyOrder.setShippingStatus("completed");
+            supplyOrder.setInputStatus("completed");
             supplyOrderRepository.save(supplyOrder);
         }
         Map<String, String> resultMap = new HashMap<>();
@@ -217,13 +221,8 @@ public class ShippingController {
     }
 
     @GetMapping("/{id}")
-    public String edit(Model model, @PathVariable Long id) {
-        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
-        if (optionalSupplyOrder.isPresent()) {
-            model.addAttribute("shippingForm", optionalSupplyOrder.get());
-            return "shipping_edit";
-        }
-        return "redirect:/shipping";
+    public String edit() {
+        return "shipping_edit_vue";
     }
 
     @PostMapping("/{id}")
@@ -243,5 +242,61 @@ public class ShippingController {
             supplyOrderRepository.save(supplyOrder);
         }
         return "redirect:/shipping";
+    }
+
+    @GetMapping("/{id}/data")
+    @ResponseBody
+    public Map<String, Object> getOrder(@PathVariable Long id) {
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
+        Map<String, Object> resultMap = new HashMap<>();
+        if (optionalSupplyOrder.isPresent()) {
+            SupplyOrder supplyOrder = optionalSupplyOrder.get();
+            resultMap.put("supplyOrder", supplyOrder);
+        }
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public Map<String, String> update(@RequestBody SupplyOrderForm payload) {
+        Long orderId = payload.getId();
+        String strDeliverBy = payload.getDeliverBy();
+        Long salesmanId = payload.getSalesmanId();
+        String description = payload.getDescription();
+        Set<SupplyOrderProductForm> supplyOrderProductFormSet = payload.getOrderProducts();
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(orderId);
+        if (optionalSupplyOrder.isPresent()) {
+            SupplyOrder supplyOrder = optionalSupplyOrder.get();
+            supplyOrder.setDeliverBy(LocalDate.parse(strDeliverBy, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay());
+            Optional<User> optionalUser = userRepository.findById(salesmanId);
+            optionalUser.ifPresent(supplyOrder::setUser);
+            supplyOrder.setDescription(description);
+            supplyOrderRepository.save(supplyOrder);
+            supplyOrderProductRepository.deleteAll(supplyOrder.getSupplyOrderProducts());
+
+            Set<SupplyOrderProductForm> orderProductFormSet = payload.getOrderProducts();
+
+            for (SupplyOrderProductForm orderProductForm : orderProductFormSet) {
+                Long productId = orderProductForm.getProductId();
+                double qty = orderProductForm.getQty();
+                Long price = orderProductForm.getPrice();
+
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+
+                if (optionalProduct.isPresent()) {
+                    Product product = optionalProduct.get();
+                    SupplyOrderProduct supplyOrderProduct = new SupplyOrderProduct();
+                    supplyOrderProduct.setProduct(product);
+                    supplyOrderProduct.setQty(qty);
+                    supplyOrderProduct.setPrice(price);
+                    supplyOrderProduct.setSupplyOrder(supplyOrder);
+                    supplyOrderProductRepository.save(supplyOrderProduct);
+                }
+            }
+        }
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
     }
 }

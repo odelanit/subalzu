@@ -388,8 +388,8 @@
                                             <td>${orderProduct.order.shop.name}</td>
                                             <td>${orderProduct.product.name}</td>
                                             <td>${orderProduct.product.standard}<br>(${orderProduct.product.unit})</td>
-                                            <td>${orderProduct.qty}</td>
-                                            <td>${orderProduct.price}</td>
+                                            <td><fmt:formatNumber value="${orderProduct.qty}" type="number" /> </td>
+                                            <td><fmt:formatNumber value="${orderProduct.price}" type="number" /></td>
                                             <td>${orderProduct.product.supplier.name}</td>
                                             <td>
                                                 <c:choose>

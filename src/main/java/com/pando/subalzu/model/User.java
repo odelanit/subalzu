@@ -72,6 +72,10 @@ public class User {
     @JsonBackReference(value = "salesman")
     Set<Order> salesOrders;
 
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    Set<SupplyOrder> supplyOrders;
+
     public Long getId() {
         return id;
     }
@@ -210,5 +214,13 @@ public class User {
 
     public void setSalesOrders(Set<Order> salesOrders) {
         this.salesOrders = salesOrders;
+    }
+
+    public Set<SupplyOrder> getSupplyOrders() {
+        return supplyOrders;
+    }
+
+    public void setSupplyOrders(Set<SupplyOrder> supplyOrders) {
+        this.supplyOrders = supplyOrders;
     }
 }

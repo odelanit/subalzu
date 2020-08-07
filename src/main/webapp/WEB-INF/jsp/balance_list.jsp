@@ -375,10 +375,10 @@
                                             <td>${supplier.id}</td>
                                             <td>${supplier.name}</td>
                                             <td>${supplier.totalPrevBalance}원</td>
-                                            <td>${supplier.totalInput}원</td>
-                                            <td>${supplier.totalOutput}원</td>
-                                            <td>${supplier.totalUpdate}원</td>
-                                            <td>${supplier.totalBalance}원</td>
+                                            <td>${supplier.totalInputFunds}원</td>
+                                            <td>${supplier.totalOutputFunds}원</td>
+                                            <td>${supplier.totalUpdateFunds}원</td>
+                                            <td>${supplier.totalFunds}원</td>
                                             <td>${supplier.dealtAt.format(localDateTimeFormat)}</td>
                                         </tr>
                                     </c:forEach>

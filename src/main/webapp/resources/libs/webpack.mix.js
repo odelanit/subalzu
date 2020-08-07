@@ -16,4 +16,6 @@ const mix = require('laravel-mix');
 mix.js('src/js/order_create.js', 'dist/js')
     .js('src/js/order_edit.js', 'dist/js')
     .js('src/js/product_create.js', 'dist/js')
-    .js('src/js/product_edit.js', 'dist/js');
+    .js('src/js/product_edit.js', 'dist/js')
+    .js('src/js/shipping_create.js', 'dist/js')
+    .js('src/js/shipping_edit.js', 'dist/js');
