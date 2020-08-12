@@ -69,6 +69,9 @@ public class OrderController {
     @Autowired
     private PriceGroupRepository priceGroupRepository;
 
+    @Autowired
+    private CompanyConfigRepository configRepository;
+
     @ModelAttribute("shops")
     List<Shop> shopList() {
         return shopRepository.findAll();
@@ -611,16 +614,48 @@ public class OrderController {
     @GetMapping("/orders/print_order")
     public String printOrder(@RequestParam List<Long> ids, Model model) {
         List<Order> orders = orderRepository.findAllById(ids);
+        CompanyConfigForm configForm = new CompanyConfigForm();
+        configForm.setConfigRepository(configRepository);
         model.addAttribute("orders", orders);
+        model.addAttribute("currentCompany", configForm);
         model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return "orders_print";
+    }
+
+    @GetMapping("/orders/print_order_return")
+    public String printOrderReturn(@RequestParam List<Long> ids, Model model) {
+        List<Order> orders = orderRepository.findAllById(ids);
+        model.addAttribute("orders", orders);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return "orders_print_return";
     }
 
     @GetMapping("/orders/print_release")
     public String printReleaseProducts(@RequestParam List<Long> ids, Model model) {
         List<Order> orders = orderRepository.findAllById(ids);
-        model.addAttribute("orders", orders);
+        double totalQty = 0;
+        Set<OrderProduct> orderProductSet = new HashSet<>();
+        List<Shop> shops = new ArrayList<>();
+        for (Order order : orders) {
+            Set<OrderProduct> orderProducts = order.getOrderProducts();
+            if (shops.isEmpty()) {
+                shops.add(order.getShop());
+            } else {
+                for (Shop shop : shops) {
+                    if (shop.getId().equals(order.getShop().getId())) {
+                        continue;
+                    }
+                    shops.add(order.getShop());
+                }
+            }
+            totalQty += order.getTotalQty();
+            orderProductSet.addAll(orderProducts);
+        }
+        model.addAttribute("orderProducts", orderProductSet);
+        model.addAttribute("totalQty", totalQty);
+        model.addAttribute("shops", shops);
         model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        model.addAttribute("printDate", LocalDateTime.now());
         return "orders_print_release";
     }
 }

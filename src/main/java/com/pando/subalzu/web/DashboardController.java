@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,7 +27,8 @@ public class DashboardController {
     ProductRepository productRepository;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpServletRequest request) {
+        boolean isAdmin = request.isUserInRole("admin");
         model.addAttribute("notices", noticeRepository.findAll());
 
         Long countOrderReleaseProgress = orderRepository.countByReleaseStatus("progress");

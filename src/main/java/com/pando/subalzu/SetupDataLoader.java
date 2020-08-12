@@ -5,6 +5,7 @@ import com.pando.subalzu.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private BusinessRepository businessRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -56,6 +57,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             user.setFullName("testadmin");
             user.setPhone("123456");
             user.setPassword(passwordEncoder.encode("123456"));
+            user.setEnabled(true);
 
             Set<Role> set = new HashSet<>();
             set.add(adminRole);

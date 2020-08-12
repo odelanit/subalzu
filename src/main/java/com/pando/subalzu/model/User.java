@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +34,8 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+    private boolean enabled;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -44,13 +47,14 @@ public class User {
     @JsonIgnore
     private String passwordConfirm;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
     @JsonIgnore
     private Set<Role> roles;
 
-    @OneToOne(mappedBy = "user")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private Company company;
+    private Set<Permission> permissions;
 
     @OneToMany(mappedBy = "salesman")
     @JsonIgnore
@@ -59,10 +63,6 @@ public class User {
     @OneToMany(mappedBy = "deliverer")
     @JsonIgnore
     private Set<Shop> deliverShops;
-
-    @ManyToMany
-    @JsonIgnore
-    private Set<Permission> permissions;
 
     @OneToMany(mappedBy = "deliverer")
     @JsonBackReference(value = "deliverer")
@@ -140,14 +140,6 @@ public class User {
         this.bio = bio;
     }
 
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -164,14 +156,6 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
     public Set<Shop> getSalesShops() {
         return salesShops;
     }
@@ -186,18 +170,6 @@ public class User {
 
     public void setDeliverShops(Set<Shop> deliverShops) {
         this.deliverShops = deliverShops;
-    }
-
-    public void setRole(Role role) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        this.roles = roles;
-    }
-
-    public void setPermission(Permission permission) {
-        Set<Permission> permissions = new HashSet<>();
-        permissions.add(permission);
-        this.permissions = permissions;
     }
 
     public Set<Order> getDeliverOrders() {
@@ -222,5 +194,21 @@ public class User {
 
     public void setSupplyOrders(Set<SupplyOrder> supplyOrders) {
         this.supplyOrders = supplyOrders;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
     }
 }

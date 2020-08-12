@@ -31,7 +31,7 @@
         <c:forEach items="${orders}" var="order">
             <div class="card mb-5">
                 <div class="card-body">
-                    <h4 class="text-center font-weight-bold my-4">거래명세표<small>(공급자 보관용)</small></h4>
+                    <h4 class="text-center font-weight-bold my-4">반품 거래명세표<small>(공급자 보관용)</small></h4>
                     <div class="row mb-2">
                         <div class="col-6">
                             <span class="mr-3">주문일자: ${order.createdAt.format(localDateTimeFormat)}</span>
@@ -124,15 +124,15 @@
                             <th>단가</th>
                             <th>총액</th>
                         </tr>
-                        <c:forEach items="${order.orderProducts}" var="orderProduct" varStatus="loop">
+                        <c:forEach items="${order.returnOrderProducts}" var="orderProduct" varStatus="loop">
                             <tr>
                                 <td>${loop.count}</td>
                                 <td>${orderProduct.product.name}</td>
                                 <td>${orderProduct.product.standard}(${orderProduct.product.unit})</td>
                                 <td>${orderProduct.product.makerName}(${orderProduct.product.country})</td>
-                                <td><fmt:formatNumber type="number" value="${orderProduct.qty}" /> </td>
+                                <td><fmt:formatNumber type="number" value="${orderProduct.reQty}" /></td>
                                 <td class="text-right"><fmt:formatNumber type="number" value="${orderProduct.price}" /></td>
-                                <td class="text-right"><fmt:formatNumber type="number" value="${orderProduct.price * orderProduct.qty}" /></td>
+                                <td class="text-right"><fmt:formatNumber type="number" value="${orderProduct.price * orderProduct.reQty}" /> </td>
                             </tr>
                         </c:forEach>
                         </tbody>
@@ -150,8 +150,8 @@
                                         </c:choose>
                                     </div>
                                     <div class="col-6 text-right">
-                                        <span class="h5 mr-3">총 주문수량: <fmt:formatNumber type="number" value="${order.totalQty}" />개</span>
-                                        <span class="h5">총 금액: <fmt:formatNumber type="number" value="${order.funds}" />원</span>
+                                        <span class="h5 mr-3">총 주문수량: <fmt:formatNumber type="number" value="${order.reQty}" /> 개</span>
+                                        <span class="h5">총 금액: <fmt:formatNumber type="number" value="${order.reFunds}" />원</span>
                                     </div>
                                 </div>
                             </th>
@@ -164,7 +164,7 @@
                                     </div>
                                     <div class="col-6 text-right">
                                     <span class="h5">
-                                        총 잔액 : <fmt:formatNumber type="number" value="${order.shop.totalBalance}" />원
+                                        총 잔액 :<fmt:formatNumber type="number" value="${order.shop.totalBalance}" />원
                                     </span>
                                     </div>
                                 </div>
@@ -189,7 +189,7 @@
                         </tbody>
                     </table>
                     <hr>
-                    <h4 class="text-center my-4">거래명세표<small>(공급받는자용)</small></h4>
+                    <h4 class="text-center my-4">반품 거래명세표<small>(공급받는자용)</small></h4>
                     <div class="row mb-2">
                         <div class="col-6">
                             <span class="mr-3">주문일자: ${order.createdAt.format(localDateTimeFormat)}</span>
@@ -282,15 +282,15 @@
                             <th>단가</th>
                             <th>총액</th>
                         </tr>
-                        <c:forEach items="${order.orderProducts}" var="orderProduct" varStatus="loop">
+                        <c:forEach items="${order.returnOrderProducts}" var="orderProduct" varStatus="loop">
                             <tr>
                                 <td>${loop.count}</td>
                                 <td>${orderProduct.product.name}</td>
                                 <td>${orderProduct.product.standard}(${orderProduct.product.unit})</td>
                                 <td>${orderProduct.product.makerName}(${orderProduct.product.country})</td>
-                                <td><fmt:formatNumber type="number" value="${orderProduct.qty}" /></td>
+                                <td><fmt:formatNumber type="number" value="${orderProduct.reQty}" /></td>
                                 <td class="text-right"><fmt:formatNumber type="number" value="${orderProduct.price}" /></td>
-                                <td class="text-right"><fmt:formatNumber type="number" value="${orderProduct.price * orderProduct.qty}" /></td>
+                                <td class="text-right"><fmt:formatNumber type="number" value="${orderProduct.price * orderProduct.reQty}" /> </td>
                             </tr>
                         </c:forEach>
                         </tbody>
@@ -308,8 +308,8 @@
                                         </c:choose>
                                     </div>
                                     <div class="col-6 text-right">
-                                        <span class="h5 mr-3">총 주문수량: <fmt:formatNumber type="number" value="${order.totalQty}" />개</span>
-                                        <span class="h5">총 금액: ${order.funds}원</span>
+                                        <span class="h5 mr-3">총 주문수량: <fmt:formatNumber type="number" value="${order.reQty}" /> 개</span>
+                                        <span class="h5">총 금액: <fmt:formatNumber type="number" value="${order.reFunds}" />원</span>
                                     </div>
                                 </div>
                             </th>
@@ -322,7 +322,7 @@
                                     </div>
                                     <div class="col-6 text-right">
                                     <span class="h5">
-                                        총 잔액 : <fmt:formatNumber type="number" value="${order.shop.totalBalance}" />원
+                                        총 잔액 :<fmt:formatNumber type="number" value="${order.shop.totalBalance}" />원
                                     </span>
                                     </div>
                                 </div>

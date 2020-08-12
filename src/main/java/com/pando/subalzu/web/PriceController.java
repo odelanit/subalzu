@@ -27,10 +27,7 @@ import java.util.Optional;
 public class PriceController {
 
     @Autowired
-    CompanyRepository companyRepository;
-
-    @Autowired
-    CompanySettingRepository companySettingRepository;
+    CompanyConfigRepository companyRepository;
 
     @Autowired
     PriceGroupRepository priceGroupRepository;
@@ -85,36 +82,38 @@ public class PriceController {
         return priceGroupRepository.findAll();
     }
 
-    @GetMapping("/prices/fixed-price-rate")
+    @GetMapping("/fixed-price-rate")
     public String fixedRate(Principal principal, Model model) {
-        Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            CompanySetting companySetting = company.getCompanySetting();
-            if (companySetting == null) {
-                return "redirect:/company";
-            }
-            boolean fixedRateSetting = companySetting.getFixedPriceRate();
-            model.addAttribute("fixedRateSetting", fixedRateSetting);
-            return "price_fixed_rate";
-        } else {
-            return "redirect:/company";
-        }
+//        List<Company> companies = companyRepository.findAll();
+//        if (companies.size() > 0) {
+//            Company company = companies.get(0);
+//            Company companySetting = company.getCompanySetting();
+//            if (companySetting == null) {
+//                return "redirect:/company";
+//            }
+//            boolean fixedRateSetting = companySetting.getFixedPriceRate();
+//            model.addAttribute("fixedRateSetting", fixedRateSetting);
+//
+//        } else {
+//            return "redirect:/company";
+//        }
+        return "price_fixed_rate_vue";
     }
 
-    @PostMapping("/prices/fixed-price-rate")
+    @PostMapping("/fixed-price-rate")
     public String updateRate(Principal principal, @RequestParam Map<String, String> formData) {
-        Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            CompanySetting companySetting = company.getCompanySetting();
-            boolean fixedRateSetting = Boolean.parseBoolean(formData.get("is_fixed"));
-            companySetting.setFixedPriceRate(fixedRateSetting);
-            companySettingRepository.save(companySetting);
-            return "redirect:/prices";
-        } else {
-            return "redirect:/company";
-        }
+//        List<Company> companies = companyRepository.findAll();
+//        if (companies.size() > 0) {
+//            Company company = companies.get(0);
+//            Company companySetting = company.getCompanySetting();
+//            boolean fixedRateSetting = Boolean.parseBoolean(formData.get("is_fixed"));
+//            companySetting.setFixedPriceRate(fixedRateSetting);
+//            companySettingRepository.save(companySetting);
+//
+//        } else {
+//            return "redirect:/company";
+//        }
+        return "redirect:/prices";
     }
 
     @PostMapping("/update")

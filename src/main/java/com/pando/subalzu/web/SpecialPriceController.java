@@ -2,6 +2,7 @@ package com.pando.subalzu.web;
 
 import com.pando.subalzu.form.ProductSearchForm;
 import com.pando.subalzu.form.ShopSearchForm2;
+import com.pando.subalzu.form.SpecialPriceForm;
 import com.pando.subalzu.model.Category;
 import com.pando.subalzu.model.Product;
 import com.pando.subalzu.model.Shop;
@@ -134,6 +135,38 @@ public class SpecialPriceController {
         Map<String, String> resultMap = new HashMap<>();
         Optional<ShopProductPrice> optionalShopProductPrice = shopProductPriceRepository.findByShopAndProduct(shopProductPrice.getShop(), shopProductPrice.getProduct());
         optionalShopProductPrice.ifPresent(productPrice -> shopProductPriceRepository.delete(productPrice));
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @PostMapping("/special-prices/{id}/apply_all")
+    @ResponseBody
+    public Map<String, String> applyAll(@RequestBody List<SpecialPriceForm> payload, @PathVariable Long id) {
+        Optional<Shop> optionalShop = shopRepository.findById(id);
+        if (optionalShop.isPresent()) {
+            Shop shop = optionalShop.get();
+            for (SpecialPriceForm form : payload) {
+                Long price = form.getPrice();
+                Long productId = form.getProductId();
+
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+                if (optionalProduct.isPresent()) {
+                    Product product = optionalProduct.get();
+                    Optional<ShopProductPrice> optionalShopProductPrice = shopProductPriceRepository.findByShopAndProduct(shop, product);
+                    if (optionalShopProductPrice.isPresent()) {
+                        ShopProductPrice shopProductPrice = optionalShopProductPrice.get();
+                        shopProductPrice.setPrice(price);
+                    } else {
+                        ShopProductPrice shopProductPrice = new ShopProductPrice();
+                        shopProductPrice.setProduct(product);
+                        shopProductPrice.setShop(shop);
+                        shopProductPrice.setPrice(price);
+                        shopProductPriceRepository.save(shopProductPrice);
+                    }
+                }
+            }
+        }
+        Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;
     }

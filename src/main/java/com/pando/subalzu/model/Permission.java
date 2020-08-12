@@ -31,7 +31,6 @@ public class Permission {
     private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "permissions")
-    @JsonBackReference
     private Set<User> users;
 
     public Long getId() {
@@ -58,14 +57,6 @@ public class Permission {
         this.koName = koName;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -80,5 +71,13 @@ public class Permission {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 }

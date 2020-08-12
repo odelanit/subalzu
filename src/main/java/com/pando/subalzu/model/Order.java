@@ -161,6 +161,16 @@ public class Order {
         return orderProducts;
     }
 
+    public Set<OrderProduct> getReturnOrderProducts() {
+        Set<OrderProduct> returnOrderProducts = new HashSet<>();
+        for (OrderProduct orderProduct : orderProducts) {
+            if (orderProduct.reQty > 0) {
+                returnOrderProducts.add(orderProduct);
+            }
+        }
+        return returnOrderProducts;
+    }
+
     public void setOrderProducts(Set<OrderProduct> orderProducts) {
         this.orderProducts = orderProducts;
     }
@@ -225,14 +235,12 @@ public class Order {
         this.returnedAt = returnedAt;
     }
 
-    public Set<OrderProduct> getReturnOrderProducts() {
-        Set<OrderProduct> returnOrderProducts = new HashSet<>();
+    public double getReQty() {
+        double totalQty = 0;
         for (OrderProduct orderProduct : this.orderProducts) {
-            if (orderProduct.reQty > 0) {
-                returnOrderProducts.add(orderProduct);
-            }
+            totalQty += orderProduct.reQty;
         }
-        return returnOrderProducts;
+        return totalQty;
     }
 
     public int getTotalQty() {

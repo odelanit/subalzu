@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -19,16 +20,7 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
     private String koName;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "roles")
     @JsonBackReference
@@ -56,22 +48,6 @@ public class Role {
 
     public void setUsers(Set<User> users) {
         this.users = users;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public String getKoName() {

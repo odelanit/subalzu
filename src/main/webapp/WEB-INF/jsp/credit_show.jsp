@@ -2,6 +2,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -68,156 +70,7 @@
     <!-- end Topbar -->
 
     <!-- ========== Left Sidebar Start ========== -->
-    <div class="left-side-menu">
-        <div class="side-menu-logo">
-            <a href="/">
-                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
-                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
-            </a>
-        </div>
-        <div class="sidebar-content">
-            <!--- Sidemenu -->
-            <div id="sidebar-menu" class="slimscroll-menu">
-                <div class="media user-profile mt-2 mb-2">
-                    <div class="media-body">
-                        <a href="/company">
-                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
-                            <span class="pro-user-desc">기업정보보기</span>
-                        </a>
-                    </div>
-                </div>
-                <ul class="metismenu" id="menu-bar">
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 주문 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/orders">주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/order_products">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/return_orders">반품 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 매입 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shipping">발주 관리</a>
-                            </li>
-                            <li>
-                                <a href="/suppliers">매입처 관리</a>
-                            </li>
-                            <li>
-                                <a href="/balance">매입처 잔액 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 상품 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/products">상품 관리</a>
-                            </li>
-                            <li>
-                                <a href="/categories">카테고리 설정</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 단가 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/price-groups">단가 그룹 관리</a>
-                            </li>
-                            <li>
-                                <a href="/special-prices">특 단가 관리</a>
-                            </li>
-                            <li>
-                                <a href="/prices">상품 단가 일괄 적용</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 재고 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/stock">입/출고 관리</a>
-                            </li>
-                            <li>
-                                <a href="/stock-history">입/출고 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 거래처 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shops">거래처 목록</a>
-                            </li>
-                            <li class="mm-active">
-                                <a href="/credits">외상잔액/예치금 관리</a>
-                            </li>
-
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 서비스 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/notices">공지사항</a>
-                            </li>
-                            <li>
-                                <a href="/users">직원 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <!-- End Sidebar -->
-
-            <div class="clearfix"></div>
-        </div>
-        <!-- Sidebar -left -->
-
-    </div>
+    <jsp:include page="sidebar.jsp" />
     <!-- Left Sidebar End -->
 
     <!-- ============================================================== -->
@@ -247,13 +100,13 @@
                             <div class="col-lg-4">
                                 <div class="card">
                                     <div class="card-body p-0">
-                                        <div class="media p-3">
+                                        <div class="media p-3 align-items-center">
                                             <div class="media-body">
-                                            <span class="text-muted text-uppercase font-weight-bold">현재 잔액</span>
                                                 <h2 class="mb-0">${shop.name}</h2>
                                             </div>
                                             <div class="align-self-center">
-                                                <span class="h3 text-danger">${totalBalance} 원</span>
+                                                <span class="d-block text-muted text-right font-weight-bold">현재 잔액</span>
+                                                <span class="h3 text-danger"><fmt:formatNumber type="number" value="${totalBalance}" />원</span>
                                             </div>
                                         </div>
                                     </div>
@@ -274,20 +127,20 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
-<%--                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-4" data-toggle="buttons">--%>
-<%--                                                        <label class="btn btn-outline-primary active">--%>
-<%--                                                            <input type="radio" value="-1" /> 전체--%>
-<%--                                                        </label>--%>
-<%--                                                        <label class="btn btn-outline-primary">--%>
-<%--                                                            <input type="radio" value="1" /> 전월--%>
-<%--                                                        </label>--%>
-<%--                                                        <label class="btn btn-outline-primary">--%>
-<%--                                                            <input type="radio" value="0" /> 금월--%>
-<%--                                                        </label>--%>
-<%--                                                        <label class="btn btn-outline-primary">--%>
-<%--                                                            <input type="radio" value="30" /> 당일--%>
-<%--                                                        </label>--%>
-<%--                                                    </div>--%>
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-4" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary active">
+                                                            <input type="radio" value="-1" /> 전체
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <input type="radio" value="1" /> 전월
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <input type="radio" value="0" /> 금월
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <input type="radio" value="30" /> 당일
+                                                        </label>
+                                                    </div>
                                                     <div class="input-group input-group-sm w-25">
                                                         <form:input path="dateFrom" class="form-control" placeholder="" />
                                                         <div class="input-group-append">
@@ -367,9 +220,9 @@
                                             </td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${transaction.transactionType == 'order'}">입금</c:when>
+                                                    <c:when test="${transaction.transactionType == 'input'}">입금</c:when>
                                                     <c:when test="${transaction.transactionType == 'update'}">수정</c:when>
-                                                    <c:when test="${transaction.transactionType == 'output'}">매출</c:when>
+                                                    <c:when test="${transaction.transactionType == 'sale'}">매출</c:when>
                                                 </c:choose>
                                             </td>
                                             <td>
@@ -385,8 +238,8 @@
                                                     </c:when>
                                                 </c:choose>
                                             </td>
-                                            <td>${transaction.funds}원</td>
-                                            <td>${transaction.totalFunds}원</td>
+                                            <td><fmt:formatNumber type="number" value="${transaction.funds}" />원</td>
+                                            <td><fmt:formatNumber type="number" value="${transaction.totalFunds}" />원</td>
                                             <td>${transaction.description}</td>
                                         </tr>
                                     </c:forEach>

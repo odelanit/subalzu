@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -22,14 +23,13 @@
     <!-- App css -->
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
-<!-- Begin page -->
 <div id="wrapper">
 
-    <!-- Topbar Start -->
     <div class="navbar navbar-expand navbar-custom">
         <ul class="navbar-nav menu-left mb-0">
             <li class="">
@@ -63,169 +63,11 @@
             </form:form>
         </ul>
     </div>
-    <!-- end Topbar -->
 
-    <!-- ========== Left Sidebar Start ========== -->
-    <div class="left-side-menu">
-        <div class="side-menu-logo">
-            <a href="/">
-                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
-                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
-            </a>
-        </div>
-        <div class="sidebar-content">
-            <!--- Sidemenu -->
-            <div id="sidebar-menu" class="slimscroll-menu">
-                <div class="media user-profile mt-2 mb-2">
-                    <div class="media-body">
-                        <a href="/company">
-                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
-                            <span class="pro-user-desc">기업정보보기</span>
-                        </a>
-                    </div>
-                </div>
-                <ul class="metismenu" id="menu-bar">
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 주문 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/orders">주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/order_products">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/return_orders">반품 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 매입 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shipping">발주 관리</a>
-                            </li>
-                            <li>
-                                <a href="/suppliers">매입처 관리</a>
-                            </li>
-                            <li>
-                                <a href="/balance">매입처 잔액 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 상품 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/products">상품 관리</a>
-                            </li>
-                            <li>
-                                <a href="/categories">카테고리 설정</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="mm-active">
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 단가 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/price-groups">단가 그룹 관리</a>
-                            </li>
-                            <li class="mm-active">
-                                <a href="/special-prices">특 단가 관리</a>
-                            </li>
-                            <li>
-                                <a href="/prices">상품 단가 일괄 적용</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 재고 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/stock">입/출고 관리</a>
-                            </li>
-                            <li>
-                                <a href="/stock-history">입/출고 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 거래처 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shops">거래처 목록</a>
-                            </li>
-                            <li>
-                                <a href="/credits">외상잔액/예치금 관리</a>
-                            </li>
-
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 서비스 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/notices">공지사항</a>
-                            </li>
-                            <li>
-                                <a href="/users">직원 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <!-- End Sidebar -->
-
-            <div class="clearfix"></div>
-        </div>
-        <!-- Sidebar -left -->
-
-    </div>
-    <!-- Left Sidebar End -->
-
-    <!-- ============================================================== -->
-    <!-- Start Page Content here -->
-    <!-- ============================================================== -->
+    <jsp:include page="sidebar.jsp" />
 
     <div class="content-page">
         <div class="content">
-
-            <!-- Start Content-->
             <div class="container-fluid">
                 <div class="row page-title">
                     <div class="col-md-12">
@@ -288,13 +130,14 @@
                                     <div class="col-6">
                                         <span>전체 ${productPage.totalElements}건</span>
                                     </div>
-                                    <div class="col-6">
-
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-sm btn-outline-primary" type="button" id="applyAll"><i class="fa fa-exchange"></i>전체 적용</button>
                                     </div>
                                 </div>
-                                <table class="table table-sm text-center table-middle">
+                                <table class="table text-center table-middle" id="products">
                                     <thead class="thead-light">
                                     <tr>
+                                        <th><input type="checkbox" id="selectAll"></th>
                                         <th>#</th>
                                         <th>상품코드</th>
                                         <th>썸네일</th>
@@ -311,9 +154,21 @@
                                     <tbody>
                                     <c:forEach var="product" items="${products}">
                                         <tr>
+                                            <td>
+                                                <input class="checkbox" type="checkbox" value="${product.id}">
+                                            </td>
                                             <td>${product.id}</td>
                                             <td>${product.erpCode}</td>
-                                            <td><c:if test="${product.imageUrl != null}"><img style="max-width: 65px;" class="img-thumbnail" src="${product.imageUrl}"></c:if></td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty product.imageUrl}">
+                                                        <img style="max-width: 65px;" class="img-thumbnail" src="${product.imageUrl}">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img style="max-width: 65px;" class="img-thumbnail" src="${contextPath}/resources/images/product-default.png">
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
                                             <td>${product.name}</td>
                                             <td>${product.category.name}</td>
                                             <td>${product.standard}<br>${product.unit}</td>
@@ -322,7 +177,7 @@
                                             <td><fmt:formatNumber type="number" value="${product.parcelPrice}" /></td>
                                             <td>
                                                 <div class="form-inline">
-                                                    <input style="width: 100px;" class="form-control form-control-sm text-right mr-2" value="${product.getShopPrice(shop.id)}" type="number">
+                                                    <input style="width: 100px;" class="form-control form-control-sm text-right mr-2 special-price" value="${product.getShopPrice(shop.id)}" type="text">
                                                     <button class="btn btn-sm btn-outline-primary apply" data-product="${product.id}" type="button">적용</button>
                                                 </div>
                                             </td>
@@ -347,12 +202,8 @@
                         </div>
                     </div>
                 </div>
-            </div> <!-- container-fluid -->
-
-        </div> <!-- content -->
-
-
-        <!-- Footer Start -->
+            </div>
+        </div>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -362,22 +213,14 @@
                 </div>
             </div>
         </footer>
-        <!-- end Footer -->
-
     </div>
-
-    <!-- ============================================================== -->
-    <!-- End Page content -->
-    <!-- ============================================================== -->
-
-
 </div>
-<!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
+<script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
@@ -433,6 +276,50 @@
                     element.closest('td').html(html);
                 }
             });
+        })
+
+        $('#selectAll').on('change', function (e) {
+            $('#products tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+        });
+
+        $('#products tbody tr td:first-child').on('click', function (e) {
+            var checkboxElement = $(this).find('input[type="checkbox"]');
+            checkboxElement.prop('checked', !checkboxElement.prop('checked'));
+        });
+
+        $('#products tbody tr td input[type="checkbox"]').on('change', function (e) {
+            var checkboxElement = $(this);
+            checkboxElement.prop('checked', !checkboxElement.prop('checked'));
+        });
+
+        $('#applyAll').on('click', function() {
+            var specialPrices = [];
+            $('#products tbody tr').each(function() {
+                var checked = $(this).find('.checkbox').prop('checked');
+                var price = $(this).find('.special-price').val();
+                var productId = $(this).find('.checkbox').val();
+                if (checked && (+price)) {
+                    specialPrices.push({
+                        price: (+price),
+                        productId: (+productId)
+                    })
+                }
+            })
+            console.log(specialPrices);
+            $.ajax({
+                type: 'POST',
+                url: '/special-prices/' + shopId + '/apply_all',
+                contentType: 'application/json',
+                accept: 'text/plain',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                data: JSON.stringify(specialPrices),
+                success: function(data) {
+                    toastr.success(data.message);
+                    window.location.reload();
+                }
+            })
         })
     });
 </script>

@@ -3,11 +3,8 @@ package com.pando.subalzu.web;
 import com.pando.subalzu.form.CategoryLevelForm;
 import com.pando.subalzu.form.CategoryPopupForm;
 import com.pando.subalzu.model.Category;
-import com.pando.subalzu.model.Company;
-import com.pando.subalzu.model.CompanySetting;
 import com.pando.subalzu.repository.CategoryRepository;
-import com.pando.subalzu.repository.CompanyRepository;
-import com.pando.subalzu.repository.CompanySettingRepository;
+import com.pando.subalzu.repository.CompanyConfigRepository;
 import com.pando.subalzu.validator.CategoryValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -25,29 +22,18 @@ public class CategoryController {
     CategoryRepository categoryRepository;
 
     @Autowired
-    CompanyRepository companyRepository;
-
-    @Autowired
-    CompanySettingRepository companySettingRepository;
+    CompanyConfigRepository companyRepository;
 
     @Autowired
     CategoryValidator categoryValidator;
 
     @GetMapping("/categories")
-    public String index(Model model, Principal principal) {
-        Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            CategoryPopupForm form = new CategoryPopupForm();
-            form.setPopup(company.getCompanySetting().getCategoryPopup());
-            model.addAttribute("categories", categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level")));
-            model.addAttribute("popupForm", form);
-            model.addAttribute("fixedPriceRate", company.getCompanySetting().getFixedPriceRate());
-            model.addAttribute("categoryForm", new Category());
-            return "category_list";
-        } else {
-            return "redirect:/company";
-        }
+    public String index(Model model) {
+        CategoryPopupForm form = new CategoryPopupForm();
+        model.addAttribute("categories", categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level")));
+        model.addAttribute("popupForm", form);
+        model.addAttribute("categoryForm", new Category());
+        return "category_list";
     }
 
     @PostMapping("/categories/store")
@@ -64,13 +50,13 @@ public class CategoryController {
     @ResponseBody
     public Map<String, String> setPopup(@ModelAttribute("popupForm") CategoryPopupForm form, Principal principal) {
         Map<String, String> resultMap = new HashMap<>();
-        Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
-        if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            CompanySetting companySetting = company.getCompanySetting();
-            companySetting.setCategoryPopup(form.getPopup());
-            companySettingRepository.save(companySetting);
-        }
+//        List<Company> companies = companyRepository.findAll();
+//        if (companies.size() > 0) {
+//            Company company = companies.get(0);
+//            CompanySetting companySetting = company.getCompanySetting();
+//            companySetting.setCategoryPopup(form.getPopup());
+//            companySettingRepository.save(companySetting);
+//        }
         resultMap.put("message", "Success");
         return resultMap;
     }

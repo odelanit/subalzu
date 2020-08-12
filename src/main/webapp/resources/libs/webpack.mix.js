@@ -18,4 +18,5 @@ mix.js('src/js/order_create.js', 'dist/js')
     .js('src/js/product_create.js', 'dist/js')
     .js('src/js/product_edit.js', 'dist/js')
     .js('src/js/shipping_create.js', 'dist/js')
-    .js('src/js/shipping_edit.js', 'dist/js');
+    .js('src/js/shipping_edit.js', 'dist/js')
+    .js('src/js/fixed_price_rate.js', 'dist/js');

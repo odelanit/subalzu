@@ -2,6 +2,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -64,156 +66,7 @@
     <!-- end Topbar -->
 
     <!-- ========== Left Sidebar Start ========== -->
-    <div class="left-side-menu">
-        <div class="side-menu-logo">
-            <a href="/">
-                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
-                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
-            </a>
-        </div>
-        <div class="sidebar-content">
-            <!--- Sidemenu -->
-            <div id="sidebar-menu" class="slimscroll-menu">
-                <div class="media user-profile mt-2 mb-2">
-                    <div class="media-body">
-                        <a href="/company">
-                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
-                            <span class="pro-user-desc">기업정보보기</span>
-                        </a>
-                    </div>
-                </div>
-                <ul class="metismenu" id="menu-bar">
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 주문 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/orders">주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/order_products">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/return_orders">반품 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="mm-active">
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 매입 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shipping">발주 관리</a>
-                            </li>
-                            <li>
-                                <a href="/suppliers">매입처 관리</a>
-                            </li>
-                            <li class="mm-active">
-                                <a href="/balance">매입처 잔액 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 상품 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/products">상품 관리</a>
-                            </li>
-                            <li>
-                                <a href="/categories">카테고리 설정</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 단가 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/price-groups">단가 그룹 관리</a>
-                            </li>
-                            <li>
-                                <a href="/special-prices">특 단가 관리</a>
-                            </li>
-                            <li>
-                                <a href="/prices">상품 단가 일괄 적용</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 재고 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/stock">입/출고 관리</a>
-                            </li>
-                            <li>
-                                <a href="/stock-history">입/출고 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 거래처 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shops">거래처 목록</a>
-                            </li>
-                            <li>
-                                <a href="/credits">외상잔액/예치금 관리</a>
-                            </li>
-
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 서비스 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/notices">공지사항</a>
-                            </li>
-                            <li>
-                                <a href="/users">직원 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <!-- End Sidebar -->
-
-            <div class="clearfix"></div>
-        </div>
-        <!-- Sidebar -left -->
-
-    </div>
+    <jsp:include page="sidebar.jsp" />
     <!-- Left Sidebar End -->
 
     <!-- ============================================================== -->
@@ -356,17 +209,17 @@
                                         </button>
                                     </div>
                                 </div>
-                                <table class="table table-hover text-center table-sm">
+                                <table class="table table-hover text-center">
                                     <thead class="thead-light">
                                     <tr>
-                                        <th>#</th>
+                                        <th style="width: 50px;">#</th>
                                         <th>매입처</th>
                                         <th>이전 잔액</th>
                                         <th>매입 금액</th>
                                         <th>출금 금액</th>
                                         <th>수정 금액</th>
                                         <th>잔액</th>
-                                        <th>최종거래일</th>
+                                        <th style="width: 125px;">최종거래일</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -374,11 +227,11 @@
                                         <tr onclick="window.location.href='/balance/${supplier.id}'">
                                             <td>${supplier.id}</td>
                                             <td>${supplier.name}</td>
-                                            <td>${supplier.totalPrevBalance}원</td>
-                                            <td>${supplier.totalInputFunds}원</td>
-                                            <td>${supplier.totalOutputFunds}원</td>
-                                            <td>${supplier.totalUpdateFunds}원</td>
-                                            <td>${supplier.totalFunds}원</td>
+                                            <td><fmt:formatNumber value="${supplier.totalPrevBalance}" type="number" /> 원</td>
+                                            <td><fmt:formatNumber value="${supplier.totalInputFunds}" type="number" />원</td>
+                                            <td><fmt:formatNumber value="${supplier.totalOutputFunds}" type="number" />원</td>
+                                            <td><fmt:formatNumber value="${supplier.totalUpdateFunds}" type="number" />원</td>
+                                            <td><fmt:formatNumber value="${supplier.totalFunds}" type="number" />원</td>
                                             <td>${supplier.dealtAt.format(localDateTimeFormat)}</td>
                                         </tr>
                                     </c:forEach>

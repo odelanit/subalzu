@@ -168,6 +168,10 @@ public class ShippingController {
             SupplyOrder supplyOrder = optionalSupplyOrder.get();
             supplyOrder.setShippingStatus("completed");
             supplyOrderRepository.save(supplyOrder);
+
+            Supplier supplier = supplyOrder.getSupplier();
+            supplier.setDealtAt(LocalDateTime.now());
+            supplierRepository.save(supplier);
         }
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
@@ -214,6 +218,10 @@ public class ShippingController {
             supplierTransactionRepository.save(transaction);
             supplyOrder.setInputStatus("completed");
             supplyOrderRepository.save(supplyOrder);
+
+            Supplier supplier = supplyOrder.getSupplier();
+            supplier.setDealtAt(LocalDateTime.now());
+            supplierRepository.save(supplier);
         }
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
@@ -273,6 +281,9 @@ public class ShippingController {
             optionalUser.ifPresent(supplyOrder::setUser);
             supplyOrder.setDescription(description);
             supplyOrderRepository.save(supplyOrder);
+            Supplier supplier = supplyOrder.getSupplier();
+            supplier.setDealtAt(LocalDateTime.now());
+            supplierRepository.save(supplier);
             supplyOrderProductRepository.deleteAll(supplyOrder.getSupplyOrderProducts());
 
             Set<SupplyOrderProductForm> orderProductFormSet = payload.getOrderProducts();

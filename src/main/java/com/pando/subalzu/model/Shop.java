@@ -124,6 +124,10 @@ public class Shop { // 거래처
     @JsonIgnore
     private Set<Transaction> transactions;
 
+    @OneToMany(mappedBy = "shop")
+    @JsonIgnore
+    private Set<ShopProductPrice> shopPrices;
+
     public Long getId() {
         return id;
     }
@@ -362,6 +366,14 @@ public class Shop { // 거래처
 
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public Set<ShopProductPrice> getShopPrices() {
+        return shopPrices;
+    }
+
+    public void setShopPrices(Set<ShopProductPrice> shopPrices) {
+        this.shopPrices = shopPrices;
     }
 
     public double getTotalBalance() {

@@ -1,8 +1,8 @@
 package com.pando.subalzu.web;
 
-import com.pando.subalzu.model.Company;
+import com.pando.subalzu.model.CompanyConfig;
 import com.pando.subalzu.model.User;
-import com.pando.subalzu.repository.CompanyRepository;
+import com.pando.subalzu.repository.CompanyConfigRepository;
 import com.pando.subalzu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,9 +19,7 @@ public class AnnotationAdvice {
     UserRepository userRepository;
 
     @Autowired
-    CompanyRepository companyRepository;
-
-    Company currentCompany;
+    CompanyConfigRepository configRepository;
 
     @ModelAttribute("currentUser")
     public User getCurrentUser(Principal principal) {
@@ -33,14 +31,9 @@ public class AnnotationAdvice {
         }
     }
 
-    @ModelAttribute("currentCompany")
-    public Company getCurrentCompany(Principal principal) {
-        if (principal == null) {
-            return null;
-        }
-        else {
-            Optional<Company> optionalCompany = companyRepository.findByUserUsername(principal.getName());
-            return optionalCompany.orElse(null);
-        }
+    @ModelAttribute("companyName")
+    public String companyName() {
+        Optional<CompanyConfig> configOptional = configRepository.findByKey("vendorName");
+        return configOptional.map(CompanyConfig::getValue).orElse(null);
     }
 }

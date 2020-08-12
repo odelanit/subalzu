@@ -2,6 +2,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -66,156 +68,7 @@
     <!-- end Topbar -->
 
     <!-- ========== Left Sidebar Start ========== -->
-    <div class="left-side-menu">
-        <div class="side-menu-logo">
-            <a href="/">
-                <img src="${contextPath}/resources/images/logo_dark.svg" alt="logo" height="40" class="logo-icon" />
-                <img src="${contextPath}/resources/images/logo_pando_dark.svg" alt="logo" height="40" class="logo-full" />
-            </a>
-        </div>
-        <div class="sidebar-content">
-            <!--- Sidemenu -->
-            <div id="sidebar-menu" class="slimscroll-menu">
-                <div class="media user-profile mt-2 mb-2">
-                    <div class="media-body">
-                        <a href="/company">
-                            <h4 class="pro-user-name mt-0 mb-0">${currentCompany.vendorName}</h4>
-                            <span class="pro-user-desc">기업정보보기</span>
-                        </a>
-                    </div>
-                </div>
-                <ul class="metismenu" id="menu-bar">
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 주문 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/orders">주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/order_products">상품별 주문 목록</a>
-                            </li>
-                            <li>
-                                <a href="/return_orders">반품 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 매입 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shipping">발주 관리</a>
-                            </li>
-                            <li>
-                                <a href="/suppliers">매입처 관리</a>
-                            </li>
-                            <li>
-                                <a href="/balance">매입처 잔액 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 상품 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/products">상품 관리</a>
-                            </li>
-                            <li>
-                                <a href="/categories">카테고리 설정</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 단가 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/price-groups">단가 그룹 관리</a>
-                            </li>
-                            <li>
-                                <a href="/special-prices">특 단가 관리</a>
-                            </li>
-                            <li>
-                                <a href="/prices">상품 단가 일괄 적용</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 재고 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/stock">입/출고 관리</a>
-                            </li>
-                            <li>
-                                <a href="/stock-history">입/출고 내역</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 거래처 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/shops">거래처 목록</a>
-                            </li>
-                            <li>
-                                <a href="/credits">외상잔액/예치금 관리</a>
-                            </li>
-
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="javascript: void(0);">
-                            <i class="fa fa-folder"></i>
-                            <span> 서비스 관리 </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <ul class="nav-second-level" aria-expanded="false">
-                            <li>
-                                <a href="/notices">공지사항</a>
-                            </li>
-                            <li>
-                                <a href="/users">직원 관리</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <!-- End Sidebar -->
-
-            <div class="clearfix"></div>
-        </div>
-        <!-- Sidebar -left -->
-
-    </div>
+    <jsp:include page="sidebar.jsp" />
     <!-- Left Sidebar End -->
 
     <!-- ============================================================== -->
@@ -283,7 +136,7 @@
                                     <div class="card-body p-0">
                                         <div class="media p-3">
                                             <div class="media-body text-center">
-                                                <a href="/stock?qtyStatus=0" class="text-danger text-decoration-none">
+                                                <a href="/stock_rest?qtyStatus=0" class="text-danger text-decoration-none">
                                                     <span class="text-uppercase font-weight-bold">재고 부족</span>
                                                     <h2 class="mb-0">${countQtyInsufficient}</h2>
                                                 </a>
@@ -300,58 +153,54 @@
                         <h5 class="header-title">주문현황</h5>
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="mb-0">당일</h6>
+                                <h5 class="text-center mb-0">당일</h5>
                             </div>
                             <div class="card-body pt-2">
 
                                 <!-- stat 1 -->
                                 <div class="media px-3 py-3 border-bottom">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${orders1.size()}건</h4>
-                                        <span class="text-muted">주문</span>
+                                        <h4 class="">주문 ${orders1.size()}건</h4>
                                     </div>
                                     <div>
-                                        <span class="h4">${total1}원</span>
+                                        <span class="h4"><fmt:formatNumber value="${total1}" type="number" />원</span>
                                     </div>
                                 </div>
 
                                 <!-- stat 2 -->
                                 <div class="media px-3 py-3">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${countReturnOrder1}건</h4>
-                                        <span class="text-muted">취소</span>
+                                        <h4>취소 ${countReturnOrder1}건</h4>
                                     </div>
                                     <div>
-                                        <span class="h4">${sumReturnAmount1}원</span>
+                                        <span class="h4"><fmt:formatNumber type="number" value="${sumReturnAmount1}"/>원</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="mb-0">한달</h6>
+                                <h5 class="text-center mb-0">한달</h5>
                             </div>
                             <div class="card-body pt-2">
 
                                 <!-- stat 1 -->
                                 <div class="media px-3 py-3 border-bottom">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${orders30.size()}</h4>
-                                        <span class="text-muted">주문</span>
+                                        <h4>주문 ${orders30.size()}건</h4>
                                     </div>
                                     <div>
-                                        <span class="h4">${total30}원</span>
+                                        <span class="h4"><fmt:formatNumber value="${total30}" type="number" /> 원</span>
                                     </div>
                                 </div>
 
                                 <!-- stat 2 -->
                                 <div class="media px-3 py-3">
                                     <div class="media-body">
-                                        <h4 class="mt-0 mb-1 font-size-22">${countReturnOrder30}</h4>
-                                        <span class="text-muted">취소</span>
+                                        <h4>취소 ${countReturnOrder30}건</h4>
                                     </div>
                                     <div>
-                                        <span class="h4">${sumReturnAmount30}원</span>
+                                        <span class="h4"><fmt:formatNumber type="number" value="${sumReturnAmount30}" />원</span>
                                     </div>
                                 </div>
                             </div>
@@ -421,12 +270,6 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/libs/moment/moment.min.js"></script>
-<script src="${contextPath}/resources/libs/apexcharts/apexcharts.min.js"></script>
-<script src="${contextPath}/resources/libs/flatpickr/flatpickr.min.js"></script>
-
-<!-- page js -->
-<script src="${contextPath}/resources/js/pages/dashboard.init.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 

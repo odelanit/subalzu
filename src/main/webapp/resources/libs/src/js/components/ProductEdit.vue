@@ -310,7 +310,9 @@
                 this.id = product.id;
                 this.erpCode = product.erpCode;
                 this.productName = product.name;
-                this.category_id = product.category.id;
+                if (product.category) {
+                    this.category_id = product.category.id;
+                }
                 if (product.subCategory) {
                     this.subcategory_id = product.subCategory.id;
                     let selected_category = this.categories.find(category => category.id === this.category_id);
