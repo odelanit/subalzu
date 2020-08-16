@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,6 +63,9 @@ public class ProductController {
 
     @Autowired
     ProductValidator productValidator;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @ModelAttribute("categories")
     List<Category> categories() {
@@ -128,24 +132,40 @@ public class ProductController {
     public Map<String, Object> getProductsForOrder(ProductSearchForm form) {
         String keyword = form.getKeyword();
         Category category = form.getCategory();
+        Category subcategory = form.getSubcategory();
         int deliveryType = form.getDeliveryType();
-
-        Specification<Product> spec = new ProductSpecification(new SearchCriteria("name", ":", keyword));
+        String qs = "select p.*, pt from products p left join (select op.product_id, count(*) pt from orders left join order_products op on orders.id = op.order_id where shop_id=:shopId group by op.product_id) c on c.product_id=p.id where (name like concat('%',:keyword,'%') or erp_code like concat('%',:keyword,'%')) and (p.delivery_type=0 or p.delivery_type=:deliveryType) order by pt desc, name";
         if (category != null) {
-            spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("category", ":", category)));
-            Category subcategory = form.getSubcategory();
+            qs = "select p.*, pt from products p left join (select op.product_id, count(*) pt from orders left join order_products op on orders.id = op.order_id where shop_id=:shopId group by op.product_id) c on c.product_id=p.id where (name like concat('%',:keyword,'%') or erp_code like concat('%',:keyword,'%')) and (p.delivery_type=0 or p.delivery_type=:deliveryType) and p.category_id=:categoryId order by pt desc, name";
             if (subcategory != null) {
-                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
+                qs = "select p.*, pt from products p left join (select op.product_id, count(*) pt from orders left join order_products op on orders.id = op.order_id where shop_id=:shopId group by op.product_id) c on c.product_id=p.id where (name like concat('%',:keyword,'%') or erp_code like concat('%',:keyword,'%')) and (p.delivery_type=0 or p.delivery_type=:deliveryType) and p.category_id=:categoryId and p.subcategory_id=:subcategoryId order by pt desc, name";
             }
         }
 
-        if (deliveryType != -1) {
-            spec = Specification.where(spec).and(Specification.where(new ProductSpecification(new SearchCriteria("deliveryType", ":", deliveryType))).or(new ProductSpecification(new SearchCriteria("deliveryType", ":", 0))));
+        Query nativeQuery = em.createNativeQuery(qs, Product.class);
+        nativeQuery.setParameter("shopId", form.getShop().getId());
+        nativeQuery.setParameter("keyword", keyword);
+        nativeQuery.setParameter("deliveryType", deliveryType);
+        if (category != null) {
+            nativeQuery.setParameter("categoryId", category.getId());
+            if (subcategory != null) {
+                nativeQuery.setParameter("subcategoryId", subcategory.getId());
+            }
         }
-        List<Product> products = productRepository.findAll(spec);
+
+        String qs2 = "select p.*, pt from products p inner join (select op.product_id, count(*) pt from orders left join order_products op on orders.id = op.order_id where shop_id=:shopId group by op.product_id) c on c.product_id=p.id where p.delivery_type=0 or p.delivery_type=:deliveryType order by pt desc, name";
+        Query nativeQuery2 = em.createNativeQuery(qs2, Product.class);
+        nativeQuery2.setParameter("shopId", form.getShop().getId());
+        nativeQuery2.setParameter("deliveryType", deliveryType);
+
+        @SuppressWarnings("unchecked")
+        List<Product> products = nativeQuery.getResultList();
+        @SuppressWarnings("unchecked")
+        List<Product> prevProducts = nativeQuery2.getResultList();
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         resultMap.put("products", products);
+        resultMap.put("prev_products", prevProducts);
         return resultMap;
     }
 

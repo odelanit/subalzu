@@ -155,7 +155,7 @@
                                         <span>전체 ${productPage.totalElements}건</span>
                                     </div>
                                     <div class="col-6 text-right">
-                                        <button type="button" class="btn btn-sm btn-outline-excel"><i class="fa fa-file-excel"></i> 단가 일괄 적용</button>
+                                        <button type="button" class="btn btn-sm btn-outline-excel" data-toggle="modal" data-target="#excelUploadModal"><i class="fa fa-file-excel"></i> 단가 일괄 수정</button>
                                         <button type="button" class="btn btn-sm btn-outline-primary" id="applyAll"><span class="fa fa-exchange mr-1"></span>전체 적용</button>
                                     </div>
                                 </div>
@@ -242,12 +242,57 @@
         <!-- end Footer -->
 
     </div>
-
-    <!-- ============================================================== -->
-    <!-- End Page content -->
-    <!-- ============================================================== -->
-
-
+</div>
+<div class="modal fade" id="excelUploadModal">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <div class="modal-title text-light">
+                    상품 일괄 수정
+                </div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>단가 다운 로드 > 엑셀 파일 작성 > 등록 </strong> 버튼을 클릭하여 등록합니다.<br>
+                    <small>* 단가만 수정 가능합니다. <span class="text-danger">※ 단가 이외의 항목을 수정하면 오류가 발생하여 수정을 할 수 없습니다.</span></small>
+                </p>
+                <table class="table">
+                    <tbody class="thead-light">
+                    <tr>
+                        <th>양식 다운 로드</th>
+                        <td>
+                            <a href="/prices/download" class="btn btn-sm btn-outline-primary"><i
+                                    class="fa fa-download"></i> 다운로드</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>파일 업로드</th>
+                        <td>
+                            <form:form method="post" action="/prices/upload" id="uploadEditForm">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file"
+                                               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                                               class="custom-file-input" id="uploadExcelFile2" name="upload">
+                                        <label class="custom-file-label" for="uploadExcelFile2">
+                                            <i class="fa fa-search"></i>파일 찾기
+                                        </label>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary">등록</button>
+                                    </div>
+                                </div>
+                            </form:form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="overlay">
     <div class="cv-spinner">
@@ -370,6 +415,29 @@
                 },
                 success: function(data) {
                     toastr.success(data.message);
+                }
+            }).done(function () {
+                setTimeout(function(){
+                    $("#overlay").fadeOut(300);
+                },500);
+            });
+        });
+
+        $('#uploadEditForm').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    $("#overlay").fadeIn(300);
+                },
+                success: function(data) {
+                    toastr.success(data.message);
+                    window.location.reload();
                 }
             }).done(function () {
                 setTimeout(function(){

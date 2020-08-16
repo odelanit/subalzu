@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.pando.subalzu.form.ProductCreationInput;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -113,6 +110,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<SupplyOrderProduct> supplyOrderProducts;
+
+    @Transient
+    Long pt;
 
     public Long getId() {
         return id;
@@ -364,5 +364,13 @@ public class Product {
 
     public void setSupplyOrderProducts(Set<SupplyOrderProduct> supplyOrderProducts) {
         this.supplyOrderProducts = supplyOrderProducts;
+    }
+
+    public Long getPt() {
+        return pt;
+    }
+
+    public void setPt(Long pt) {
+        this.pt = pt;
     }
 }

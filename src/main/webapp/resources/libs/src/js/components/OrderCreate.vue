@@ -363,6 +363,7 @@
                 selected_subcategory_id: null,
                 product_keyword: '',
                 products: [],
+                prev_products: [],
                 orderProducts: [],
                 total_amount: 0,
                 total_qty: 0,
@@ -411,7 +412,6 @@
                     toastr.error('거래처 선택을 먼저 해주셔야 상품 선택이 가능합니다.');
                 } else {
                     this.products_modal_title = (this.deliveryType === 'direct' ? '직배송' : '택배 배송') + ' 상품 검색 및 선택';
-                    this.searchProducts();
                     $('#selectProducts').modal('show');
                 }
             },
@@ -428,6 +428,8 @@
             selectShop: function (shop) {
                 this.selected_shop = shop;
                 this.selected_shop_name = this.selected_shop.name;
+                this.searchProducts();
+                this.orderProducts = [];
                 $('#selectShops').modal('hide');
             },
             formatDate: function (date) {
@@ -459,18 +461,26 @@
                         category: this.selected_category_id,
                         subcategory: this.selected_subcategory_id,
                         keyword: this.product_keyword,
-                        deliveryType: (this.deliveryType === 'direct' ? 1 : 2)
+                        deliveryType: (this.deliveryType === 'direct' ? 1 : 2),
+                        shop: this.selected_shop.id
                     }
                 })
                     .then(res => res.data)
                     .then(data => {
                         this.products = data.products;
+                        this.prev_products = data.prev_products;
+                        if (data.prev_products.length > 0) {
+                            this.prev_products.forEach(product => {
+                                this.addToOrderProduct(product);
+                            });
+                            this.showCartTable = true;
+                        }
                     })
                     .catch(err => {
                         console.log(err);
                     })
             },
-            selectedProduct: function (product) {
+            addToOrderProduct: function (product) {
                 let opId = this.orderProducts.findIndex(x => x.product.id === product.id);
                 let orderProduct = {};
                 if (opId !== -1) {
@@ -486,9 +496,12 @@
                         orderProduct.primaryPrice = product.shopPrices[spIdx].price;
                     }
                     orderProduct.price = orderProduct.primaryPrice;
-                    orderProduct.qty = 1;
+                    orderProduct.qty = 0;
                     this.orderProducts.push(orderProduct);
                 }
+            },
+            selectedProduct: function (product) {
+                this.addToOrderProduct(product);
             },
             resetOrderProducts: function () {
                 this.orderProducts = [];

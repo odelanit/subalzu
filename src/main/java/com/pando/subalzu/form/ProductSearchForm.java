@@ -1,6 +1,7 @@
 package com.pando.subalzu.form;
 
 import com.pando.subalzu.model.Category;
+import com.pando.subalzu.model.Shop;
 
 public class ProductSearchForm {
 
@@ -11,6 +12,8 @@ public class ProductSearchForm {
     Category category;
 
     Category subcategory;
+
+    Shop shop;
 
     int deliveryType = -1;
 
@@ -62,5 +65,13 @@ public class ProductSearchForm {
 
     public void setDeliveryType(int deliveryType) {
         this.deliveryType = deliveryType;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
     }
 }
