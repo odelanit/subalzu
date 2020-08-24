@@ -1,5 +1,6 @@
 package com.pando.subalzu.service;
 
+import com.pando.subalzu.model.Permission;
 import com.pando.subalzu.model.Role;
 import com.pando.subalzu.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,5 +58,23 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.getEnabled();
+    }
+
+    public Set<Permission> getPermissions() {
+        return user.getPermissions();
+    }
+
+    public boolean hasPermission(String name) {
+        Set<Permission> permissions = user.getPermissions();
+        for (Permission permission : permissions) {
+            if (permission.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

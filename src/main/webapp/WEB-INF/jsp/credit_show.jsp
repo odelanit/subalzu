@@ -27,7 +27,6 @@
     <link href="${contextPath}/resources/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/toastr-2.1.4/toastr.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
-    <link href="${contextPath}/resources/libs/flatpickr/flatpickr.min.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="left-side-menu-dark">
 <!-- Begin page -->
@@ -432,7 +431,6 @@
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/libs/flatpickr/flatpickr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script>

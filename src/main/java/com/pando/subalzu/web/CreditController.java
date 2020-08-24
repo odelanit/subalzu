@@ -5,8 +5,10 @@ import com.pando.subalzu.form.ShopSearchForm4;
 import com.pando.subalzu.form.TransactionSearchForm;
 import com.pando.subalzu.model.Shop;
 import com.pando.subalzu.model.Transaction;
+import com.pando.subalzu.model.User;
 import com.pando.subalzu.repository.ShopRepository;
 import com.pando.subalzu.repository.TransactionRepository;
+import com.pando.subalzu.service.UserDetailsImpl;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.ShopSpecification;
 import com.pando.subalzu.specification.TransactionSpecification;
@@ -17,17 +19,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/credits")
@@ -38,6 +39,9 @@ public class CreditController {
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    @Autowired
+    UserDetailsService userDetailsService;
 
     @ModelAttribute("localDateTimeFormat")
     DateTimeFormatter localDateTimeFormat() {
@@ -82,10 +86,18 @@ public class CreditController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable Long id, @ModelAttribute("form") TransactionSearchForm form, Model model) {
+    public String show(@PathVariable Long id, @ModelAttribute("form") TransactionSearchForm form, Model model, Principal principal) {
         Optional<Shop> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(principal.getName());
+            if (userDetails.hasPermission("in_charge")) {
+                User user = userDetails.getUser();
+                Set<Shop> salesShops = user.getSalesShops();
+                if (!salesShops.contains(shop)) {
+                    return "redirect:/credits";
+                }
+            }
             String transactionType = form.getTransactionType();
             String processingMethod = form.getProcessingMethod();
             String strDateFrom = form.getDateFrom();
@@ -131,6 +143,11 @@ public class CreditController {
         } else {
             return "redirect:/credits";
         }
+    }
+
+    @GetMapping("/{id}/download_excel")
+    public String downloadExcel(@PathVariable Long id) {
+        return "redirect:/credits/" + id;
     }
 
     @PostMapping("/store")

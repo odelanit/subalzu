@@ -50,7 +50,7 @@ public class StockController {
             if (qtyStatus.equalsIgnoreCase("1")) {
                 spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("qty", ">", 0.0)));
             } else {
-                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("qty", "<", 0.0)));
+                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("qty", "<=", 0.0)));
             }
         }
 

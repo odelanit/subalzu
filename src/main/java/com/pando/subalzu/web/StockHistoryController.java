@@ -179,9 +179,9 @@ public class StockHistoryController {
 
                 cell = dataRow.createCell(7);
                 if (records.get(i).getProduct().getUseDecimal()) {
-                    cell.setCellValue(records.get(i).getProduct().getQty());
+                    cell.setCellValue(records.get(i).getPreviousQty());
                 } else {
-                    cell.setCellValue(Math.round(records.get(i).getProduct().getQty()));
+                    cell.setCellValue(Math.round(records.get(i).getPreviousQty()));
                 }
                 cell.setCellStyle(defaultStyle);
 

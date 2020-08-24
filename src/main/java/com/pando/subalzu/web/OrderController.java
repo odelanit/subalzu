@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -439,10 +440,9 @@ public class OrderController {
                 Row dataRow = sheet.createRow(i + 1);
                 dataRow.createCell(0).setCellValue(i + 1);
                 dataRow.createCell(1).setCellValue(orders.get(i).getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd hh:mm:ss")));
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String strRequestDate = "";
                 if (orders.get(i).getRequestDate() != null) {
-                    strRequestDate = dateFormat.format(orders.get(i).getRequestDate());
+                    strRequestDate = orders.get(i).getRequestDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 }
                 dataRow.createCell(2).setCellValue(strRequestDate);
                 dataRow.createCell(3).setCellValue(orders.get(i).getOrderCode());
@@ -510,11 +510,15 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/orders/download/orders.xlsx")
+    @GetMapping("/orders/history/download")
     public void excelOrderReport(HttpServletResponse response) throws IOException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+        LocalDateTime now = LocalDateTime.now();
+        String fileName = URLEncoder.encode("주문내역_" + dtf.format(now) + ".xlsx", "UTF-8");
+
         List<Order> orders = orderRepository.findAll();
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment;filename=orders.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
         ByteArrayInputStream stream = orderListToExcelFile(orders);
         IOUtils.copy(stream, response.getOutputStream());
     }

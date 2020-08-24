@@ -226,7 +226,7 @@
                                     </div>
                                     <div class="col-6 text-right">
                                         <span>* 전일~당일까지의 주문내역이 기본으로 노출됩니다. </span>
-                                        <a target="_blank" class="btn btn-sm btn-excel" href="/orders/download/orders.xlsx">
+                                        <a class="btn btn-sm btn-excel" href="/orders/history/download">
                                             <i class="fa fa-file-excel"></i> 주문내역
                                         </a>
                                     </div>

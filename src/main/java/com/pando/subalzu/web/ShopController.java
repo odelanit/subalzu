@@ -5,6 +5,7 @@ import com.pando.subalzu.form.OrderSearchForm;
 import com.pando.subalzu.form.ShopSearchForm3;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
+import com.pando.subalzu.service.UserDetailsImpl;
 import com.pando.subalzu.specification.OrderSpecification;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.specification.ShopSpecification;
@@ -20,12 +21,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -83,6 +96,9 @@ public class ShopController {
     @Autowired
     private PermissionRepository permissionsRepository;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @ModelAttribute("businesses")
     List<Business> businessList() {
         return businessRepository.findAll();
@@ -119,7 +135,7 @@ public class ShopController {
     }
 
     @GetMapping("")
-    public String index(@ModelAttribute("form") ShopSearchForm3 form, Model model) {
+    public String index(@ModelAttribute("form") ShopSearchForm3 form, Model model, Principal principal) {
         Page<Shop> shopPage;
         String field = form.getField();
         String keyword = form.getKeyword();
@@ -193,10 +209,18 @@ public class ShopController {
     }
 
     @GetMapping("/{id}")
-    public String show(@ModelAttribute("form") OrderSearchForm form, Model model, @PathVariable Long id) throws ParseException {
+    public String show(@ModelAttribute("form") OrderSearchForm form, Model model, @PathVariable Long id, Principal principal) throws ParseException {
         Optional<Shop> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(principal.getName());
+            if (userDetails.hasPermission("in_charge")) {
+                User user = userDetails.getUser();
+                Set<Shop> salesShops = user.getSalesShops();
+                if (!salesShops.contains(shop)) {
+                    return "redirect:/shops";
+                }
+            }
             String field = form.getField();
             String keyword = form.getKeyword();
             String dateField = form.getDateField();
@@ -230,10 +254,18 @@ public class ShopController {
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable Long id) {
+    public String edit(Model model, @PathVariable Long id, Principal principal) {
         Optional<Shop> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(principal.getName());
+            if (userDetails.hasPermission("in_charge")) {
+                User user = userDetails.getUser();
+                Set<Shop> salesShops = user.getSalesShops();
+                if (!salesShops.contains(shop)) {
+                    return "redirect:/shops";
+                }
+            }
             shop.setOwnerUsername(shop.getShopOwner().getUsername());
             shop.setOwnerFullname(shop.getShopOwner().getFullName());
             shop.setOwnerPhone(shop.getShopOwner().getPhone());

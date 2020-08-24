@@ -235,10 +235,10 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${record.product.useDecimal == true}">
-                                                        ${record.product.qty}
+                                                        ${record.previousQty}
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <fmt:parseNumber value="${record.product.qty}" integerOnly="true" />
+                                                        <fmt:parseNumber value="${record.previousQty}" integerOnly="true" />
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -354,6 +354,19 @@
                 $('#form').submit();
             }
         });
+
+        formatDate = function (date) {
+            let month = '' + (date.getMonth() + 1),
+                day = '' + date.getDate(),
+                year = date.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        };
 
         $('input[name="period"]').on('change', function() {
             var diff = +$(this).val();
