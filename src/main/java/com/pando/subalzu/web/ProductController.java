@@ -1015,13 +1015,12 @@ public class ProductController {
 
     @PostMapping("/upload_create_file")
     @ResponseBody
-    public Map<String, String> uploadFile(@RequestParam("upload") MultipartFile file, HttpServletResponse response) {
+    public Map<String, String> uploadFile(@RequestParam("upload") MultipartFile file, Principal principal, HttpServletResponse response) {
         try {
             InputStream is = file.getInputStream();
             Workbook workbook = new XSSFWorkbook(is);
             Sheet sheet = workbook.getSheet("상품 대량 업로드 양식");
             Iterator<Row> rows = sheet.iterator();
-            List<Product> products = new ArrayList<>();
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
 
@@ -1038,9 +1037,11 @@ public class ProductController {
                     int cellIdx = currentCell.getColumnIndex();
                     switch (cellIdx) {
                         case 0:
+                            currentCell.setCellType(CellType.STRING);
                             product.setErpCode(currentCell.getStringCellValue());
                             break;
                         case 1: // category
+                            currentCell.setCellType(CellType.STRING);
                             String categoryName = currentCell.getStringCellValue();
                             Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
                             if (optionalCategory.isPresent()) {
@@ -1051,6 +1052,7 @@ public class ProductController {
                             }
                             break;
                         case 2: // subcategory
+                            currentCell.setCellType(CellType.STRING);
                             String subcategoryName = currentCell.getStringCellValue();
                             Optional<Category> optionalCategory1 = categoryRepository.findByName(subcategoryName);
                             if (optionalCategory1.isPresent()) {
@@ -1061,28 +1063,36 @@ public class ProductController {
                             }
                             break;
                         case 3:
+                            currentCell.setCellType(CellType.STRING);
                             product.setName(currentCell.getStringCellValue());
                             break;
                         case 4:
+                            currentCell.setCellType(CellType.STRING);
                             product.setStandard(currentCell.getStringCellValue());
                             break;
                         case 5:
+                            currentCell.setCellType(CellType.STRING);
                             product.setUnit(currentCell.getStringCellValue());
                             break;
                         case 6: // delivery type
+                            currentCell.setCellType(CellType.NUMERIC);
                             int deliveryType = (int)currentCell.getNumericCellValue();
+                            if (deliveryType != 1 && deliveryType != 2 && deliveryType != 0) deliveryType = 0;
                             product.setDeliveryType(deliveryType);
                             break;
                         case 7:
+                            currentCell.setCellType(CellType.STRING);
                             product.setMakerName(currentCell.getStringCellValue());
                             break;
                         case 8:
+                            currentCell.setCellType(CellType.STRING);
                             product.setCountry(currentCell.getStringCellValue());
                             break;
                         case 9:
                             product.setBuyPrice((long)currentCell.getNumericCellValue());
                             break;
                         case 10:
+                            currentCell.setCellType(CellType.BOOLEAN);
                             product.setTax(currentCell.getBooleanCellValue());
                             break;
                         case 11: // supplier
@@ -1108,10 +1118,19 @@ public class ProductController {
                             break;
                     }
                 }
-                products.add(product);
-            }
+                product = productRepository.save(product);
+                if (product.getQty() > 0) {
+                    ProductRecord productRecord = new ProductRecord();
+                    productRecord.setAction("manual_input");
+                    productRecord.setProduct(product);
+                    productRecord.setDiff(product.getQty());
+                    productRecord.setQty(product.getQty());
+                    Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                    optionalUser.ifPresent(productRecord::setUser);
+                    productRecordRepository.save(productRecord);
+                }
 
-            productRepository.saveAll(products);
+            }
 
             workbook.close();
         } catch (IOException exception) {
@@ -1279,11 +1298,11 @@ public class ProductController {
             product.setQty(previousQty - productRecord.getDiff());
         }
 
-        productRepository.save(product);
+        product = productRepository.save(product);
 
         Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
         optionalUser.ifPresent(productRecord::setUser);
-        productRecord.setPreviousQty(previousQty);
+        productRecord.setQty(product.getQty());
         productRecordRepository.save(productRecord);
 
         Map<String, String> resultMap = new HashMap<>();
@@ -1320,7 +1339,7 @@ public class ProductController {
 
                 Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
                 optionalUser.ifPresent(productRecord::setUser);
-                productRecord.setPreviousQty(previousQty);
+                productRecord.setQty(previousQty);
                 productRecordRepository.save(productRecord);
             }
 

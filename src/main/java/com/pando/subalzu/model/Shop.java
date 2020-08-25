@@ -93,7 +93,7 @@ public class Shop { // 거래처
     String memo;
 
     @Column(nullable = false)
-    Long prevTotalBalance = 0L;
+    Double prevTotalBalance = 0.0;
 
     @ManyToOne
     @JoinColumn(name="assignee_type_id")
@@ -125,7 +125,7 @@ public class Shop { // 거래처
     private Set<Transaction> transactions;
 
     @OneToMany(mappedBy = "shop")
-    @JsonIgnore
+    @JsonBackReference
     private Set<ShopProductPrice> shopPrices;
 
     public Long getId() {
@@ -419,11 +419,11 @@ public class Shop { // 거래처
         return total;
     }
 
-    public Long getPrevTotalBalance() {
+    public Double getPrevTotalBalance() {
         return prevTotalBalance;
     }
 
-    public void setPrevTotalBalance(Long prevTotalBalance) {
+    public void setPrevTotalBalance(Double prevTotalBalance) {
         this.prevTotalBalance = prevTotalBalance;
     }
 

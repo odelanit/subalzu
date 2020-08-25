@@ -502,25 +502,29 @@
 
         $('#uploadExcelForm, #uploadEditForm').submit(function(e) {
             e.preventDefault();
-            var formData = new FormData($(this)[0]);
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                beforeSend: function() {
-                    $("#overlay").fadeIn(300);
-                },
-                success: function(data) {
-                    toastr.success(data.message);
-                    window.location.reload();
-                }
-            }).done(function () {
-                setTimeout(function(){
-                    $("#overlay").fadeOut(300);
-                },500);
-            });
+            if ($(this).find('input[name="upload"]').get(0).files.length > 0) {
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        $("#overlay").fadeIn(300);
+                    },
+                    success: function(data) {
+                        toastr.success(data.message);
+                        window.location.reload();
+                    }
+                }).done(function () {
+                    setTimeout(function(){
+                        $("#overlay").fadeOut(300);
+                    },500);
+                });
+            } else {
+                toastr.error('파일을 선택해 주세요');
+            }
         });
 
         $('#selectAll').on('change', function (e) {

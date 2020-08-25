@@ -38,7 +38,7 @@ public class SupplierTransaction {
     private LocalDateTime updatedAt;
 
     @Transient
-    Long prevTotal;
+    Double prevTotal;
 
     public SupplierTransaction() {
     }
@@ -111,11 +111,11 @@ public class SupplierTransaction {
         this.description = memo;
     }
 
-    public Long getPrevTotal() {
+    public Double getPrevTotal() {
         return prevTotal;
     }
 
-    public void setPrevTotal(Long prevTotal) {
+    public void setPrevTotal(Double prevTotal) {
         this.prevTotal = prevTotal;
     }
 

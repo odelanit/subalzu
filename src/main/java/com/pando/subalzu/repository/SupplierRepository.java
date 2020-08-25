@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface SupplierRepository extends JpaRepository<Supplier, Long>, JpaSpecificationExecutor<Supplier> {
     Optional<Supplier> findByName(String name);
 
-    @Query("SELECT SUM(totalPrevBalance) FROM Supplier ")
+    @Query("SELECT SUM(prevTotalFunds) FROM Supplier ")
     Long sumPrevTotal();
 }

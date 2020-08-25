@@ -99,7 +99,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 이전 잔액</span>
-                                                <h3 class="mb-0 text-primary">${sumPrevBalance}원</h3>
+                                                <h3 class="mb-0 text-primary"><fmt:formatNumber type="number" value="${sumPrevBalance}" />원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -111,7 +111,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 매출 금액</span>
-                                                <h3 class="mb-0 text-success">${sumTotalSales} 원</h3>
+                                                <h3 class="mb-0 text-success"><fmt:formatNumber type="number" value="${sumTotalSales}" /> 원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -123,7 +123,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 입금 금액</span>
-                                                <h3 class="mb-0 text-secondary">${sumInputAmount}원</h3>
+                                                <h3 class="mb-0 text-secondary"><fmt:formatNumber type="number" value="${sumInputAmount}" />원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -135,7 +135,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">수정 금액</span>
-                                                <h3 class="mb-0 text-warning">${sumUpdateAmount} 원</h3>
+                                                <h3 class="mb-0 text-warning"><fmt:formatNumber type="number" value="${sumUpdateAmount}" /> 원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -147,7 +147,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 잔액</span>
-                                                <h3 class="mb-0 text-danger">${sumAmount}원</h3>
+                                                <h3 class="mb-0 text-danger"><fmt:formatNumber type="number" value="${sumAmount}" />원</h3>
                                             </div>
                                         </div>
                                     </div>

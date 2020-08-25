@@ -27,9 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.security.Principal;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -223,6 +221,77 @@ public class OrderController {
         return resultMap;
     }
 
+    @PostMapping(value = "/orders/return_store")
+    @ResponseBody
+    public Map<String, String> returnStore(@RequestBody OrderForm formData, Principal principal, HttpServletResponse response) {
+        Order order = new Order();
+        order.setOrderCode(randomAlphaNumeric(10));
+        Long shopId = formData.getShopId();
+        Optional<Shop> optionalShop = shopRepository.findById(shopId);
+        if (optionalShop.isPresent()) {
+            Shop shop = optionalShop.get();
+            order.setShop(shop);
+            order.setDeliveryType(formData.getDeliveryType());
+            Optional<User> optionalDeliverer = userRepository.findById(formData.getDelivererId());
+            optionalDeliverer.ifPresent(order::setDeliverer);
+            if (formData.getSalesmanId() != null) {
+                Optional<User> optionalSalesman = userRepository.findById(formData.getSalesmanId());
+                optionalSalesman.ifPresent(order::setSalesMan);
+            }
+            order.setMemo(formData.getMemo());
+            order.setReturnStatus("completed");
+            order.setReturnedAt(LocalDateTime.now());
+            order = orderRepository.save(order);
+
+            shop.setDealtAt(LocalDateTime.now());
+            shopRepository.save(shop);
+
+            Set<OrderProductForm> orderProductFormSet = formData.getOrderProducts();
+            double total = 0.0;
+            for (OrderProductForm orderProductForm : orderProductFormSet) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrder(order);
+                Long productId = orderProductForm.getProductId();
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+                optionalProduct.ifPresent(orderProduct::setProduct);
+                orderProduct.setQty(0.0);
+                orderProduct.setReQty(orderProductForm.getQty());
+                orderProduct.setPrice(orderProductForm.getPrice());
+                orderProduct = orderProductRepository.save(orderProduct);
+                total += orderProductForm.getQty() * orderProductForm.getPrice();
+
+                Product product = orderProduct.getProduct();
+
+                ProductRecord productRecord = new ProductRecord();
+                productRecord.setAction("return_output");
+                productRecord.setProduct(orderProduct.getProduct());
+                productRecord.setDiff(-orderProduct.getReQty());
+                productRecord.setQty(product.getQty() - orderProduct.getReQty());
+                Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                optionalUser.ifPresent(productRecord::setUser);
+                productRecordRepository.save(productRecord);
+
+                product.setQty(product.getQty() - orderProduct.getReQty());
+                productRepository.save(product);
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setShop(shop);
+            transaction.setTransactionType("sale");
+            transaction.setProcessingMethod("order_minus");
+            transaction.setFunds(-total);
+            Double prevTotal = transactionRepository.sumShopAmount(shop);
+            if (prevTotal == null) prevTotal = 0.0;
+            transaction.setTotalFunds(prevTotal - total);
+            transaction.setDescription(order.getOrderCode() + " 반품 완료");
+            transactionRepository.save(transaction);
+        }
+
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
     @GetMapping("/orders/{id}")
     public String show(@PathVariable Long id, Model model) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -304,7 +373,7 @@ public class OrderController {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            order.setOrderStatus("return_received");
+            order.setReturnStatus("progress");
             order.setReturnedAt(LocalDateTime.now());
             order = orderRepository.save(order);
             Set<OrderProduct> orderProducts = order.getOrderProducts();
@@ -321,16 +390,6 @@ public class OrderController {
                 orderProduct.setReQty(orderProductForm.getReQty());
                 orderProduct.setPrice(orderProductForm.getPrice());
                 funds += orderProductForm.getReQty() * orderProductForm.getPrice();
-                orderProduct = orderProductRepository.save(orderProduct);
-
-                ProductRecord productRecord = new ProductRecord();
-                productRecord.setAction("output");
-                productRecord.setProduct(orderProduct.getProduct());
-                productRecord.setDiff(orderProduct.getReQty());
-                productRecord.setPreviousQty(orderProduct.getProduct().getQty());
-                Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
-                optionalUser.ifPresent(productRecord::setUser);
-                productRecordRepository.save(productRecord);
             }
 
             Transaction transaction = new Transaction();
@@ -357,6 +416,41 @@ public class OrderController {
             return "redirect:/orders/" + order.getId();
         }
         return "redirect:/orders";
+    }
+
+    @PostMapping("/orders/{id}/return_complete")
+    @ResponseBody
+    public Map<String, String> completeReturn(@PathVariable Long id, Principal principal) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        Map<String, String> resultMap = new HashMap<>();
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setReturnStatus("completed");
+            orderRepository.save(order);
+
+            Set<OrderProduct> orderProducts = order.getOrderProducts();
+            for (OrderProduct orderProduct : orderProducts) {
+                if (orderProduct.getReQty() > 0) {
+                    Product product = orderProduct.getProduct();
+
+                    ProductRecord productRecord = new ProductRecord();
+                    productRecord.setAction("return_output");
+                    productRecord.setProduct(orderProduct.getProduct());
+                    productRecord.setDiff(-orderProduct.getReQty());
+
+                    productRecord.setQty(product.getQty() - orderProduct.getReQty());
+                    Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                    optionalUser.ifPresent(productRecord::setUser);
+                    productRecordRepository.save(productRecord);
+
+
+                    product.setQty(product.getQty() - orderProduct.getReQty());
+                    productRepository.save(product);
+                }
+            }
+            resultMap.put("message", "Success");
+        }
+        return resultMap;
     }
 
     @GetMapping("/orders/transaction-details")
@@ -553,7 +647,7 @@ public class OrderController {
                     productRecord.setAction("output");
                     productRecord.setProduct(product);
                     productRecord.setDiff(-orderProduct.getQty());
-                    productRecord.setPreviousQty(product.getQty());
+                    productRecord.setQty(product.getQty() - orderProduct.getQty());
                     Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
                     optionalUser.ifPresent(productRecord::setUser);
                     productRecordRepository.save(productRecord);
@@ -581,38 +675,6 @@ public class OrderController {
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;
-    }
-
-    @GetMapping("/return_orders")
-    public String returnOrders(@ModelAttribute("form")OrderSearchForm form, Model model) {
-        String field = form.getField();
-        String keyword = form.getKeyword();
-        String strDateFrom = form.getDateFrom();
-        String strDateTo = form.getDateTo();
-        User deliverer = form.getDeliverer();
-        int page = form.getPage();
-
-        Page<Order> orderPage;
-        Specification<Order> spec = new OrderSpecification(new SearchCriteria(field, ":", keyword));
-        if (deliverer != null) {
-            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliverer", ":", deliverer)));
-        }
-        if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
-            LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
-            Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
-            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("returnedAt", "<>", dateTimePair)));
-        }
-        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("returnedAt").descending());
-        orderPage = orderRepository.findAll(spec, pageable);
-        List<Order> orders = orderPage.getContent();
-
-        model.addAttribute("orderPage", orderPage);
-        model.addAttribute("orders", orders);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
-        return "return_orders";
     }
 
     @GetMapping("/orders/print_order")
@@ -661,5 +723,42 @@ public class OrderController {
         model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         model.addAttribute("printDate", LocalDateTime.now());
         return "orders_print_release";
+    }
+
+    @GetMapping("/return_orders")
+    public String returnOrders(@ModelAttribute("form")OrderSearchForm form, Model model) {
+        String field = form.getField();
+        String keyword = form.getKeyword();
+        String strDateFrom = form.getDateFrom();
+        String strDateTo = form.getDateTo();
+        User deliverer = form.getDeliverer();
+        int page = form.getPage();
+
+        Page<Order> orderPage;
+        Specification<Order> spec = new OrderSpecification(new SearchCriteria(field, ":", keyword));
+        if (deliverer != null) {
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("deliverer", ":", deliverer)));
+        }
+        if (!Strings.isNullOrEmpty(strDateFrom) && !Strings.isNullOrEmpty(strDateTo)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDateTime dateFrom = LocalDate.parse(strDateFrom, formatter).atStartOfDay();
+            LocalDateTime dateTo = LocalDate.parse(strDateTo, formatter).atTime(23, 59, 59);
+            Pair<LocalDateTime, LocalDateTime> dateTimePair = Pair.of(dateFrom, dateTo);
+            spec = Specification.where(spec).and(new OrderSpecification(new SearchCriteria("returnedAt", "<>", dateTimePair)));
+        }
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("returnedAt").descending());
+        orderPage = orderRepository.findAll(spec, pageable);
+        List<Order> orders = orderPage.getContent();
+
+        model.addAttribute("orderPage", orderPage);
+        model.addAttribute("orders", orders);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+        return "return_orders";
+    }
+
+    @GetMapping("/return_orders/create")
+    public String createReturnOrder() {
+        return "return_order_create";
     }
 }

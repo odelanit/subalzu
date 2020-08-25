@@ -14,6 +14,7 @@
     <meta content="" name="description"/>
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
@@ -158,11 +159,11 @@
                                             <i data-feather="file-text" class="icon-xs"></i> 반품 거래명세표 출력
                                         </button>
                                     </div>
-<%--                                    <div class="col-md-6 text-md-right mt-md-0 mt-2">--%>
-<%--                                        <a href="/returns/create" class="btn btn-outline-danger">--%>
-<%--                                            <i data-feather="file-plus" class="icon-xs"></i> 반품 등록--%>
-<%--                                        </a>--%>
-<%--                                    </div>--%>
+                                    <div class="col-md-6 text-md-right mt-md-0 mt-2">
+                                        <a href="/return_orders/create" class="btn btn-outline-danger btn-sm">
+                                            <i class="fa fa-plus"></i> 반품 등록
+                                        </a>
+                                    </div>
                                 </div>
                                 <table class="table table-middle text-center table-hover" id="orders">
                                     <thead class="thead-light">
@@ -179,7 +180,7 @@
                                         <th>총 반품수량</th>
                                         <th>반품금액</th>
                                         <th>처리 담당자</th>
-                                        <th>출고상태</th>
+                                        <th>반품상태</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -199,14 +200,11 @@
                                             </td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${order.releaseStatus == 'progress'}">
-                                                        출고전
+                                                    <c:when test="${order.returnStatus == 'progress'}">
+                                                        <button type="button" class="btn btn-sm btn-outline-primary process">처리</button>
                                                     </c:when>
-                                                    <c:when test="${order.releaseStatus == 'completed'}">
-                                                        출고완료
-                                                    </c:when>
-                                                    <c:when test="${order.releaseStatus == 'rejected'}">
-                                                        출고거절
+                                                    <c:when test="${order.returnStatus == 'completed'}">
+                                                        반품완료
                                                     </c:when>
                                                 </c:choose>
                                             </td>
@@ -367,7 +365,7 @@
         checkboxElement.prop('checked', !checkboxElement.prop('checked'));
     });
 
-    $('#orders tbody tr td:not(:first-child)').on('click', function () {
+    $('#orders tbody tr td:not(:first-child):not(:last-child)').on('click', function () {
         window.location.href = '/orders/' + $(this).closest('tr').data('id');
     });
 
@@ -382,6 +380,23 @@
             toastr.error('출력할 주문을 선택해주세요');
         }
     }
+
+    $('.process').on('click', function(e) {
+        e.preventDefault();
+        var token = $("meta[name='_csrf']").attr("content");
+        var orderId = $(this).closest('tr').data('id');
+        $.ajax({
+            type: 'POST',
+            url: '/orders/' + orderId + '/return_complete',
+            headers: {
+                'X-CSRF-TOKEN': token,
+            },
+            success: function (data) {
+                window.location.href = '/return_orders';
+            }
+        })
+
+    })
 
 </script>
 </body>

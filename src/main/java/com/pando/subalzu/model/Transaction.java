@@ -41,7 +41,7 @@ public class Transaction {
     private LocalDateTime updatedAt;
 
     @Transient
-    Long prevTotal;
+    Double prevTotal;
 
     public Long getId() {
         return id;
@@ -115,11 +115,11 @@ public class Transaction {
         this.totalFunds = totalAmount;
     }
 
-    public Long getPrevTotal() {
+    public Double getPrevTotal() {
         return prevTotal;
     }
 
-    public void setPrevTotal(Long prevTotal) {
+    public void setPrevTotal(Double prevTotal) {
         this.prevTotal = prevTotal;
     }
 }

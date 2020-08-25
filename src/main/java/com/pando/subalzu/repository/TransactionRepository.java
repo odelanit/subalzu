@@ -16,6 +16,9 @@ public interface TransactionRepository extends PagingAndSortingRepository<Transa
     @Query("SELECT SUM(t.funds) FROM Transaction t WHERE t.transactionType = 'input'")
     Long sumInputAmount();
 
+    @Query("SELECT SUM(t.funds) FROM Transaction t WHERE t.transactionType = 'sale'")
+    Long sumSaleAmount();
+
     @Query("SELECT SUM(t.funds) FROM Transaction t WHERE t.shop = :shop")
     Double sumShopAmount(Shop shop);
 }

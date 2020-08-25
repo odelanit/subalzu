@@ -158,6 +158,7 @@
                                                 <form:select path="action" cssClass="custom-select custom-select-sm w-20">
                                                     <form:option value="" label="구분" />
                                                     <form:option value="shipping_input" label="입고" />
+                                                    <form:option value="output" label="출고" />
                                                     <form:option value="manual_input" label="수동입고" />
                                                     <form:option value="manual_output" label="수동출고" />
                                                     <form:option value="discard_output" label="폐기출고" />
@@ -208,6 +209,9 @@
                                                     <c:when test="${record.action == 'shipping_input'}">
                                                         입고
                                                     </c:when>
+                                                    <c:when test="${record.action == 'output'}">
+                                                        출고
+                                                    </c:when>
                                                     <c:when test="${record.action == 'manual_input'}">
                                                         수동입고
                                                     </c:when>
@@ -235,10 +239,10 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${record.product.useDecimal == true}">
-                                                        ${record.previousQty}
+                                                        ${record.qty}
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <fmt:parseNumber value="${record.previousQty}" integerOnly="true" />
+                                                        <fmt:parseNumber value="${record.qty}" integerOnly="true" />
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>

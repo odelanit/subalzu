@@ -46,7 +46,7 @@ public class SupplyOrder {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "supplyOrder")
+    @OneToMany(mappedBy = "supplyOrder", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<SupplyOrderProduct> supplyOrderProducts;
 

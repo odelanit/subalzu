@@ -14,6 +14,7 @@
     <meta content="" name="description"/>
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
@@ -36,7 +37,7 @@
             <li class="">
                 <button class="button-menu-mobile open-left disable-btn">
                     <i class="fa fa-bars menu-icon"></i>
-                    <i data-feather="x" class="close-icon"></i>
+                    <i class="fa fa-times"></i>
                 </button>
             </li>
         </ul>
@@ -55,10 +56,12 @@
 
         <ul class="navbar-nav ml-auto topnav-menu mb-0">
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out value="${pageContext.request.remoteUser}"/></a>
+                <a href="javascript:;" class="nav-link"><i class="fa fa-user"></i>&nbsp;<c:out
+                        value="${pageContext.request.remoteUser}"/></a>
             </li>
             <li class="nav-item d-none d-lg-block">
-                <a href="javascript:;" class="nav-link" onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
+                <a href="javascript:;" class="nav-link"
+                   onclick="document.getElementById('logout-form').submit();">로그아웃<i class="fa fa-sign-out"></i></a>
             </li>
             <form:form class="d-none" action="/logout" method="post" id="logout-form">
             </form:form>
@@ -67,7 +70,7 @@
     <!-- end Topbar -->
 
     <!-- ========== Left Sidebar Start ========== -->
-    <jsp:include page="sidebar.jsp" />
+    <jsp:include page="sidebar.jsp"/>
     <!-- Left Sidebar End -->
 
     <!-- ============================================================== -->
@@ -94,16 +97,17 @@
                 <div class="row">
                     <div class="col">
                         <div class="row mb-2">
-                            <div class="col-lg-4">
+                            <div class="col-auto">
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <div class="media p-3 align-items-center">
-                                            <div class="media-body">
+                                            <div class="media-body mr-5">
                                                 <h3 class="mb-0">${supplier.name}</h3>
                                             </div>
                                             <div class="align-self-center">
                                                 <span class="d-block text-muted text-right font-weight-bold">현재 잔액</span>
-                                                <span class="h3 text-danger"><fmt:formatNumber type="number" value="${supplier.totalFunds}" />원</span>
+                                                <span class="h3 text-danger"><fmt:formatNumber type="number"
+                                                                                               value="${supplier.totalFunds}"/>원</span>
                                             </div>
                                         </div>
                                     </div>
@@ -119,8 +123,22 @@
                                             <th>기간</th>
                                             <td>
                                                 <div class="form-inline">
+                                                    <div class="btn-group btn-group-sm btn-group-toggle mr-4" data-toggle="buttons">
+                                                        <label class="btn btn-outline-primary active">
+                                                            <form:radiobutton path="period" value="-1" label="전체" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" value="2" label="전월" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" value="1" label="금월" />
+                                                        </label>
+                                                        <label class="btn btn-outline-primary">
+                                                            <form:radiobutton path="period" value="0" label="당일" />
+                                                        </label>
+                                                    </div>
                                                     <div class="input-group input-group-sm">
-                                                        <form:input path="dateFrom" cssClass="form-control" />
+                                                        <form:input path="dateFrom" cssClass="form-control"/>
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">
                                                                 <i class="fa fa-calendar"></i>
@@ -129,7 +147,7 @@
                                                     </div>
                                                     <span class="mx-2">-</span>
                                                     <div class="input-group input-group-sm">
-                                                        <form:input path="dateTo" cssClass="form-control" />
+                                                        <form:input path="dateTo" cssClass="form-control"/>
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">
                                                                 <i class="fa fa-calendar"></i>
@@ -138,7 +156,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td style="width: 40%;">
+                                            <td style="width: 20%;">
                                                 <button class="btn btn-primary">검색</button>
                                             </td>
                                         </tr>
@@ -146,20 +164,22 @@
                                             <th>즉시 검색</th>
                                             <td colspan="2">
                                                 <div class="form-inline" id="imSearch">
-                                                    <form:select class="form-control form-control-sm w-20 mr-2" path="type">
-                                                        <form:option value="" label="구분" />
-                                                        <form:option value="output" label="출금" />
-                                                        <form:option value="shipping" label="매입" />
-                                                        <form:option value="update" label="수정" />
+                                                    <form:select class="form-control form-control-sm w-20 mr-2"
+                                                                 path="type">
+                                                        <form:option value="" label="구분"/>
+                                                        <form:option value="output" label="출금"/>
+                                                        <form:option value="shipping" label="매입"/>
+                                                        <form:option value="update" label="수정"/>
                                                     </form:select>
-                                                    <form:select class="form-control form-control-sm w-20" path="method">
-                                                        <form:option value="" label="처리방식" />
-                                                        <form:option value="manual_order" label="일반 발주" />
-                                                        <form:option value="auto_order" label="자동 발주" />
-                                                        <form:option value="direct_minus" label="직접 출금" />
-                                                        <form:option value="fund_minus" label="금액 차감" />
-                                                        <form:option value="fund_plus" label="금액 추가" />
-                                                        <form:option value="canceled_order" label="발주 취소" />
+                                                    <form:select class="form-control form-control-sm w-20"
+                                                                 path="method">
+                                                        <form:option value="" label="처리방식"/>
+                                                        <form:option value="manual_order" label="일반 발주"/>
+                                                        <form:option value="auto_order" label="자동 발주"/>
+                                                        <form:option value="direct_minus" label="직접 출금"/>
+                                                        <form:option value="fund_minus" label="금액 차감"/>
+                                                        <form:option value="fund_plus" label="금액 추가"/>
+                                                        <form:option value="canceled_order" label="발주 취소"/>
                                                     </form:select>
                                                 </div>
                                             </td>
@@ -170,13 +190,18 @@
                                 <div class="row mb-3 align-items-center">
                                     <div class="col-lg-6">
                                         <span>전체 ${transactionPage.totalElements}건</span>
-                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#outputModal">출금 처리</button>
-                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#manualModal">직접 수정</button>
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                                data-target="#outputModal">출금 처리
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal"
+                                                data-target="#manualModal">직접 수정
+                                        </button>
                                     </div>
                                     <div class="col-lg-6 text-lg-right">
-                                        <button class="btn btn-sm btn-outline-primary">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="/balance/${supplier.id}/download_excel">
                                             <i class="fa fa-file-excel"></i> Excel 다운로드
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                                 <table class="table table-middle table-hover text-center">
@@ -201,7 +226,7 @@
                                                     <c:when test="${transaction.type == 'output'}">
                                                         출금
                                                     </c:when>
-                                                    <c:when test="${transaction.type == 'order'}">
+                                                    <c:when test="${transaction.type == 'shipping'}">
                                                         매입
                                                     </c:when>
                                                     <c:when test="${transaction.type == 'update'}">
@@ -225,8 +250,9 @@
                                                     </c:when>
                                                 </c:choose>
                                             </td>
-                                            <td><fmt:formatNumber value="${transaction.amount}" type="number" />원</td>
-                                            <td><fmt:formatNumber value="${transaction.totalAmount}" type="number" />원</td>
+                                            <td><fmt:formatNumber value="${transaction.amount}" type="number"/>원</td>
+                                            <td><fmt:formatNumber value="${transaction.totalAmount}" type="number"/>원
+                                            </td>
                                             <td>${transaction.description}</td>
                                         </tr>
                                     </c:forEach>
@@ -271,49 +297,43 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form:form method="post" modelAttribute="form1" action="/balance/add">
+                <div id="output">
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
-                        <div class="col-8 text-right">
-                                ${supplier.name}
-                            <form:hidden path="supplier" />
-                            <form:hidden path="type" />
-                            <form:hidden path="method" />
-                        </div>
+                        <div class="col-8 text-right">{{ supplierName }}</div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                                ${supplier.totalFunds} 원
-                            <form:hidden path="prevTotal" value="${supplier.totalFunds}" />
+                            {{ formatNumber(prevTotalFunds) }} 원
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-4">입금 금액</label>
+                        <label class="col-form-label col-4" for="inputFunds">입금 금액</label>
                         <div class="col-8 text-right">
-                            <form:input type="number" class="form-control text-right form-control-sm" path="amount" />
+                            <input type="text" id="inputFunds" class="form-control form-control-sm text-right"
+                                   @blur="isInputActive = false" @focus="isInputActive = true" v-model="displayFunds">
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">입금 후 잔액</label>
                         <div class="col-8 text-right text-danger">
-                            <span class="totalAmount">${supplier.totalFunds}</span> 원
-                            <form:hidden path="totalAmount" />
+                            <span>{{ formatNumber(prevTotalFunds - funds) }}</span> 원
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">비고</label>
                         <div class="col-8">
-                            <form:textarea path="description" class="form-control-sm form-control" rows="3" />
+                            <textarea class="form-control form-control-sm" v-model="description"></textarea>
                         </div>
                     </div>
-                </form:form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
-                <button class="btn btn-primary" form="form1">적용</button>
+                <button class="btn btn-primary" onclick="submitOutput()">적용</button>
             </div>
         </div>
     </div>
@@ -329,62 +349,59 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form:form method="post" modelAttribute="form2" action="/balance/add">
+                <div id="update">
                     <div class="form-group row">
                         <label class="col-form-label col-4">구분</label>
                         <div class="col-8 text-right">
                             <div class="custom-control custom-control-inline custom-radio">
-                                <form:radiobutton class="custom-control-input" path="method" value="fund_minus" id="transactionType1" />
+                                <input type="radio" class="custom-control-input" v-model="method" value="fund_minus"
+                                                  id="transactionType1"/>
                                 <label class="custom-control-label" for="transactionType1">금액 차감</label>
                             </div>
                             <div class="custom-control custom-control-inline custom-radio">
-                                <form:radiobutton class="custom-control-input" path="method" value="fund_plus" id="transactionType2" />
+                                <input type="radio" class="custom-control-input" v-model="method" value="fund_plus"
+                                                  id="transactionType2"/>
                                 <label class="custom-control-label" for="transactionType2">금액 추가</label>
                             </div>
                         </div>
-                        <form:hidden path="prevTotal" value="${supplier.totalFunds}" />
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
                         <div class="col-8 text-right">
-                                ${supplier.name}
-                            <form:hidden path="supplier" />
-                            <form:hidden path="type" />
+                            {{ supplierName }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                                ${supplier.totalFunds} 원
-                            <input type="hidden" name="prevTotal" value="${supplier.totalFunds}">
+                            {{ formatNumber(prevTotalFunds) }} 원
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 금액</label>
                         <div class="col-8 text-right">
-                            <form:input type="number" class="form-control text-right form-control-sm" path="amount" />
+                            <input type="text" class="form-control text-right form-control-sm" @blur="isInputActive = false" @focus="isInputActive = true" v-model="displayFunds"/>
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 후 잔액</label>
                         <div class="col-8 text-right text-danger">
-                            <span class="totalBalance">${supplier.totalFunds}</span> 원
-                            <form:hidden path="totalAmount" />
+                            <span>{{ formatNumber(totalFunds) }}</span> 원
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">비고</label>
                         <div class="col-8">
-                            <form:textarea path="description" class="form-control-sm form-control" rows="3" />
+                            <textarea v-model="description" class="form-control-sm form-control" rows="3"></textarea>
                         </div>
                     </div>
-                </form:form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
-                <button class="btn btn-primary" form="form2">적용</button>
+                <button class="btn btn-primary" onclick="submitUpdate()">적용</button>
             </div>
         </div>
     </div>
@@ -417,72 +434,303 @@
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script src="${contextPath}/resources/js/vue.js"></script>
+<script src="${contextPath}/resources/js/axios.js"></script>
 <script>
-    $('#dateFrom, #dateTo').datepicker({
-        dateFormat: 'yy-mm-dd'
-    });
-
-    $('#form1 input[name="amount"]').on('keyup', function () {
-        var amount = $(this).val();
-        var prevTotal = $('#form1 input[name="prevTotal"]').val();
-        if (parseInt(amount) > 0) {
-            var totalAmount = parseInt(prevTotal) - parseInt(amount);
-            $('#form1 input[name="totalAmount"]').val(totalAmount);
-            $('#form1 .totalAmount').text(totalAmount);
-        }
-    });
-
-    $('#form2 input[name="amount"]').on('keyup', function () {
-        var amount = $(this).val();
-        var prevTotal = $('#form2 input[name="prevTotal"]').val();
-        var method = $('#form2 input[name="method"]:checked').val();
-        console.log(method);
-        if (parseInt(amount) > 0) {
-            if (method === 'fund_plus') {
-                var totalAmount = parseInt(prevTotal) + parseInt(amount);
-            } else {
-                var totalAmount = parseInt(prevTotal) - parseInt(amount);
-            }
-            $('#form2 input[name="totalAmount"]').val(totalAmount);
-            $('#form2 .totalBalance').text(totalAmount);
-        }
-    });
-
-    $('#form2 input[name="method"]').on('change', function () {
-        var method = $('#form2 input[name="method"]:checked').val();
-        var amount = $('#form2 input[name="amount"]').val();
-        var prevTotal = $('#form2 input[name="prevTotal"]').val();
-        console.log(method);
-        if (parseInt(amount) > 0) {
-            if (method === 'fund_plus') {
-                var totalAmount = parseInt(prevTotal) + parseInt(amount);
-            } else {
-                var totalAmount = parseInt(prevTotal) - parseInt(amount);
-            }
-            $('#form2 input[name="totalAmount"]').val(totalAmount);
-            $('#form2 .totalBalance').text(totalAmount);
-        }
-    });
-
-    $('#form1, #form2').submit(function (e) {
-        e.preventDefault();
-        var funds = $(this).find('input[name="amount"]').val();
-        if (funds > 0) {
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function(data) {
-                    $('#outcome-modal').modal('hide');
-                    window.location.reload();
+    var fundsOutput = new Vue({
+        el: '#output',
+        data: {
+            prevTotalFunds: 0,
+            funds: 0,
+            totalFunds: 0,
+            supplierName: '',
+            description: '',
+            isInputActive: false,
+            type: 'output',
+            method: 'direct_minus',
+        },
+        mounted() {
+            axios.get(window.location.pathname + '/ajax')
+                .then(res => res.data)
+                .then(data => {
+                    this.prevTotalFunds = data.totalFunds;
+                    this.supplierName = data.name;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+        computed: {
+            displayFunds: {
+                get: function () {
+                    let fixedValue = this.toFixed(this.funds);
+                    if (this.isInputActive) {
+                        return fixedValue.toString();
+                    } else {
+                        return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+                },
+                set: function (modifiedValue) {
+                    let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));
+                    if (isNaN(newValue)) {
+                        newValue = 0;
+                    }
+                    this.funds = newValue;
                 }
-            })
+            }
+        },
+        methods: {
+            formatNumber(value) {
+                let fixedValue = this.toFixed(value);
+                return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            toFixed(x) {
+                if (Math.abs(x) < 1.0) {
+                    var e = parseInt(x.toString().split('e-')[1]);
+                    if (e) {
+                        x *= Math.pow(10, e - 1);
+                        x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+                    }
+                } else {
+                    var e = parseInt(x.toString().split('+')[1]);
+                    if (e > 20) {
+                        e -= 20;
+                        x /= Math.pow(10, e);
+                        x += (new Array(e + 1)).join('0');
+                    }
+                }
+                return x;
+            },
+            applyFunds() {
+                let currentUrl = window.location.pathname;
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post(currentUrl + '/add', {
+                    funds: this.funds,
+                    type: this.type,
+                    method: this.method,
+                    description: this.description
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
         }
     });
 
-    $('#imSearch select').on('change', function() {
-        $('#searchForm').submit();
+    var fundsUpdate = new Vue({
+        el: '#update',
+        data: {
+            prevTotalFunds: 0,
+            funds: 0,
+            supplierName: '',
+            description: '',
+            isInputActive: false,
+            type: 'output',
+            method: 'fund_minus',
+        },
+        mounted() {
+            axios.get(window.location.pathname + '/ajax')
+                .then(res => res.data)
+                .then(data => {
+                    this.prevTotalFunds = data.totalFunds;
+                    this.supplierName = data.name;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+        computed: {
+            displayFunds: {
+                get: function () {
+                    let fixedValue = this.toFixed(this.funds);
+                    if (this.isInputActive) {
+                        return fixedValue.toString();
+                    } else {
+                        return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+                },
+                set: function (modifiedValue) {
+                    let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));
+                    if (isNaN(newValue)) {
+                        newValue = 0;
+                    }
+                    this.funds = newValue;
+                }
+            },
+            totalFunds: {
+                get: function() {
+                    if (this.method.includes("minus")) {
+                        return this.prevTotalFunds - this.funds;
+                    } else {
+                        return this.prevTotalFunds + this.funds;
+                    }
+                }
+            }
+        },
+        methods: {
+            formatNumber(value) {
+                let fixedValue = this.toFixed(value);
+                return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            toFixed(x) {
+                if (Math.abs(x) < 1.0) {
+                    var e = parseInt(x.toString().split('e-')[1]);
+                    if (e) {
+                        x *= Math.pow(10, e - 1);
+                        x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+                    }
+                } else {
+                    var e = parseInt(x.toString().split('+')[1]);
+                    if (e > 20) {
+                        e -= 20;
+                        x /= Math.pow(10, e);
+                        x += (new Array(e + 1)).join('0');
+                    }
+                }
+                return x;
+            },
+            applyFunds() {
+                let currentUrl = window.location.pathname;
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post(currentUrl + '/add', {
+                    funds: this.funds,
+                    type: this.type,
+                    method: this.method,
+                    description: this.description
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        }
+    });
+
+    function submitOutput() {
+        fundsOutput.applyFunds();
+    }
+
+    function submitUpdate() {
+        fundsUpdate.applyFunds();
+    }
+
+    formatDate = function (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    $('input[name="period"]').on('change', function() {
+        var diff = +$(this).val();
+        const dateTo = new Date();
+        let strDateTo = formatDate(dateTo);
+        if (diff === -1) {
+            $('#dateFrom').val('2020-01-01');
+            $('#dateTo').val(strDateTo);
+        } else if (diff === 0) {
+            $('#dateFrom').val(strDateTo);
+            $('#dateTo').val(strDateTo);
+        } else if (diff === 1) {
+            let firstDay = new Date(dateTo.getFullYear(), dateTo.getMonth(), 1);
+            let lastDay = new Date(dateTo.getFullYear(), dateTo.getMonth() + 1, 0);
+            $('#dateFrom').val(formatDate(firstDay));
+            $('#dateTo').val(formatDate(lastDay));
+        } else if (diff === 2) {
+            let firstDay = new Date(dateTo.getFullYear(), dateTo.getMonth() - 1, 1);
+            let lastDay = new Date(dateTo.getFullYear(), dateTo.getMonth(), 0);
+            $('#dateFrom').val(formatDate(firstDay));
+            $('#dateTo').val(formatDate(lastDay));
+        }
     });
 </script>
+<%--<script>--%>
+<%--    $('#dateFrom, #dateTo').datepicker({--%>
+<%--        dateFormat: 'yy-mm-dd'--%>
+<%--    });--%>
+
+<%--    $('#form1 input[name="amount"]').on('keyup', function () {--%>
+<%--        var amount = $(this).val();--%>
+<%--        var prevTotal = $('#form1 input[name="prevTotal"]').val();--%>
+<%--        if (parseFloat(amount) > 0) {--%>
+<%--            var totalAmount = parseFloat(prevTotal) - parseFloat(amount);--%>
+<%--            $('#form1 input[name="totalAmount"]').val(totalAmount);--%>
+<%--            $('#form1 .totalAmount').text(totalAmount);--%>
+<%--        }--%>
+<%--    });--%>
+
+<%--    $('#form2 input[name="amount"]').on('keyup', function () {--%>
+<%--        var amount = $(this).val();--%>
+<%--        var prevTotal = $('#form2 input[name="prevTotal"]').val();--%>
+<%--        var method = $('#form2 input[name="method"]:checked').val();--%>
+<%--        if (parseInt(amount) > 0) {--%>
+<%--            if (method === 'fund_plus') {--%>
+<%--                var totalAmount = parseFloat(prevTotal) + parseFloat(amount);--%>
+<%--            } else {--%>
+<%--                var totalAmount = parseFloat(prevTotal) - parseFloat(amount);--%>
+<%--            }--%>
+<%--            $('#form2 input[name="totalAmount"]').val(totalAmount);--%>
+<%--            $('#form2 .totalBalance').text(totalAmount);--%>
+<%--        }--%>
+<%--    });--%>
+
+<%--    $('#form2 input[name="method"]').on('change', function () {--%>
+<%--        var method = $('#form2 input[name="method"]:checked').val();--%>
+<%--        var amount = $('#form2 input[name="amount"]').val();--%>
+<%--        var prevTotal = $('#form2 input[name="prevTotal"]').val();--%>
+<%--        console.log(method);--%>
+<%--        if (parseFloat(amount) > 0) {--%>
+<%--            var totalAmount = 0;--%>
+<%--            if (method === 'fund_plus') {--%>
+<%--                totalAmount = parseFloat(prevTotal) + parseFloat(amount);--%>
+<%--            } else {--%>
+<%--                totalAmount = parseFloat(prevTotal) - parseFloat(amount);--%>
+<%--            }--%>
+<%--            $('#form2 input[name="totalAmount"]').val(totalAmount);--%>
+<%--            $('#form2 .totalBalance').text(totalAmount);--%>
+<%--        }--%>
+<%--    });--%>
+
+<%--    $('#form1, #form2').submit(function (e) {--%>
+<%--        e.preventDefault();--%>
+<%--        var funds = $(this).find('input[name="amount"]').val();--%>
+<%--        if (funds > 0) {--%>
+<%--            $.ajax({--%>
+<%--                type: 'POST',--%>
+<%--                url: $(this).attr('action'),--%>
+<%--                data: $(this).serialize(),--%>
+<%--                success: function(data) {--%>
+<%--                    $('#outcome-modal').modal('hide');--%>
+<%--                    window.location.reload();--%>
+<%--                }--%>
+<%--            })--%>
+<%--        }--%>
+<%--    });--%>
+
+<%--    $('#imSearch select').on('change', function() {--%>
+<%--        $('#searchForm').submit();--%>
+<%--    });--%>
+<%--</script>--%>
 </body>
 </html>

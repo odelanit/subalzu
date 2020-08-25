@@ -195,6 +195,11 @@ public class SupplierController {
         Optional<Supplier> supplierOptional = supplierRepository.findById(id);
         if (supplierOptional.isPresent()) {
             Supplier supplier = supplierOptional.get();
+            Set<Product> products = supplier.getProducts();
+            for (Product product : products) {
+                product.setSupplier(null);
+                productRepository.save(product);
+            }
             supplierRepository.delete(supplier);
         }
         return "redirect:/suppliers";

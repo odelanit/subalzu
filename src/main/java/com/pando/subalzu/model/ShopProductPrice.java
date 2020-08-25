@@ -2,6 +2,7 @@ package com.pando.subalzu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ public class ShopProductPrice {
 
     @ManyToOne
     @JoinColumn(name="shop_id")
-    @JsonIdentityInfo(property = "id", generator = ObjectIdGenerators.PropertyGenerator.class)
+    @JsonManagedReference
     Shop shop;
 
     @Column(nullable = false)

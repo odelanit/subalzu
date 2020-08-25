@@ -16,6 +16,8 @@ public class SupplierTransactionSearch {
 
     String method;
 
+    int period = 1;
+
     int page = 1;
 
     public SupplierTransactionSearch() {
@@ -77,5 +79,13 @@ public class SupplierTransactionSearch {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public int getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
     }
 }

@@ -72,6 +72,8 @@ public class Order {
 
     String releaseStatus = "progress"; // completed, progress, rejected,
 
+    String returnStatus = ""; // progress, completed
+
     public Order() {
         LocalDateTime today = LocalDateTime.now();
         requestDate = today.plusDays(1);
@@ -255,5 +257,13 @@ public class Order {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate requestDate = LocalDate.parse(strRequestDate, formatter);
         this.requestDate = requestDate.atStartOfDay();
+    }
+
+    public String getReturnStatus() {
+        return returnStatus;
+    }
+
+    public void setReturnStatus(String returnStatus) {
+        this.returnStatus = returnStatus;
     }
 }

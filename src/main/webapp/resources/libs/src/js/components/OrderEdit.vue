@@ -19,28 +19,33 @@
                             <i class="fa fa-scroll"></i>
                             거래명세표
                         </button>
-                        <button v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'"
-                                class="btn btn-sm btn-outline-danger" @click="changeReleaseStatus('rejected')">
-                            <i class="fa fa-times"></i>출고거절
-                        </button>
-                        <button v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'"
-                                class="btn btn-sm btn-outline-primary" @click="changeReleaseStatus('completed')">
-                            <i class="fa fa-check"></i>출고완료
-                        </button>
-                        <button v-if="releaseStatus === 'completed' && orderStatus !== 'return_received'"
-                                class="btn btn-sm btn-outline-warning" @click="showReturnModal">
-                            반품접수
-                        </button>
-<!--                        <button v-if="orderStatus === 'return_received'"-->
-<!--                                class="btn btn-sm btn-outline-success" @click="completeReturn">-->
-<!--                            반품완료-->
-<!--                        </button>-->
+                        <template v-if="returnStatus === ''">
+                            <button v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'"
+                                    class="btn btn-sm btn-outline-danger" @click="changeReleaseStatus('rejected')">
+                                <i class="fa fa-times"></i>출고거절
+                            </button>
+                            <button v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'"
+                                    class="btn btn-sm btn-outline-primary" @click="changeReleaseStatus('completed')">
+                                <i class="fa fa-check"></i>출고완료
+                            </button>
+                            <button v-if="releaseStatus === 'completed'"
+                                    class="btn btn-sm btn-outline-warning" @click="showReturnModal">
+                                반품접수
+                            </button>
+                        </template>
+                        <template v-else>
+                            <button v-if="returnStatus === 'progress'"
+                                    class="btn btn-sm btn-outline-success" @click="completeReturn">
+                                반품완료
+                            </button>
+                        </template>
                     </div>
                 </div>
                 <hr>
-                <h5 class="card-title">주문 정보
+                <h5 class="card-title">
+                    <span class="font-weight-bold">주문 정보: </span>
                     <span class="text-primary">
-                                        (주문상태:
+                        주문상태:
                         <template v-if="orderStatus === 'completed'">
                             주문완료
                         </template>
@@ -63,8 +68,19 @@
                         <template v-else-if="releaseStatus === 'completed'">
                             출고완료
                         </template>
-                        )
                     </span>
+                    <template v-if="returnStatus !== ''">
+                        <span class="mx-1">/</span>
+                        <span class="text-warning">
+                            반품상태:
+                            <template v-if="releaseStatus === 'progress'">
+                                반품접수
+                            </template>
+                            <template v-else-if="releaseStatus === 'completed'">
+                                반품완료
+                            </template>
+                        </span>
+                    </template>
                 </h5>
                 <table class="table form-table table-bordered mb-4">
                     <colgroup>
@@ -199,7 +215,7 @@
                         <th>수량</th>
                         <th>단가(원)</th>
                         <th>합계금액(원)</th>
-                        <th v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'">삭제</th>
+                        <th v-if="releaseStatus === '' && (orderStatus !== 'canceled' && releaseStatus === 'progress')">삭제</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -226,7 +242,7 @@
                             </template>
                         </td>
                         <td>{{ Number(orderProduct.qty * orderProduct.price).toLocaleString() }}</td>
-                        <td v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'">
+                        <td v-if="releaseStatus === '' && (orderStatus !== 'canceled' && releaseStatus === 'progress')">
                             <button class="btn btn-outline-danger btn-sm" @click="removeOrderProduct(index)">삭제</button>
                         </td>
                     </tr>
@@ -240,11 +256,11 @@
                         <td class="text-center">{{ total_qty }}</td>
                         <td></td>
                         <td>{{ Number(total_amount).toLocaleString() }}</td>
-                        <td v-if="orderStatus !== 'canceled' && releaseStatus === 'progress'"></td>
+                        <td v-if="releaseStatus === '' && (orderStatus !== 'canceled' && releaseStatus === 'progress')"></td>
                     </tr>
                     </tfoot>
                 </table>
-                <template v-if="orderStatus === 'return_received' || orderStatus === 'return_completed'">
+                <template v-if="returnStatus !== ''">
                     <h5 class="card-title">반품 상품 목록</h5>
                     <table class="table table-sm text-center table-middle table-hover mb-5">
                         <colgroup>
@@ -434,7 +450,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="returnProducts" v-if="releaseStatus === 'completed'">
+        <div class="modal fade" id="returnProducts" v-if="returnStatus === ''">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
                     <div class="modal-header bg-danger">
@@ -513,6 +529,7 @@
                 createdAt: '',
                 orderStatus: '',
                 releaseStatus: '',
+                returnStatus: '',
                 shop_keyword: '',
                 selected_shop: {
                     shopOwner: {}
@@ -564,6 +581,9 @@
                     this.createdAt = data.order.createdAt;
                     this.orderStatus = data.order.orderStatus;
                     this.releaseStatus = data.order.releaseStatus;
+                    this.returnStatus = data.order.returnStatus;
+
+                    console.log(this.returnStatus);
 
                     this.selected_shop = data.order.shop;
                     this.deliveryType = data.order.deliveryType;
@@ -785,7 +805,20 @@
                     })
             },
             completeReturn: function() {
-                console.log('OK');
+                var completeReturnUrl = `${window.location.pathname}/return_complete`;
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post(completeReturnUrl, {}, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.href = '/orders'
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
             }
         },
         watch: {
@@ -794,10 +827,12 @@
                 handler(orderProducts) {
                     let total_funds = 0, total_qty = 0, total_refunds = 0, total_reQty = 0;
                     orderProducts.forEach(item => {
-                        if (item.qty < item.reQty) {
-                            toastr.error('반품은 주문 수량 내에서만 가능합니다.');
-                            item.reQty = item.qty;
-                            return false;
+                        if (this.returnStatus === '') {
+                            if (item.qty < item.reQty) {
+                                toastr.error('반품은 주문 수량 내에서만 가능합니다.');
+                                item.reQty = item.qty;
+                                return false;
+                            }
                         }
                         total_funds += item.price * item.qty;
                         total_refunds += item.price * item.reQty;

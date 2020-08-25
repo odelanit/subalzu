@@ -16,6 +16,8 @@ public class TransactionSearchForm {
 
     String processingMethod;
 
+    int period = 1;
+
     int page = 1;
 
     public TransactionSearchForm() {
@@ -77,5 +79,13 @@ public class TransactionSearchForm {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public int getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
     }
 }

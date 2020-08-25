@@ -110,7 +110,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 매입 금액</span>
-                                                <h3 class="mb-0 text-success">${sumOrderAmount} 원</h3>
+                                                <h3 class="mb-0 text-success"><fmt:formatNumber value="${sumOrderAmount}" type="number" /> 원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +122,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 출금 금액</span>
-                                                <h3 class="mb-0 text-secondary">${sumOutputAmount}원</h3>
+                                                <h3 class="mb-0 text-secondary"><fmt:formatNumber value="${sumOutputAmount}" type="number" />원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +134,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">수정 금액</span>
-                                                <h3 class="mb-0 text-warning">${sumUpdateAmount} 원</h3>
+                                                <h3 class="mb-0 text-warning"><fmt:formatNumber value="${sumUpdateAmount}" type="number" />원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -146,7 +146,7 @@
                                         <div class="media p-3">
                                             <div class="media-body text-right">
                                                 <span class="text-muted text-uppercase font-weight-bold">총 잔액</span>
-                                                <h3 class="mb-0 text-danger">${sumAmount}원</h3>
+                                                <h3 class="mb-0 text-danger"><fmt:formatNumber value="${sumAmount}" type="number" />원</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -204,9 +204,9 @@
                                         <span>전체 ${supplierPage.totalElements}건</span>
                                     </div>
                                     <div class="col-6 text-right">
-                                        <button class="btn btn-sm btn-outline-primary">
+                                        <a class="btn btn-sm btn-outline-primary" href="/balance/download_excel">
                                             <i class="fa fa-file-excel"></i> Excel 다운로드
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                                 <table class="table table-hover text-center">
@@ -227,7 +227,7 @@
                                         <tr onclick="window.location.href='/balance/${supplier.id}'">
                                             <td>${supplier.id}</td>
                                             <td>${supplier.name}</td>
-                                            <td><fmt:formatNumber value="${supplier.totalPrevBalance}" type="number" /> 원</td>
+                                            <td><fmt:formatNumber value="${supplier.prevTotalFunds}" type="number" /> 원</td>
                                             <td><fmt:formatNumber value="${supplier.totalInputFunds}" type="number" />원</td>
                                             <td><fmt:formatNumber value="${supplier.totalOutputFunds}" type="number" />원</td>
                                             <td><fmt:formatNumber value="${supplier.totalUpdateFunds}" type="number" />원</td>

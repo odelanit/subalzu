@@ -18,7 +18,7 @@
                     </tr>
                     <tr>
                         <th>배송유형</th>
-                        <td>
+                        <td colspan="3">
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" value="direct" id="deliveryType1" v-model="deliveryType"
                                        class="custom-control-input">
@@ -28,18 +28,6 @@
                                 <input type="radio" value="parcel" id="deliveryType2" v-model="deliveryType"
                                        class="custom-control-input">
                                 <label class="custom-control-label" for="deliveryType2">택배 배송</label>
-                            </div>
-                        </td>
-                        <th>배송요청일</th>
-                        <td>
-                            <div class="input-group input-group-sm w-75">
-                                <input type="text" class="form-control" v-model="requestDate"
-                                       id="requestDate"/>
-                                <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="fa fa-calendar"></i>
-                                </span>
-                                </div>
                             </div>
                         </td>
                     </tr>
@@ -64,20 +52,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>요청사항</th>
-                        <td colspan="3">
-                            <textarea class="form-control w-50" rows="3" v-model="requestMemo"></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>메모</th>
+                        <th>사유</th>
                         <td colspan="3">
                             <textarea class="form-control w-50" rows="3" v-model="memo"/>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <h5 class="card-title">상품 목록</h5>
+                <h5 class="card-title">반품 상품 목록</h5>
                 <div class="row mb-2">
                     <div class="col-6">
                         <span></span>
@@ -431,38 +413,6 @@
                 this.selected_shop_name = this.selected_shop.name;
                 this.orderProducts = [];
                 $('#selectShops').modal('hide');
-                this.initOrderProducts();
-            },
-            initOrderProducts: function () {
-                axios.get('/products/data_for_order', {
-                    params: {
-                        category: this.selected_category_id,
-                        subcategory: this.selected_subcategory_id,
-                        keyword: this.product_keyword,
-                        deliveryType: (this.deliveryType === 'direct' ? 1 : 2),
-                        shop: this.selected_shop.id
-                    }
-                })
-                    .then(res => res.data)
-                    .then(data => {
-                        this.products = data.products;
-                        this.products.forEach(product => {
-                            let spIdx = product.shopPrices.findIndex(x => x.shop.id === this.selected_shop.id);
-                            if (spIdx !== -1) {
-                                product.sellPrice = product.shopPrices[spIdx].price;
-                            }
-                        });
-                        this.prev_products = data.prev_products;
-                        if (data.prev_products.length > 0) {
-                            this.prev_products.forEach(product => {
-                                this.addToOrderProduct(product);
-                            });
-                            this.showCartTable = true;
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
             },
             formatDate: function (date) {
                 let month = '' + (date.getMonth() + 1),
@@ -506,6 +456,13 @@
                                 product.sellPrice = product.shopPrices[spIdx].price;
                             }
                         });
+                        this.prev_products = data.prev_products;
+                        if (data.prev_products.length > 0) {
+                            this.prev_products.forEach(product => {
+                                this.addToOrderProduct(product);
+                            });
+                            this.showCartTable = true;
+                        }
                     })
                     .catch(err => {
                         console.log(err);
@@ -555,13 +512,12 @@
                     return false;
                 }
 
-                axios.post('/orders/store', {
+                axios.post('/orders/return_store', {
                     shopId: this.selected_shop.id,
                     deliveryType: this.deliveryType,
                     requestDate: this.requestDate,
                     delivererId: this.selected_deliverer_id,
                     salesmanId: this.selected_salesman_id,
-                    requestMemo: this.requestMemo,
                     memo: this.memo,
                     orderProducts: this.orderProducts
                 }, {

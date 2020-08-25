@@ -128,16 +128,16 @@
                                                 <div class="form-inline">
                                                     <div class="btn-group btn-group-sm btn-group-toggle mr-4" data-toggle="buttons">
                                                         <label class="btn btn-outline-primary active">
-                                                            <input type="radio" value="-1" /> 전체
+                                                            <form:radiobutton path="period" value="-1" label="전체" />
                                                         </label>
                                                         <label class="btn btn-outline-primary">
-                                                            <input type="radio" value="1" /> 전월
+                                                            <form:radiobutton path="period" value="2" label="전월" />
                                                         </label>
                                                         <label class="btn btn-outline-primary">
-                                                            <input type="radio" value="0" /> 금월
+                                                            <form:radiobutton path="period" value="1" label="금월" />
                                                         </label>
                                                         <label class="btn btn-outline-primary">
-                                                            <input type="radio" value="30" /> 당일
+                                                            <form:radiobutton path="period" value="0" label="당일" />
                                                         </label>
                                                     </div>
                                                     <div class="input-group input-group-sm w-25">
@@ -175,8 +175,7 @@
                                                     </form:select>
                                                     <form:select path="processingMethod" cssClass="custom-select custom-select-sm mr-2">
                                                         <form:option value="" label="처리방식" />
-                                                        <form:option value="credit_minus" label="외상거래" />
-                                                        <form:option value="prepaid_minus" label="예치금" />
+                                                        <form:option value="order_minus" label="주문거래" />
                                                         <form:option value="manual_minus" label="직접입금" />
                                                         <form:option value="fund_minus" label="금액차감" />
                                                         <form:option value="fund_plus" label="금액추가" />
@@ -234,6 +233,9 @@
                                                     </c:when>
                                                     <c:when test="${transaction.processingMethod == 'fund_plus'}">
                                                         금액 추가
+                                                    </c:when>
+                                                    <c:when test="${transaction.processingMethod == 'order_minus'}">
+                                                        주문 거래
                                                     </c:when>
                                                 </c:choose>
                                             </td>
@@ -445,52 +447,52 @@
             $('#form').submit();
         });
 
-        $('#transactionForm1 input[name="amount"]').on('keyup', function () {
+        $('#transactionForm1 input[name="funds"]').on('keyup', function () {
             var amount = $(this).val();
             var prevTotal = $('#transactionForm1 input[name="prevTotal"]').val();
-            if (parseInt(amount) > 0) {
-                var totalAmount = parseInt(prevTotal) - parseInt(amount);
-                $('#transactionForm1 input[name="totalAmount"]').val(totalAmount);
+            if (parseFloat(amount) > 0) {
+                var totalAmount = parseFloat(prevTotal) - parseFloat(amount);
+                $('#transactionForm1 input[name="totalFunds"]').val(totalAmount);
                 $('#transactionForm1 .totalAmount').text(totalAmount);
             }
         });
 
-        $('#transactionForm2 input[name="amount"]').on('keyup', function () {
+        $('#transactionForm2 input[name="funds"]').on('keyup', function () {
             var amount = $(this).val();
             var prevTotal = $('#transactionForm2 input[name="prevTotal"]').val();
             var method = $('#transactionForm2 input[name="processingMethod"]:checked').val();
-            console.log(method);
             if (parseInt(amount) > 0) {
+                var totalAmount = 0;
                 if (method === 'fund_plus') {
-                    var totalAmount = parseInt(prevTotal) + parseInt(amount);
+                    totalAmount = parseFloat(prevTotal) + parseFloat(amount);
                 } else {
-                    var totalAmount = parseInt(prevTotal) - parseInt(amount);
+                    totalAmount = parseFloat(prevTotal) - parseFloat(amount);
                 }
-                $('#transactionForm2 input[name="totalAmount"]').val(totalAmount);
+                $('#transactionForm2 input[name="totalFunds"]').val(totalAmount);
                 $('#transactionForm2 .totalBalance').text(totalAmount);
             }
         });
 
         $('#transactionForm2 input[name="processingMethod"]').on('change', function () {
             var method = $('#transactionForm2 input[name="processingMethod"]:checked').val();
-            var amount = $('#transactionForm2 input[name="amount"]').val();
+            var amount = $('#transactionForm2 input[name="funds"]').val();
             var prevTotal = $('#transactionForm2 input[name="prevTotal"]').val();
-            console.log(method);
-            if (parseInt(amount) > 0) {
+            if (parseFloat(amount) > 0) {
+                var totalAmount = 0;
                 if (method === 'fund_plus') {
-                    var totalAmount = parseInt(prevTotal) + parseInt(amount);
+                    totalAmount = parseFloat(prevTotal) + parseFloat(amount);
                 } else {
-                    var totalAmount = parseInt(prevTotal) - parseInt(amount);
+                    totalAmount = parseFloat(prevTotal) - parseFloat(amount);
                 }
-                $('#transactionForm2 input[name="totalAmount"]').val(totalAmount);
+                $('#transactionForm2 input[name="totalFunds"]').val(totalAmount);
                 $('#transactionForm2 .totalBalance').text(totalAmount);
             }
         });
 
         $('#transactionForm1, #transactionForm2').submit(function (e) {
             e.preventDefault();
-            var amount = $(this).find('input[name="amount"]').val();
-            if (parseInt(amount) > 0) {
+            var amount = $(this).find('input[name="funds"]').val();
+            if (parseFloat(amount) > 0) {
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('action'),
@@ -511,6 +513,42 @@
                 toastr.error('입금 금액은 0보다 커야 합니다.');
             }
         });
+    });
+
+    formatDate = function (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    $('input[name="period"]').on('change', function() {
+        var diff = +$(this).val();
+        const dateTo = new Date();
+        let strDateTo = formatDate(dateTo);
+        if (diff === -1) {
+            $('#dateFrom').val('2020-01-01');
+            $('#dateTo').val(strDateTo);
+        } else if (diff === 0) {
+            $('#dateFrom').val(strDateTo);
+            $('#dateTo').val(strDateTo);
+        } else if (diff === 1) {
+            let firstDay = new Date(dateTo.getFullYear(), dateTo.getMonth(), 1);
+            let lastDay = new Date(dateTo.getFullYear(), dateTo.getMonth() + 1, 0);
+            $('#dateFrom').val(formatDate(firstDay));
+            $('#dateTo').val(formatDate(lastDay));
+        } else if (diff === 2) {
+            let firstDay = new Date(dateTo.getFullYear(), dateTo.getMonth() - 1, 1);
+            let lastDay = new Date(dateTo.getFullYear(), dateTo.getMonth(), 0);
+            $('#dateFrom').val(formatDate(firstDay));
+            $('#dateTo').val(formatDate(lastDay));
+        }
     });
 </script>
 </body>

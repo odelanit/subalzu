@@ -6,7 +6,6 @@ import com.pando.subalzu.model.ProductRecord;
 import com.pando.subalzu.repository.ProductRecordRepository;
 import com.pando.subalzu.specification.ProductRecordSpecification;
 import com.pando.subalzu.specification.SearchCriteria;
-import com.pando.subalzu.specification.TransactionSpecification;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -29,8 +28,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -179,9 +176,9 @@ public class StockHistoryController {
 
                 cell = dataRow.createCell(7);
                 if (records.get(i).getProduct().getUseDecimal()) {
-                    cell.setCellValue(records.get(i).getPreviousQty());
+                    cell.setCellValue(records.get(i).getQty());
                 } else {
-                    cell.setCellValue(Math.round(records.get(i).getPreviousQty()));
+                    cell.setCellValue(Math.round(records.get(i).getQty()));
                 }
                 cell.setCellStyle(defaultStyle);
 

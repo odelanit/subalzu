@@ -168,7 +168,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="required"><span>택배송 단가</span></th>
+                    <th class="required"><span>택배배송 단가</span></th>
                     <td>
                         <div class="input-group w-25">
                             <NumberInput v-model="parcelPrice" class="form-control text-right price-group" placeholder="택배배송 단가" />

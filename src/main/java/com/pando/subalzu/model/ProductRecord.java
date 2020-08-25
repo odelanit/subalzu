@@ -18,7 +18,8 @@ public class ProductRecord {
     @JoinColumn(name="product_id", nullable = false)
     Product product;
 
-    double previousQty = 0.0;
+    @Column(columnDefinition = "float default 0.0")
+    double qty = 0.0;
 
     double diff = 0.0;
 
@@ -51,12 +52,12 @@ public class ProductRecord {
         this.product = product;
     }
 
-    public double getPreviousQty() {
-        return previousQty;
+    public double getQty() {
+        return qty;
     }
 
-    public void setPreviousQty(double previousQty) {
-        this.previousQty = previousQty;
+    public void setQty(double qty) {
+        this.qty = qty;
     }
 
     public double getDiff() {

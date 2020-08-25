@@ -43,7 +43,7 @@ public class Supplier { // 매입처
 
     private String addressLine2;
 
-    private Long totalPrevBalance = 0L;
+    private Double prevTotalFunds = 0.0;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -83,7 +83,7 @@ public class Supplier { // 매입처
     @JsonBackReference
     private Set<Product> products;
 
-    @OneToMany(mappedBy = "supplier")
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<SupplierTransaction> supplierTransactions;
 
@@ -92,7 +92,7 @@ public class Supplier { // 매입처
     @JsonManagedReference
     private SupplyOwner owner;
 
-    @OneToMany(mappedBy = "supplier")
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
     @JsonBackReference
     Set<SupplyOrder> supplyOrders;
 
@@ -296,12 +296,12 @@ public class Supplier { // 매입처
         this.dealtAt = dealtAt;
     }
 
-    public Long getTotalPrevBalance() {
-        return totalPrevBalance;
+    public Double getPrevTotalFunds() {
+        return prevTotalFunds;
     }
 
-    public void setTotalPrevBalance(Long totalPrevFunds) {
-        this.totalPrevBalance = totalPrevFunds;
+    public void setPrevTotalFunds(Double totalPrevFunds) {
+        this.prevTotalFunds = totalPrevFunds;
     }
 
     public double getTotalFunds() {

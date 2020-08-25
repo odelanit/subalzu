@@ -195,12 +195,12 @@ public class ShippingController {
 
                 ProductRecord productRecord = new ProductRecord();
                 productRecord.setProduct(supplyOrderProduct.getProduct());
-                productRecord.setPreviousQty(previousQty);
+                productRecord.setQty(previousQty);
                 productRecord.setDiff(supplyOrderProduct.getQty());
                 productRecord.setAction("shipping_input");
                 Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
                 optionalUser.ifPresent(productRecord::setUser);
-                productRecord.setPreviousQty(previousQty);
+                productRecord.setQty(previousQty);
                 productRecordRepository.save(productRecord);
 
                 total += supplyOrderProduct.getPrice() * supplyOrderProduct.getQty();
