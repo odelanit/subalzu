@@ -1,6 +1,8 @@
 package com.pando.subalzu.repository;
 
 import com.pando.subalzu.model.Category;
+import org.hibernate.boot.model.source.spi.Sortable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +19,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findByName(String name);
 
     List<Category> findByParent(Category category);
+
+    @Query("SELECT c from Category c WHERE c.useIndividual = true ORDER BY c.id")
+    List<Category> getCategoriesByUseIndividualTrue();
 }

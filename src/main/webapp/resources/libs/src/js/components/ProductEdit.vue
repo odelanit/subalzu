@@ -288,7 +288,7 @@
             });
 
             let currentUrl = window.location.pathname;
-            axios.all([axios.get('/categories/all'),
+            axios.all([axios.get('/categories/data'),
                 axios.get('/price-groups/data'),
                 axios.get('/suppliers/data'),
                 axios.get(`${currentUrl}/data`)

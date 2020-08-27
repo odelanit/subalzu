@@ -116,7 +116,11 @@ public class ShopController {
 
     @ModelAttribute("priceGroups")
     List<PriceGroup> priceGroupList() {
-        return priceGroupRepository.findAll();
+        List<String> strings = new ArrayList<>();
+        strings.add("direct");
+        strings.add("main");
+        strings.add("parcel");
+        return priceGroupRepository.findAllByNameNotIn(strings);
     }
 
     @ModelAttribute("shopGrades")

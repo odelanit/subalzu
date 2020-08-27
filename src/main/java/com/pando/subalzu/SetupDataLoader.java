@@ -35,6 +35,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private BusinessRepository businessRepository;
 
     @Autowired
+    private PriceGroupRepository priceGroupRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -91,6 +97,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createBusinessIfNotFound("뷔페");
         createBusinessIfNotFound("기타");
 
+        createPriceGroupIfNotFound("direct");
+        createPriceGroupIfNotFound("parcel");
+        createPriceGroupIfNotFound("main");
+
         alreadySetup = true;
     }
 
@@ -135,6 +145,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             Business business = new Business();
             business.setName(name);
             businessRepository.save(business);
+        }
+    }
+
+    @Transactional
+    void createPriceGroupIfNotFound(String name) {
+        Optional<PriceGroup> optionalPriceGroup = priceGroupRepository.findByName(name);
+        if (!optionalPriceGroup.isPresent()) {
+            PriceGroup priceGroup = new PriceGroup();
+            priceGroup.setName(name);
+            priceGroupRepository.save(priceGroup);
+        }
+    }
+
+    @Transactional
+    void createCategoryIfNotFound(String name) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(name);
+        if (!optionalCategory.isPresent()) {
+            Category category = new Category();
+            category.setName(name);
+            categoryRepository.save(category);
         }
     }
 }

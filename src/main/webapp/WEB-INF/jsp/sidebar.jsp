@@ -91,7 +91,7 @@
                         <li <c:if test="${fn:startsWith(requestScope['javax.servlet.forward.request_uri'], '/special-prices')}">class="mm-active"</c:if>>
                             <a href="/special-prices">특 단가 관리</a>
                         </li>
-                        <li <c:if test="${fn:startsWith(requestScope['javax.servlet.forward.request_uri'], '/prices')}">class="mm-active"</c:if>>
+                        <li <c:if test="${fn:startsWith(requestScope['javax.servlet.forward.request_uri'], '/prices') || fn:startsWith(requestScope['javax.servlet.forward.request_uri'], '/fixed_price_rate')}">class="mm-active"</c:if>>
                             <a href="/prices">상품 단가 일괄 적용</a>
                         </li>
                     </ul>

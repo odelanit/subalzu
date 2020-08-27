@@ -22,7 +22,7 @@ public class Category {
 
     private int level = 0;
 
-    private boolean usedIndividual;
+    private boolean useIndividual;
 
     @ManyToOne
     @JoinColumn(name="parent_id")
@@ -66,12 +66,12 @@ public class Category {
         this.name = name;
     }
 
-    public boolean getUsedIndividual() {
-        return usedIndividual;
+    public boolean getUseIndividual() {
+        return useIndividual;
     }
 
-    public void setUsedIndividual(boolean usedIndividual) {
-        this.usedIndividual = usedIndividual;
+    public void setUseIndividual(boolean usedIndividual) {
+        this.useIndividual = usedIndividual;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -112,5 +112,13 @@ public class Category {
 
     public void setChildren(Set<Category> children) {
         this.children = children;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
 }

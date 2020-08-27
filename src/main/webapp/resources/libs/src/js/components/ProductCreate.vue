@@ -286,7 +286,7 @@
                 return response;
             })
 
-            axios.get('/categories/all')
+            axios.get('/categories/data')
                 .then(res => res.data)
                 .then(data => {
                     this.categories = data.categories;

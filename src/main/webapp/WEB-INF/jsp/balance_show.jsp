@@ -533,7 +533,7 @@
             supplierName: '',
             description: '',
             isInputActive: false,
-            type: 'output',
+            type: 'update',
             method: 'fund_minus',
         },
         mounted() {
@@ -664,73 +664,10 @@
             $('#dateTo').val(formatDate(lastDay));
         }
     });
+
+    $('#imSearch select').on('change', function() {
+        $('#searchForm').submit();
+    });
 </script>
-<%--<script>--%>
-<%--    $('#dateFrom, #dateTo').datepicker({--%>
-<%--        dateFormat: 'yy-mm-dd'--%>
-<%--    });--%>
-
-<%--    $('#form1 input[name="amount"]').on('keyup', function () {--%>
-<%--        var amount = $(this).val();--%>
-<%--        var prevTotal = $('#form1 input[name="prevTotal"]').val();--%>
-<%--        if (parseFloat(amount) > 0) {--%>
-<%--            var totalAmount = parseFloat(prevTotal) - parseFloat(amount);--%>
-<%--            $('#form1 input[name="totalAmount"]').val(totalAmount);--%>
-<%--            $('#form1 .totalAmount').text(totalAmount);--%>
-<%--        }--%>
-<%--    });--%>
-
-<%--    $('#form2 input[name="amount"]').on('keyup', function () {--%>
-<%--        var amount = $(this).val();--%>
-<%--        var prevTotal = $('#form2 input[name="prevTotal"]').val();--%>
-<%--        var method = $('#form2 input[name="method"]:checked').val();--%>
-<%--        if (parseInt(amount) > 0) {--%>
-<%--            if (method === 'fund_plus') {--%>
-<%--                var totalAmount = parseFloat(prevTotal) + parseFloat(amount);--%>
-<%--            } else {--%>
-<%--                var totalAmount = parseFloat(prevTotal) - parseFloat(amount);--%>
-<%--            }--%>
-<%--            $('#form2 input[name="totalAmount"]').val(totalAmount);--%>
-<%--            $('#form2 .totalBalance').text(totalAmount);--%>
-<%--        }--%>
-<%--    });--%>
-
-<%--    $('#form2 input[name="method"]').on('change', function () {--%>
-<%--        var method = $('#form2 input[name="method"]:checked').val();--%>
-<%--        var amount = $('#form2 input[name="amount"]').val();--%>
-<%--        var prevTotal = $('#form2 input[name="prevTotal"]').val();--%>
-<%--        console.log(method);--%>
-<%--        if (parseFloat(amount) > 0) {--%>
-<%--            var totalAmount = 0;--%>
-<%--            if (method === 'fund_plus') {--%>
-<%--                totalAmount = parseFloat(prevTotal) + parseFloat(amount);--%>
-<%--            } else {--%>
-<%--                totalAmount = parseFloat(prevTotal) - parseFloat(amount);--%>
-<%--            }--%>
-<%--            $('#form2 input[name="totalAmount"]').val(totalAmount);--%>
-<%--            $('#form2 .totalBalance').text(totalAmount);--%>
-<%--        }--%>
-<%--    });--%>
-
-<%--    $('#form1, #form2').submit(function (e) {--%>
-<%--        e.preventDefault();--%>
-<%--        var funds = $(this).find('input[name="amount"]').val();--%>
-<%--        if (funds > 0) {--%>
-<%--            $.ajax({--%>
-<%--                type: 'POST',--%>
-<%--                url: $(this).attr('action'),--%>
-<%--                data: $(this).serialize(),--%>
-<%--                success: function(data) {--%>
-<%--                    $('#outcome-modal').modal('hide');--%>
-<%--                    window.location.reload();--%>
-<%--                }--%>
-<%--            })--%>
-<%--        }--%>
-<%--    });--%>
-
-<%--    $('#imSearch select').on('change', function() {--%>
-<%--        $('#searchForm').submit();--%>
-<%--    });--%>
-<%--</script>--%>
 </body>
 </html>

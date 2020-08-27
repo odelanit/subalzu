@@ -9,18 +9,25 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
 public class PriceGroupController {
+
     @Autowired
     PriceGroupRepository priceGroupRepository;
 
     @GetMapping("/price-groups")
     public String index(Model model) {
         model.addAttribute("priceGroupForm", new PriceGroup());
-        model.addAttribute("priceGroups", priceGroupRepository.findAll());
+        List<String> strings = new ArrayList<>();
+        strings.add("direct");
+        strings.add("main");
+        strings.add("parcel");
+        model.addAttribute("priceGroups", priceGroupRepository.findAllByNameNotIn(strings));
         return "price_group_list";
     }
 
@@ -28,7 +35,11 @@ public class PriceGroupController {
     @ResponseBody
     public Map<String, Object> getPriceGroups() {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("priceGroups", priceGroupRepository.findAll());
+        List<String> strings = new ArrayList<>();
+        strings.add("direct");
+        strings.add("main");
+        strings.add("parcel");
+        resultMap.put("priceGroups", priceGroupRepository.findAllByNameNotIn(strings));
         return resultMap;
     }
 

@@ -141,7 +141,7 @@
 
                                     </div>
                                     <div class="col-lg-6 text-lg-right">
-                                        <a class="btn btn-sm btn-outline-primary" href="/prices/fixed-price-rate"
+                                        <a class="btn btn-sm btn-outline-primary" href="/fixed_price_rate/"
                                            data-toggle="tooltip"
                                            data-placement="top"
                                            title="정액/정률 설정값을 변경할 수 있습니다. 적용하실 상품을 먼저 검색하여 사용하시는 것을 권장합니다.">
