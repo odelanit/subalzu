@@ -59,10 +59,19 @@ public class ProductController {
     ProductGroupPriceRepository productGroupPriceRepository;
 
     @Autowired
+    ProductPriceRepository productPriceRepository;
+
+    @Autowired
     ProductRecordRepository productRecordRepository;
 
     @Autowired
     ProductValidator productValidator;
+
+    @Autowired
+    CompanyConfigRepository companyConfigRepository;
+
+    @Autowired
+    FixedPriceRateRepository fixedPriceRateRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -191,6 +200,36 @@ public class ProductController {
         return "product_create_vue";
     }
 
+    @GetMapping("/data_for_product")
+    @ResponseBody
+    public Map<String, Object> getDataForProduct() {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<CompanyConfig> optionalCompanyConfig = companyConfigRepository.findByKey("use_special_price_rate");
+        boolean useSpecialPriceRate = false;
+        if (optionalCompanyConfig.isPresent()) {
+            CompanyConfig config = optionalCompanyConfig.get();
+            useSpecialPriceRate = Boolean.parseBoolean(config.getValue());
+        }
+        resultMap.put("use_special_price_rate", useSpecialPriceRate);
+
+        if (useSpecialPriceRate) {
+            List<FixedPriceRate> fixedPriceRates = fixedPriceRateRepository.findAll();
+            resultMap.put("fixed_price_rates", fixedPriceRates);
+        }
+
+        List<Category> categories = categoryRepository.findByParentNull();
+        resultMap.put("categories", categories);
+
+        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+        resultMap.put("price_groups", priceGroups);
+
+        List<Supplier> suppliers = supplierRepository.findAll();
+        resultMap.put("suppliers", suppliers);
+
+        return resultMap;
+    }
+
     @PostMapping("/store")
     @ResponseBody
     public Map<String, String> store(@RequestBody ProductCreationInput formData) {
@@ -220,19 +259,16 @@ public class ProductController {
             optionalSupplier.ifPresent(product::setSupplier);
         }
         product.setBuyPrice(formData.getBuyPrice());
-        product.setDirectPrice(formData.getDirectPrice());
-        product.setParcelPrice(formData.getParcelPrice());
-        product.setSellPrice(formData.getSellPrice());
         product = productRepository.save(product);
 
-        Set<ProductGroupPriceInput> groupPrices = formData.getGroupPrices();
-        for (ProductGroupPriceInput groupPriceInput : groupPrices) {
-            ProductGroupPrice productGroupPrice = new ProductGroupPrice();
-            Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(groupPriceInput.getPriceGroupId());
-            optionalPGPrice.ifPresent(productGroupPrice::setPriceGroup);
-            productGroupPrice.setProduct(product);
-            productGroupPrice.setPrice(groupPriceInput.getPrice());
-            productGroupPriceRepository.save(productGroupPrice);
+        Set<ProductPriceInput> productPriceInputs = formData.getProductPriceInputs();
+        for (ProductPriceInput productPriceInput : productPriceInputs) {
+            ProductPrice productPrice = new ProductPrice();
+            Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(productPriceInput.getPriceGroupId());
+            optionalPGPrice.ifPresent(productPrice::setPriceGroup);
+            productPrice.setProduct(product);
+            productPrice.setPrice(productPriceInput.getPrice());
+            productPriceRepository.save(productPrice);
         }
 
         Map<String, String> resultMap = new HashMap<>();
@@ -272,32 +308,16 @@ public class ProductController {
                 optionalSupplier.ifPresent(product::setSupplier);
             }
             product.setBuyPrice(formData.getBuyPrice());
-            product.setDirectPrice(formData.getDirectPrice());
-            product.setParcelPrice(formData.getParcelPrice());
-            product.setSellPrice(formData.getSellPrice());
             product = productRepository.save(product);
 
-            Set<ProductGroupPriceInput> groupPrices = formData.getGroupPrices();
-            for (ProductGroupPriceInput groupPriceInput : groupPrices) {
-                Long gpId = groupPriceInput.getId();
-                if (gpId != null) {
-                    Optional<ProductGroupPrice> optionalProductGroupPrice = productGroupPriceRepository.findById(gpId);
-                    if (optionalProductGroupPrice.isPresent()) {
-                        ProductGroupPrice productGroupPrice = optionalProductGroupPrice.get();
-                        Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(groupPriceInput.getPriceGroupId());
-                        optionalPGPrice.ifPresent(productGroupPrice::setPriceGroup);
-                        productGroupPrice.setProduct(product);
-                        productGroupPrice.setPrice(groupPriceInput.getPrice());
-                        productGroupPriceRepository.save(productGroupPrice);
-                    }
-                } else {
-                    ProductGroupPrice productGroupPrice = new ProductGroupPrice();
-                    Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(groupPriceInput.getPriceGroupId());
-                    optionalPGPrice.ifPresent(productGroupPrice::setPriceGroup);
-                    productGroupPrice.setProduct(product);
-                    productGroupPrice.setPrice(groupPriceInput.getPrice());
-                    productGroupPriceRepository.save(productGroupPrice);
-                }
+            Set<ProductPriceInput> productPriceInputs = formData.getProductPriceInputs();
+            for (ProductPriceInput productPriceInput : productPriceInputs) {
+                ProductPrice productPrice = new ProductPrice();
+                Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(productPriceInput.getPriceGroupId());
+                optionalPGPrice.ifPresent(productPrice::setPriceGroup);
+                productPrice.setProduct(product);
+                productPrice.setPrice(productPriceInput.getPrice());
+                productPriceRepository.save(productPrice);
             }
         }
 
@@ -316,8 +336,34 @@ public class ProductController {
     public Map<String, Object> getProduct(@PathVariable Long id, HttpServletResponse response) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         Map<String, Object> resultMap = new HashMap<>();
+
+        List<Category> categories = categoryRepository.findByParentNull();
+        resultMap.put("categories", categories);
+
+        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+        resultMap.put("price_groups", priceGroups);
+
+        List<Supplier> suppliers = supplierRepository.findAll();
+        resultMap.put("suppliers", suppliers);
+
+        Optional<CompanyConfig> optionalCompanyConfig = companyConfigRepository.findByKey("use_special_price_rate");
+        boolean useSpecialPriceRate = false;
+        if (optionalCompanyConfig.isPresent()) {
+            CompanyConfig config = optionalCompanyConfig.get();
+            useSpecialPriceRate = Boolean.parseBoolean(config.getValue());
+        }
+        resultMap.put("use_special_price_rate", useSpecialPriceRate);
+
+        if (useSpecialPriceRate) {
+            List<FixedPriceRate> fixedPriceRates = fixedPriceRateRepository.findAll();
+            resultMap.put("fixed_price_rates", fixedPriceRates);
+        }
+
         if (optionalProduct.isPresent()) {
             resultMap.put("product", optionalProduct.get());
+
+            List<ProductPrice> productPrices = productPriceRepository.findByProduct(optionalProduct.get());
+            resultMap.put("productPrices", productPrices);
             return resultMap;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

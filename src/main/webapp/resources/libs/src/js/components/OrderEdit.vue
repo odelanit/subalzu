@@ -619,7 +619,7 @@
                 .catch(error => {
                     console.log(error);
                 });
-            axios.get('/categories/all')
+            axios.get('/categories/data')
                 .then(res => res.data)
                 .then(data => {
                     this.categories = data.categories;

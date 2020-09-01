@@ -150,48 +150,35 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <span>전체 ${productPage.totalElements}건</span>
+                                <div id="price-table">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span>전체 {{ totalElements }}건</span>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <button type="button" class="btn btn-sm btn-outline-excel" data-toggle="modal" data-target="#excelUploadModal"><i class="fa fa-file-excel"></i> 단가 일괄 수정</button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" @click="applyAll"><span class="fa fa-exchange mr-1"></span>전체 적용</button>
+                                        </div>
                                     </div>
-                                    <div class="col-6 text-right">
-                                        <button type="button" class="btn btn-sm btn-outline-excel" data-toggle="modal" data-target="#excelUploadModal"><i class="fa fa-file-excel"></i> 단가 일괄 수정</button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary" id="applyAll"><span class="fa fa-exchange mr-1"></span>전체 적용</button>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <table class="table table-sm text-center table-middle" id="products">
-                                        <colgroup>
-                                            <col>
-                                            <col>
-                                            <col>
-                                            <col>
-                                            <col>
-                                            <col>
-                                            <col style="width: 120px;">
-                                            <col style="width: 120px;">
-                                            <col style="width: 120px;">
-                                            <col style="width: 120px;">
-                                            <col style="width: 70px;">
-                                        </colgroup>
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th><input type="checkbox" id="selectAll"></th>
-                                            <th>#</th>
-                                            <th>상품명</th>
-                                            <th>카테고리</th>
-                                            <th>규격(단위)</th>
-                                            <th>제조사(원산지)</th>
-                                            <th>매입단가</th>
-                                            <th>직배송단가</th>
-                                            <th>택배배송단가</th>
-                                            <th>기본단가</th>
-                                            <th>적용</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <c:forEach var="product" items="${products}">
-                                            <tr data-id="${product.id}">
+                                    <div class="mt-3">
+                                        <table class="table table-sm text-center table-middle" id="products">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAll"></th>
+                                                <th>#</th>
+                                                <th>상품명</th>
+                                                <th>카테고리</th>
+                                                <th>규격(단위)</th>
+                                                <th>제조사(원산지)</th>
+                                                <th>매입단가</th>
+                                                <th>직배송단가</th>
+                                                <th>택배배송단가</th>
+                                                <th>기본단가</th>
+                                                <th>적용</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-for="product in products">
                                                 <td>
                                                     <input type="checkbox" class="check" value="${product.id}">
                                                 </td>
@@ -216,9 +203,9 @@
                                                     <button type="button" class="apply btn btn-outline-primary btn-sm">적용</button>
                                                 </td>
                                             </tr>
-                                        </c:forEach>
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -321,6 +308,8 @@
 <script src="${contextPath}/resources/toastr-2.1.4/toastr.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script src="${contextPath}/resources/js/vue.js"></script>
+<script src="${contextPath}/resources/js/axios.js"></script>
 <script>
     $(document).ready(function () {
         var token = $("meta[name='_csrf']").attr("content");
@@ -445,6 +434,32 @@
                 },500);
             });
         });
+    })
+</script>
+<script>
+    var priceTable = new Vue({
+        el: '#price-table',
+        data: {
+            totalElements: 0,
+            products: []
+        },
+        mounted() {
+            console.log(window.location.pathname + window.location.search);
+            axios.get(window.location.pathname + '/data' + window.location.search)
+                .then(res => res.data)
+                .then(data => {
+                    console.log(data);
+                    this.totalElements = data.productPage.totalElements;
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        },
+        methods: {
+            applyAll: function () {
+
+            }
+        }
     })
 </script>
 </body>

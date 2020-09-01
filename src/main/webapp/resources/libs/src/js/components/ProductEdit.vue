@@ -156,44 +156,11 @@
             <h5 class="card-title">단가 정보</h5>
             <table class="table table-bordered form-table mb-5">
                 <tbody class="thead-light">
-                <tr>
-                    <th class="required"><span>직배송 단가</span></th>
+                <tr v-for="(productPrice, index) in productPrices" :key="index">
+                    <th>{{ productPrice.priceGroupName === 'direct' ? '직배송 단가' : (productPrice.priceGroupName === 'parcel' ? '택배배송 단가' : (productPrice.priceGroupName === 'main' ? '기본 단가' : productPrice.priceGroupName)) }}</th>
                     <td>
                         <div class="input-group w-25">
-                            <NumberInput v-model="directPrice" class="form-control text-right price-group" placeholder="직배송 단가" />
-                            <div class="input-group-append">
-                                <span class="input-group-text">원</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="required"><span>택배배송 단가</span></th>
-                    <td>
-                        <div class="input-group w-25">
-                            <NumberInput v-model="parcelPrice" class="form-control text-right price-group" placeholder="택배배송 단가" />
-                            <div class="input-group-append">
-                                <span class="input-group-text">원</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="required"><span>기본 단가</span></th>
-                    <td>
-                        <div class="input-group w-25">
-                            <NumberInput v-model="sellPrice" class="form-control price-group text-right" placeholder="택배배송 단가"/>
-                            <div class="input-group-append">
-                                <span class="input-group-text">원</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr v-for="groupPrice in groupPrices">
-                    <th>{{ groupPrice.priceGroupName }}</th>
-                    <td>
-                        <div class="input-group w-25">
-                            <NumberInput v-model="groupPrice.price" class="form-control price-group text-right" v-bind:placeholder="groupPrice.priceGroupName"/>
+                            <NumberInput :disabled="use_special_price_rate" v-model="productPrice.price" class="form-control price-group text-right" v-bind:placeholder="productPrice.priceGroupName"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">원</span>
                             </div>
@@ -243,6 +210,8 @@
                 subcategories: [],
                 priceGroups: [],
                 groupPrices: [],
+                productPrices: [],
+                use_special_price_rate: false
             }
         },
         mounted() {
@@ -288,77 +257,58 @@
             });
 
             let currentUrl = window.location.pathname;
-            axios.all([axios.get('/categories/data'),
-                axios.get('/price-groups/data'),
-                axios.get('/suppliers/data'),
-                axios.get(`${currentUrl}/data`)
-            ]).then(axios.spread((res0, res1, res2, res3) => {
-                this.categories = res0.data.categories;
+            axios.get(`${currentUrl}/data`)
+                .then(res => res.data)
+                .then(data => {
+                    console.log(data);
+                    this.categories = data.categories;
+                    this.priceGroups = data.priceGroups;
+                    this.suppliers = data.suppliers;
 
-                this.priceGroups = res1.data.priceGroups;
-                this.priceGroups.forEach(priceGroup => {
-                    let groupPrice = {};
-                    groupPrice.priceGroupId = priceGroup.id;
-                    groupPrice.priceGroupName = priceGroup.name;
-                    groupPrice.price = 0;
-                    this.groupPrices.push(groupPrice);
-                });
-
-                this.suppliers = res2.data.suppliers;
-
-                let product = res3.data.product;
-                this.id = product.id;
-                this.erpCode = product.erpCode;
-                this.productName = product.name;
-                if (product.category) {
-                    this.category_id = product.category.id;
-                }
-                if (product.subCategory) {
-                    this.subcategory_id = product.subCategory.id;
-                    let selected_category = this.categories.find(category => category.id === this.category_id);
-                    this.subcategories = selected_category.children;
-                }
-                this.makerName = product.makerName;
-                this.country = product.country;
-                this.standard = product.standard;
-                this.unit = product.unit;
-                this.tax = product.tax;
-                this.deliveryType = product.deliveryType;
-                this.shippingMethod = product.shippingMethod;
-                this.useDecimal = product.useDecimal;
-                this.imageUrl = product.imageUrl;
-                this.message = product.message;
-                if (product.supplier) {
-                    this.supplier_id = product.supplier.id;
-                }
-                this.buyPrice = product.buyPrice;
-                this.directPrice = product.directPrice;
-                this.parcelPrice = product.parcelPrice;
-                this.sellPrice = product.sellPrice;
-
-                product.groupPrices.forEach(groupPrice0 => {
-                    let index = this.groupPrices.findIndex(groupPrice1 => groupPrice1.priceGroupId === groupPrice0.priceGroup.id);
-                    this.groupPrices[index].price = groupPrice0.price;
-                    this.groupPrices[index].id = groupPrice0.id;
-                });
-            }))
+                    let product = data.product;
+                    this.id = product.id;
+                    this.erpCode = product.erpCode;
+                    this.productName = product.name;
+                    if (product.category) {
+                        this.category_id = product.category.id;
+                    }
+                    if (product.subCategory) {
+                        this.subcategory_id = product.subCategory.id;
+                        let selected_category = this.categories.find(category => category.id === this.category_id);
+                        this.subcategories = selected_category.children;
+                    }
+                    this.makerName = product.makerName;
+                    this.country = product.country;
+                    this.standard = product.standard;
+                    this.unit = product.unit;
+                    this.tax = product.tax;
+                    this.deliveryType = product.deliveryType;
+                    this.shippingMethod = product.shippingMethod;
+                    this.useDecimal = product.useDecimal;
+                    this.imageUrl = product.imageUrl;
+                    this.message = product.message;
+                    if (product.supplier) {
+                        this.supplier_id = product.supplier.id;
+                    }
+                    this.buyPrice = product.buyPrice;
+                    this.use_special_price_rate = data.use_special_price_rate;
+                    this.productPrices = data.productPrices;
+                    this.productPrices.forEach(productPrice => {
+                        productPrice.priceGroupName = productPrice.priceGroup.name;
+                        productPrice.priceGroupId = productPrice.priceGroup.id;
+                    });
+                    if (this.use_special_price_rate === true) {
+                        this.fixed_price_rates = data.fixed_price_rates;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                })
         },
         methods: {
             saveProduct: function () {
                 if (!this.productName) {
                     toastr.error('상품명을 입력하세요.');
-                    return false;
-                }
-                if (!this.directPrice) {
-                    toastr.error('직배송 단가를 입력하세요.');
-                    return false;
-                }
-                if (!this.parcelPrice) {
-                    toastr.error('택배 배송 단가를 입력하세요.');
-                    return false;
-                }
-                if (!this.sellPrice) {
-                    toastr.error('기본 단가를 입력하세요.');
                     return false;
                 }
                 let token = $("meta[name='_csrf']").attr("content");
@@ -380,10 +330,7 @@
                     message: this.message,
                     supplierId: this.supplier_id,
                     buyPrice: this.buyPrice,
-                    directPrice: this.directPrice,
-                    parcelPrice: this.parcelPrice,
-                    sellPrice: this.sellPrice,
-                    groupPrices: this.groupPrices
+                    productPriceInputs: this.productPrices
                 }, {
                     headers: {
                         'X-CSRF-TOKEN': token,
@@ -406,6 +353,185 @@
                     this.subcategories = selected_category.children;
                     this.subcategory_id = null;
                 }
+            }
+        },
+        watch: {
+            category_id: function (category_id) {
+                if (this.use_special_price_rate === true) {
+                    if (category_id === null) {
+                        let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                            return x.category === null;
+                        });
+                        this.productPrices = [];
+                        selectedPriceRates.forEach(priceRate => {
+                            let price = 0;
+                            if (priceRate.unit === 'p') {
+                                price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                            } else if (priceRate.unit === 'w') {
+                                price = this.buyPrice + priceRate.rate;
+                            }
+                            this.productPrices.push({
+                                priceGroupId: priceRate.priceGroup.id,
+                                priceGroupName: priceRate.priceGroup.name,
+                                price: price,
+                                unit: priceRate.unit,
+                                rate: priceRate.rate,
+                            });
+                        });
+                    } else {
+                        let selected_category = this.categories.find(category => category.id === category_id);
+                        if (selected_category.useIndividual === true) {
+                            let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                return x.category && x.category.id === category_id;
+                            });
+                            this.productPrices = [];
+                            selectedPriceRates.forEach(priceRate => {
+                                let price = 0;
+                                if (priceRate.unit === 'p') {
+                                    price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                                } else if (priceRate.unit === 'w') {
+                                    price = this.buyPrice + priceRate.rate;
+                                }
+                                this.productPrices.push({
+                                    priceGroupId: priceRate.priceGroup.id,
+                                    priceGroupName: priceRate.priceGroup.name,
+                                    price: price,
+                                    unit: priceRate.unit,
+                                    rate: priceRate.rate,
+                                });
+                            });
+                        } else {
+                            let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                return x.category === null;
+                            });
+                            this.productPrices = [];
+                            selectedPriceRates.forEach(priceRate => {
+                                let price = 0;
+                                if (priceRate.unit === 'p') {
+                                    price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                                } else if (priceRate.unit === 'w') {
+                                    price = this.buyPrice + priceRate.rate;
+                                }
+                                this.productPrices.push({
+                                    priceGroupId: priceRate.priceGroup.id,
+                                    priceGroupName: priceRate.priceGroup.name,
+                                    price: price,
+                                    unit: priceRate.unit,
+                                    rate: priceRate.rate,
+                                });
+                            });
+                        }
+                    }
+                }
+
+                if (category_id === null) {
+                    this.subcategories = [];
+                    this.subcategory_id = null;
+                } else {
+                    let selected_category = this.categories.find(category => category.id === category_id);
+                    this.subcategories = selected_category.children;
+                    this.subcategory_id = null;
+                }
+            },
+            subcategory_id: function (subcategory_id) {
+                if (this.use_special_price_rate === true) {
+                    if (subcategory_id) {
+                        let selected_subcategory = this.subcategories.find(category => category.id === subcategory_id);
+                        if (selected_subcategory.useIndividual === true) {
+                            let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                return x.category && x.category.id === selected_subcategory.id;
+                            });
+                            this.productPrices = [];
+                            selectedPriceRates.forEach(priceRate => {
+                                let price = 0;
+                                if (priceRate.unit === 'p') {
+                                    price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                                } else if (priceRate.unit === 'w') {
+                                    price = this.buyPrice + priceRate.rate;
+                                }
+                                this.productPrices.push({
+                                    priceGroupId: priceRate.priceGroup.id,
+                                    priceGroupName: priceRate.priceGroup.name,
+                                    price: price,
+                                    unit: priceRate.unit,
+                                    rate: priceRate.rate,
+                                });
+                            });
+                        } else {
+                            let selected_category = this.categories.find(category => category.id === this.category_id);
+                            if (selected_category.useIndividual === true) {
+                                let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                    return x.category && x.category.id === selected_category.id;
+                                });
+                                this.productPrices = [];
+                                selectedPriceRates.forEach(priceRate => {
+                                    let price = 0;
+                                    if (priceRate.unit === 'p') {
+                                        price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                                    } else if (priceRate.unit === 'w') {
+                                        price = this.buyPrice + priceRate.rate;
+                                    }
+                                    this.productPrices.push({
+                                        priceGroupId: priceRate.priceGroup.id,
+                                        priceGroupName: priceRate.priceGroup.name,
+                                        price: price,
+                                        unit: priceRate.unit,
+                                        rate: priceRate.rate,
+                                    });
+                                });
+                            } else {
+                                let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                    return x.category === null;
+                                });
+                                this.productPrices = [];
+                                selectedPriceRates.forEach(priceRate => {
+                                    let price = 0;
+                                    if (priceRate.unit === 'p') {
+                                        price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                                    } else if (priceRate.unit === 'w') {
+                                        price = this.buyPrice + priceRate.rate;
+                                    }
+                                    this.productPrices.push({
+                                        priceGroupId: priceRate.priceGroup.id,
+                                        priceGroupName: priceRate.priceGroup.name,
+                                        price: price,
+                                        unit: priceRate.unit,
+                                        rate: priceRate.rate,
+                                    });
+                                });
+                            }
+                        }
+                    } else {
+                        let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                            return x.category === null;
+                        });
+                        this.productPrices = [];
+                        selectedPriceRates.forEach(priceRate => {
+                            let price = 0;
+                            if (priceRate.unit === 'p') {
+                                price = Math.round(this.buyPrice * (priceRate.rate / 100 + 1));
+                            } else if (priceRate.unit === 'w') {
+                                price = this.buyPrice + priceRate.rate;
+                            }
+                            this.productPrices.push({
+                                priceGroupId: priceRate.priceGroup.id,
+                                priceGroupName: priceRate.priceGroup.name,
+                                price: price,
+                                unit: priceRate.unit,
+                                rate: priceRate.rate,
+                            });
+                        });
+                    }
+                }
+            },
+            buyPrice: function(buyPrice) {
+                this.productPrices.forEach(productPrice => {
+                    if (productPrice.unit === 'p') {
+                        productPrice.price = Math.round(buyPrice * (productPrice.rate / 100 + 1));
+                    } else if (productPrice.unit === 'w') {
+                        productPrice.price = buyPrice + productPrice.rate;
+                    }
+                });
             }
         }
     }

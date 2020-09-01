@@ -96,11 +96,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row mb-3">
-                            <div class="col-lg-4">
+                            <div class="col-auto">
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <div class="media p-3 align-items-center">
-                                            <div class="media-body">
+                                            <div class="media-body mr-4">
                                                 <h2 class="mb-0">${shop.name}</h2>
                                             </div>
                                             <div class="align-self-center">
@@ -289,49 +289,45 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form:form method="post" modelAttribute="transactionForm1" action="/credits/store">
+                <div id="inputForm">
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
                         <div class="col-8 text-right">
-                            ${shop.name}
-                            <form:hidden path="shop" />
-                            <form:hidden path="transactionType" />
-                                <form:hidden path="processingMethod" />
+                            {{ shopName }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                                ${shop.totalBalance} 원
-                            <form:hidden path="prevTotal" value="${shop.totalBalance}" />
+                            {{ formatNumber(prevTotalFunds) }} 원
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">입금 금액</label>
                         <div class="col-8 text-right">
-                            <form:input type="number" class="form-control text-right form-control-sm" path="funds" />
+                            <input type="text" class="form-control text-right form-control-sm"
+                                   @blur="isInputActive = false" @focus="isInputActive = true" v-model="displayFunds" />
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">입금 후 잔액</label>
                         <div class="col-8 text-right text-danger">
-                            <span class="totalAmount">${shop.totalBalance}</span> 원
-                            <form:hidden path="totalFunds" />
+                            <span class="totalAmount">{{ formatNumber(prevTotalFunds - funds) }}</span> 원
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">비고</label>
                         <div class="col-8">
-                            <form:textarea path="description" class="form-control-sm form-control" rows="3" />
+                            <textarea v-model="description" class="form-control-sm form-control" rows="3"></textarea>
                         </div>
                     </div>
-                </form:form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
-                <button class="btn btn-primary" form="transactionForm1">적용</button>
+                <button class="btn btn-primary" onclick="submitInput()">적용</button>
             </div>
         </div>
     </div>
@@ -347,62 +343,59 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form:form method="post" modelAttribute="transactionForm2" action="/credits/store">
+                <div id="updateForm">
                     <div class="form-group row">
                         <label class="col-form-label col-4">구분</label>
                         <div class="col-8 text-right">
                             <div class="custom-control custom-control-inline custom-radio">
-                                <form:radiobutton class="custom-control-input" path="processingMethod" value="fund_minus" id="transactionType1" />
+                                <input type="radio" class="custom-control-input" v-model="method" value="fund_minus" id="transactionType1" />
                                 <label class="custom-control-label" for="transactionType1">금액 차감</label>
                             </div>
                             <div class="custom-control custom-control-inline custom-radio">
-                                <form:radiobutton class="custom-control-input" path="processingMethod" value="fund_plus" id="transactionType2" />
+                                <input type="radio" class="custom-control-input" v-model="method" value="fund_plus" id="transactionType2" />
                                 <label class="custom-control-label" for="transactionType2">금액 추가</label>
                             </div>
                         </div>
-                        <form:hidden path="prevTotal" value="${shop.totalBalance}" />
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">거래처</label>
                         <div class="col-8 text-right">
-                                ${shop.name}
-                                    <form:hidden path="shop" />
-                                    <form:hidden path="transactionType" />
+                            {{ shopName }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">총 잔액</label>
                         <div class="col-8 text-right">
-                                ${shop.totalBalance} 원
+                                {{ formatNumber(prevTotalFunds) }} 원
                             <input type="hidden" name="prevTotal" value="${shop.totalBalance}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 금액</label>
                         <div class="col-8 text-right">
-                            <form:input type="number" class="form-control text-right form-control-sm" path="funds" />
+                            <input type="text" class="form-control text-right form-control-sm"
+                                   @blur="isInputActive = false" @focus="isInputActive = true" v-model="displayFunds" />
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 후 잔액</label>
                         <div class="col-8 text-right text-danger">
-                            <span class="totalBalance">${shop.totalBalance}</span> 원
-                            <form:hidden path="totalFunds" />
+                            <span class="totalBalance">{{ formatNumber(totalFunds) }}</span> 원
                         </div>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <label class="col-form-label col-4">비고</label>
                         <div class="col-8">
-                            <form:textarea path="description" class="form-control-sm form-control" rows="3" />
+                            <textarea v-model="description" class="form-control-sm form-control" rows="3"></textarea>
                         </div>
                     </div>
-                </form:form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
-                <button class="btn btn-primary" form="transactionForm2">적용</button>
+                <button class="btn btn-primary" onclick="submitUpdate()">적용</button>
             </div>
         </div>
     </div>
@@ -435,84 +428,19 @@
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
+<script src="${contextPath}/resources/js/vue.js"></script>
+<script src="${contextPath}/resources/js/axios.js"></script>
 <script>
-
     $(document).ready(function() {
         var token = $("meta[name='_csrf']").attr("content");
 
         $('#dateFrom, #dateTo').datepicker({
             dateFormat: 'yy-mm-dd'
         })
-        $('#imSearch').on('change', function() {
+        $('#imSearch').on('change', function () {
             $('#form').submit();
         });
 
-        $('#transactionForm1 input[name="funds"]').on('keyup', function () {
-            var amount = $(this).val();
-            var prevTotal = $('#transactionForm1 input[name="prevTotal"]').val();
-            if (parseFloat(amount) > 0) {
-                var totalAmount = parseFloat(prevTotal) - parseFloat(amount);
-                $('#transactionForm1 input[name="totalFunds"]').val(totalAmount);
-                $('#transactionForm1 .totalAmount').text(totalAmount);
-            }
-        });
-
-        $('#transactionForm2 input[name="funds"]').on('keyup', function () {
-            var amount = $(this).val();
-            var prevTotal = $('#transactionForm2 input[name="prevTotal"]').val();
-            var method = $('#transactionForm2 input[name="processingMethod"]:checked').val();
-            if (parseInt(amount) > 0) {
-                var totalAmount = 0;
-                if (method === 'fund_plus') {
-                    totalAmount = parseFloat(prevTotal) + parseFloat(amount);
-                } else {
-                    totalAmount = parseFloat(prevTotal) - parseFloat(amount);
-                }
-                $('#transactionForm2 input[name="totalFunds"]').val(totalAmount);
-                $('#transactionForm2 .totalBalance').text(totalAmount);
-            }
-        });
-
-        $('#transactionForm2 input[name="processingMethod"]').on('change', function () {
-            var method = $('#transactionForm2 input[name="processingMethod"]:checked').val();
-            var amount = $('#transactionForm2 input[name="funds"]').val();
-            var prevTotal = $('#transactionForm2 input[name="prevTotal"]').val();
-            if (parseFloat(amount) > 0) {
-                var totalAmount = 0;
-                if (method === 'fund_plus') {
-                    totalAmount = parseFloat(prevTotal) + parseFloat(amount);
-                } else {
-                    totalAmount = parseFloat(prevTotal) - parseFloat(amount);
-                }
-                $('#transactionForm2 input[name="totalFunds"]').val(totalAmount);
-                $('#transactionForm2 .totalBalance').text(totalAmount);
-            }
-        });
-
-        $('#transactionForm1, #transactionForm2').submit(function (e) {
-            e.preventDefault();
-            var amount = $(this).find('input[name="funds"]').val();
-            if (parseFloat(amount) > 0) {
-                $.ajax({
-                    type: 'POST',
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    beforeSend: function() {
-                        $("#overlay").fadeIn(300);
-                    },
-                    success: function(data) {
-                        toastr.success(data.message);
-                        window.location.reload();
-                    }
-                }).done(function () {
-                    setTimeout(function() {
-                        $("#overlay").fadeOut(300);
-                    }, 500);
-                });
-            } else {
-                toastr.error('입금 금액은 0보다 커야 합니다.');
-            }
-        });
     });
 
     formatDate = function (date) {
@@ -550,6 +478,196 @@
             $('#dateTo').val(formatDate(lastDay));
         }
     });
+</script>
+<script>
+    var inputForm = new Vue({
+        el: '#inputForm',
+        data: {
+            method: 'manual_minus',
+            type: 'input',
+            shopName: '',
+            description: '',
+            funds: 0,
+            prevTotalFunds: 0,
+            isInputActive: false,
+        },
+        mounted() {
+            axios.get(window.location.pathname + '/data')
+                .then(res => res.data)
+                .then(data => {
+                    this.shopName = data.shopName;
+                    this.prevTotalFunds = data.totalFunds;
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        },
+        computed: {
+            displayFunds: {
+                get: function () {
+                    let fixedValue = this.toFixed(this.funds);
+                    if (this.isInputActive) {
+                        return fixedValue.toString();
+                    } else {
+                        return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+                },
+                set: function (modifiedValue) {
+                    let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));
+                    if (isNaN(newValue)) {
+                        newValue = 0;
+                    }
+                    this.funds = newValue;
+                }
+            }
+        },
+        methods: {
+            submitForm() {
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post(window.location.pathname + '/store', {
+                    funds: this.funds,
+                    description: this.description,
+                    type: this.type,
+                    method: this.method,
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
+            formatNumber(value) {
+                let fixedValue = this.toFixed(value);
+                return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            toFixed(x) {
+                if (Math.abs(x) < 1.0) {
+                    var e = parseInt(x.toString().split('e-')[1]);
+                    if (e) {
+                        x *= Math.pow(10, e - 1);
+                        x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+                    }
+                } else {
+                    var e = parseInt(x.toString().split('+')[1]);
+                    if (e > 20) {
+                        e -= 20;
+                        x /= Math.pow(10, e);
+                        x += (new Array(e + 1)).join('0');
+                    }
+                }
+                return x;
+            },
+        }
+    });
+
+    var updateForm = new Vue({
+        el: '#updateForm',
+        data: {
+            method: 'fund_minus',
+            type: 'update',
+            shopName: '',
+            description: '',
+            funds: 0,
+            prevTotalFunds: 0,
+            isInputActive: false,
+        },
+        mounted() {
+            axios.get(window.location.pathname + '/data')
+                .then(res => res.data)
+                .then(data => {
+                    this.shopName = data.shopName;
+                    this.prevTotalFunds = data.totalFunds;
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        },
+        computed: {
+            totalFunds: {
+                get: function() {
+                    if (this.method.includes("minus")) {
+                        return this.prevTotalFunds - this.funds;
+                    } else {
+                        return this.prevTotalFunds + this.funds;
+                    }
+                }
+            },
+            displayFunds: {
+                get: function () {
+                    let fixedValue = this.toFixed(this.funds);
+                    if (this.isInputActive) {
+                        return fixedValue.toString();
+                    } else {
+                        return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+                },
+                set: function (modifiedValue) {
+                    let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));
+                    if (isNaN(newValue)) {
+                        newValue = 0;
+                    }
+                    this.funds = newValue;
+                }
+            },
+        },
+        methods: {
+            formatNumber(value) {
+                let fixedValue = this.toFixed(value);
+                return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            toFixed(x) {
+                if (Math.abs(x) < 1.0) {
+                    var e = parseInt(x.toString().split('e-')[1]);
+                    if (e) {
+                        x *= Math.pow(10, e - 1);
+                        x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+                    }
+                } else {
+                    var e = parseInt(x.toString().split('+')[1]);
+                    if (e > 20) {
+                        e -= 20;
+                        x /= Math.pow(10, e);
+                        x += (new Array(e + 1)).join('0');
+                    }
+                }
+                return x;
+            },
+            submitForm() {
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post(window.location.pathname + '/store', {
+                    funds: this.funds,
+                    description: this.description,
+                    type: this.type,
+                    method: this.method,
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
+        }
+    });
+
+    function submitInput() {
+        inputForm.submitForm();
+    }
+
+    function submitUpdate() {
+        updateForm.submitForm();
+    }
 </script>
 </body>
 </html>

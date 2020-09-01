@@ -2,6 +2,7 @@ package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
 import com.pando.subalzu.form.ShopSearchForm4;
+import com.pando.subalzu.form.TransactionForm;
 import com.pando.subalzu.form.TransactionSearchForm;
 import com.pando.subalzu.model.Order;
 import com.pando.subalzu.model.Shop;
@@ -332,19 +333,7 @@ public class CreditController {
             Page<Transaction> transactionPage = transactionRepository.findAll(spec, pageable);
             List<Transaction> transactions = transactionPage.getContent();
 
-            Transaction transaction1 = new Transaction();
-            transaction1.setTransactionType("input");
-            transaction1.setProcessingMethod("manual_minus");
-            transaction1.setShop(shop);
-
-            Transaction transaction2 = new Transaction();
-            transaction2.setTransactionType("update");
-            transaction2.setProcessingMethod("fund_minus");
-            transaction2.setShop(shop);
-
             model.addAttribute("shop", shop);
-            model.addAttribute("transactionForm1", transaction1);
-            model.addAttribute("transactionForm2", transaction2);
             model.addAttribute("transactionPage", transactionPage);
             model.addAttribute("transactions", transactions);
             model.addAttribute("currentPage", page);
@@ -353,6 +342,59 @@ public class CreditController {
         } else {
             return "redirect:/credits";
         }
+    }
+
+    @GetMapping("/{id}/data")
+    @ResponseBody
+    public Map<String, Object> getData(@PathVariable Long id, HttpServletResponse response) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<Shop> optionalShop = shopRepository.findById(id);
+        if (optionalShop.isPresent()) {
+            Shop shop = optionalShop.get();
+            resultMap.put("shopName", shop.getName());
+            resultMap.put("totalFunds", shop.getTotalBalance());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        resultMap.put("message", "Success");
+        return resultMap;
+    }
+
+    @PostMapping("/{id}/store")
+    @ResponseBody
+    public Map<String, Object> storeData(@PathVariable Long id, @RequestBody TransactionForm form, HttpServletResponse response) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Optional<Shop> optionalShop = shopRepository.findById(id);
+        if (optionalShop.isPresent()) {
+            Shop shop = optionalShop.get();
+            String description = form.getDescription();
+            Double funds = form.getFunds();
+            String method = form.getMethod();
+            String type = form.getType();
+            if (method.contains("minus")) {
+                funds = -funds;
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setShop(shop);
+            transaction.setFunds(funds);
+            transaction.setProcessingMethod(method);
+            transaction.setTransactionType(type);
+            transaction.setDescription(description);
+            transaction.setPrevTotal(shop.getTotalBalance());
+            transaction.setTotalFunds(shop.getTotalBalance() + funds);
+            transactionRepository.save(transaction);
+
+            shop.setPrevTotalBalance(shop.getTotalBalance());
+            shop.setDealtAt(LocalDateTime.now());
+            shopRepository.save(shop);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        resultMap.put("message", "Success");
+        return resultMap;
     }
 
     @GetMapping("/{id}/download_excel")

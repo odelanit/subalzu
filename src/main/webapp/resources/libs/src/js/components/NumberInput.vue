@@ -1,11 +1,11 @@
 <template>
-    <input type="text" v-model="displayValue" @blur="isInputActive = false" @focus="isInputActive = true">
+    <input :disabled="disabled" type="text" v-model="displayValue" @blur="isInputActive = false" @focus="isInputActive = true">
 </template>
 
 <script>
     export default {
         name: "NumberInput",
-        props: ["value"],
+        props: ["value", "disabled"],
         data: function () {
             return {
                 isInputActive: false

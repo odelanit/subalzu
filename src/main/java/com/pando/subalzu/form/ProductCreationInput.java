@@ -37,13 +37,7 @@ public class ProductCreationInput {
 
     Long buyPrice;
 
-    Long sellPrice; // 기본 단가
-
-    Long directPrice; // 직배송 단가
-
-    Long parcelPrice; // 택배 배송 단가
-
-    Set<ProductGroupPriceInput> groupPrices;
+    Set<ProductPriceInput> productPriceInputs;
 
     public Long getId() {
         return id;
@@ -181,35 +175,11 @@ public class ProductCreationInput {
         this.buyPrice = buyPrice;
     }
 
-    public Long getSellPrice() {
-        return sellPrice;
+    public Set<ProductPriceInput> getProductPriceInputs() {
+        return productPriceInputs;
     }
 
-    public void setSellPrice(Long sellPrice) {
-        this.sellPrice = sellPrice;
-    }
-
-    public Long getDirectPrice() {
-        return directPrice;
-    }
-
-    public void setDirectPrice(Long directPrice) {
-        this.directPrice = directPrice;
-    }
-
-    public Long getParcelPrice() {
-        return parcelPrice;
-    }
-
-    public void setParcelPrice(Long parcelPrice) {
-        this.parcelPrice = parcelPrice;
-    }
-
-    public Set<ProductGroupPriceInput> getGroupPrices() {
-        return groupPrices;
-    }
-
-    public void setGroupPrices(Set<ProductGroupPriceInput> groupPrices) {
-        this.groupPrices = groupPrices;
+    public void setProductPriceInputs(Set<ProductPriceInput> productPriceInputs) {
+        this.productPriceInputs = productPriceInputs;
     }
 }

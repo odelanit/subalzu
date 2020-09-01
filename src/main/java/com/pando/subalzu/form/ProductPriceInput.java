@@ -1,6 +1,6 @@
 package com.pando.subalzu.form;
 
-public class ProductGroupPriceInput {
+public class ProductPriceInput {
     private Long id;
 
     Long price = 0L;

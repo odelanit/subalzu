@@ -48,6 +48,9 @@ public class PriceController {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    ProductPriceRepository productPriceRepository;
+
     @ModelAttribute("categories")
     List<Category> categories() {
         return categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level"));
@@ -55,6 +58,19 @@ public class PriceController {
 
     @GetMapping("")
     public String index(@ModelAttribute("form") ProductSearchForm form, Model model) {
+        Category category = form.getCategory();
+        if (category != null) {
+            List<Category> subcategories = categoryRepository.findByParent(category);
+            model.addAttribute("subcategories", subcategories);
+        } else {
+            form.setSubcategory(null);
+        }
+        return "price_list";
+    }
+
+    @GetMapping("/data")
+    @ResponseBody
+    public Page<Product> getData(@ModelAttribute("form") ProductSearchForm form) {
         String field = form.getField();
         String keyword = form.getKeyword();
         Category category = form.getCategory();
@@ -64,10 +80,7 @@ public class PriceController {
         Specification<Product> spec = new ProductSpecification(new SearchCriteria(field, ":", keyword));
 
         if (category != null) {
-            List<Category> subcategories = categoryRepository.findByParent(category);
-            model.addAttribute("subcategories", subcategories);
             spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("category", ":", category)));
-
             Category subcategory = form.getSubcategory();
             if (subcategory != null) {
                 spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
@@ -78,52 +91,26 @@ public class PriceController {
 
         Pageable pageable = PageRequest.of(page - 1, 50);
         productPage = productRepository.findAll(spec, pageable);
-        List<Product> products = productPage.getContent();
 
-        model.addAttribute("productPage", productPage);
-        model.addAttribute("products", products);
-        model.addAttribute("currentPage", page);
+//        List<Product> products = productPage.getContent();
+//        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+//        for (Product product : products) {
+//            for (PriceGroup priceGroup : priceGroups) {
+//                Optional<ProductPrice> optionalProductPrice = productPriceRepository.getByProductAndPriceGroup(product, priceGroup);
+//                if (!optionalProductPrice.isPresent()) {
+//                    ProductPrice productPrice = new ProductPrice();
+//                    productPrice.setProduct(product);
+//                    productPrice.setPriceGroup(priceGroup);
+//                }
+//            }
+//        }
 
-        return "price_list";
+        return productPage;
     }
 
     @ModelAttribute("priceGroups")
     public List<PriceGroup> priceGroupList() {
         return priceGroupRepository.findAll();
-    }
-
-    @GetMapping("/fixed-price-rate")
-    public String fixedRate(Principal principal, Model model) {
-//        List<Company> companies = companyRepository.findAll();
-//        if (companies.size() > 0) {
-//            Company company = companies.get(0);
-//            Company companySetting = company.getCompanySetting();
-//            if (companySetting == null) {
-//                return "redirect:/company";
-//            }
-//            boolean fixedRateSetting = companySetting.getFixedPriceRate();
-//            model.addAttribute("fixedRateSetting", fixedRateSetting);
-//
-//        } else {
-//            return "redirect:/company";
-//        }
-        return "price_fixed_rate_vue";
-    }
-
-    @PostMapping("/fixed-price-rate")
-    public String updateRate(Principal principal, @RequestParam Map<String, String> formData) {
-//        List<Company> companies = companyRepository.findAll();
-//        if (companies.size() > 0) {
-//            Company company = companies.get(0);
-//            Company companySetting = company.getCompanySetting();
-//            boolean fixedRateSetting = Boolean.parseBoolean(formData.get("is_fixed"));
-//            companySetting.setFixedPriceRate(fixedRateSetting);
-//            companySettingRepository.save(companySetting);
-//
-//        } else {
-//            return "redirect:/company";
-//        }
-        return "redirect:/prices";
     }
 
     @PostMapping("/update")
