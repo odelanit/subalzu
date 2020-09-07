@@ -489,7 +489,7 @@
                     })
             },
             printOrder: function () {
-
+                window.open('/shipping/print?ids=' + this.orderId, "발주서", "width=1350, height=700, toolbar=no, menubar=no, scrollbars=yes, resizable=yes");
             }
         },
         watch: {

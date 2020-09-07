@@ -1,5 +1,5 @@
 <template>
-    <input :disabled="disabled" type="text" v-model="displayValue" @blur="isInputActive = false" @focus="isInputActive = true">
+    <input :disabled="disabled" type="text" v-model="displayValue">
 </template>
 
 <script>
@@ -14,11 +14,11 @@
         computed: {
             displayValue: {
                 get: function () {
-                    if (this.isInputActive) {
-                        return this.value.toString();
-                    } else {
+                    // if (this.isInputActive) {
+                    //     return this.value.toString();
+                    // } else {
                         return this.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    }
+                    // }
                 },
                 set: function(modifiedValue) {
                     let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));

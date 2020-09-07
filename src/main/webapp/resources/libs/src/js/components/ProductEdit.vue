@@ -293,13 +293,33 @@
                     this.buyPrice = product.buyPrice;
                     this.use_special_price_rate = data.use_special_price_rate;
                     this.productPrices = data.productPrices;
-                    this.productPrices.forEach(productPrice => {
-                        productPrice.priceGroupName = productPrice.priceGroup.name;
-                        productPrice.priceGroupId = productPrice.priceGroup.id;
-                    });
                     if (this.use_special_price_rate === true) {
                         this.fixed_price_rates = data.fixed_price_rates;
                     }
+
+                    if (this.use_special_price_rate === true) {
+                        if (product.category === null) {
+                            let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                return x.category === null;
+                            });
+                            console.log(selectedPriceRates);
+                            this.productPrices.forEach(productPrice => {
+                                productPrice.priceGroupName = productPrice.priceGroup.name;
+                                productPrice.priceGroupId = productPrice.priceGroup.id;
+                                let priceRate = selectedPriceRates.find(x => x.priceGroup.name === productPrice.priceGroup.name);
+                                this.$set(productPrice, 'unit', priceRate.unit);
+                                this.$set(productPrice, 'rate', priceRate.rate);
+                            });
+                            console.log(this.productPrices);
+                        } else {
+
+                        }
+                    }
+
+                    // this.productPrices.forEach(productPrice => {
+                    //     productPrice.priceGroupName = productPrice.priceGroup.name;
+                    //     productPrice.priceGroupId = productPrice.priceGroup.id;
+                    // });
                 })
                 .catch(error => {
                     console.error(error);

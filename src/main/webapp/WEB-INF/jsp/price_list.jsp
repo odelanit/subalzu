@@ -151,7 +151,7 @@
                                 </div>
                                 <hr>
                                 <div id="price-table">
-                                    <div class="row">
+                                    <div class="row mb-3">
                                         <div class="col-6">
                                             <span>전체 {{ totalElements }}건</span>
                                         </div>
@@ -160,7 +160,7 @@
                                             <button type="button" class="btn btn-sm btn-outline-primary" @click="applyAll"><span class="fa fa-exchange mr-1"></span>전체 적용</button>
                                         </div>
                                     </div>
-                                    <div class="mt-3">
+                                    <div class="table-responsive-lg">
                                         <table class="table table-sm text-center table-middle" id="products">
                                             <thead class="thead-light">
                                             <tr>
@@ -171,36 +171,28 @@
                                                 <th>규격(단위)</th>
                                                 <th>제조사(원산지)</th>
                                                 <th>매입단가</th>
-                                                <th>직배송단가</th>
-                                                <th>택배배송단가</th>
-                                                <th>기본단가</th>
+                                                <th v-for="(priceGroup, index) in price_groups" :key="index">{{ priceGroup.name === 'direct' ? '직배송 단가' : (priceGroup.name === 'parcel' ? '택배배송 단가' : (priceGroup.name === 'main' ? '기본 단가' : priceGroup.name)) }}</th>
                                                 <th>적용</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr v-for="product in products">
                                                 <td>
-                                                    <input type="checkbox" class="check" value="${product.id}">
+                                                    <input type="checkbox" class="check" :value="product.id">
                                                 </td>
-                                                <td>${product.id}</td>
-                                                <td>${product.name}</td>
-                                                <td>${product.category.name}</td>
-                                                <td>${product.standard}<c:if test="${not empty product.unit}"><br>(${product.unit})</c:if></td>
-                                                <td>${product.makerName}<c:if test="${not empty product.country}"><br>(${product.country})</c:if></td>
+                                                <td>{{ product.id }}</td>
+                                                <td>{{ product.name }}</td>
+                                                <td>{{ product.category ? product.category.name : ''}}</td>
+                                                <td>{{ product.standard }}<br>{{ product.unit ? '(' + product.unit + ')' : ''}}</td>
+                                                <td>{{ product.makerName }}<br>{{ product.country ? '(' + product.country + ')' : ''}}</td>
                                                 <td>
-                                                    <input class="form-control form-control-sm text-right buyPrice" type="number" value="${product.buyPrice}">
+                                                    <number-input class="form-control form-control-sm text-right" v-model="product.buyPrice" />
                                                 </td>
-                                                <td>
-                                                    <input class="form-control form-control-sm text-right directPrice" type="number" value="${product.directPrice}">
-                                                </td>
-                                                <td>
-                                                    <input class="form-control form-control-sm text-right parcelPrice" type="number" value="${product.parcelPrice}">
+                                                <td v-for="productPrice in product.productPrices">
+                                                    <number-input :disabled="use_special_price_rate" class="form-control form-control-sm text-right" v-model="productPrice.price" />
                                                 </td>
                                                 <td>
-                                                    <input class="form-control form-control-sm text-right sellPrice" type="number" value="${product.sellPrice}">
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="apply btn btn-outline-primary btn-sm">적용</button>
+                                                    <button type="button" @click="apply(product)" class="btn btn-outline-primary btn-sm">적용</button>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -299,7 +291,6 @@
         </div>
     </div>
 </div>
-<!-- END wrapper -->
 
 <script src="${contextPath}/resources/jquery/jquery.min.js"></script>
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
@@ -437,19 +428,91 @@
     })
 </script>
 <script>
+    Vue.component('number-input', {
+        template: '<input :disabled="disabled" type="text" v-model="displayValue">',
+        props: ["value", "disabled"],
+        data: function () {
+            return {
+                isInputActive: false
+            }
+        },
+        computed: {
+            displayValue: {
+                get: function () {
+                    // if (this.isInputActive) {
+                    //     return this.value.toString();
+                    // } else {
+                        return this.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    // }
+                },
+                set: function(modifiedValue) {
+                    let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));
+                    if (isNaN(newValue)) {
+                        newValue = 0;
+                    }
+                    this.$emit('input', newValue);
+                }
+            }
+        }
+    })
     var priceTable = new Vue({
         el: '#price-table',
         data: {
             totalElements: 0,
-            products: []
+            products: [],
+            use_special_price_rate: false,
+            price_groups: []
         },
         mounted() {
-            console.log(window.location.pathname + window.location.search);
             axios.get(window.location.pathname + '/data' + window.location.search)
                 .then(res => res.data)
                 .then(data => {
-                    console.log(data);
                     this.totalElements = data.productPage.totalElements;
+                    this.products = data.productPage.content;
+                    this.price_groups = data.price_groups;
+                    this.use_special_price_rate = data.use_special_price_rate;
+                    this.fixed_price_rates = data.fixed_price_rates;
+
+                    this.products.forEach(product => {
+                        if (this.use_special_price_rate === true) {
+                            if (product.category === null) {
+                                let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                    return x.category === null;
+                                });
+                                product.productPrices.forEach(productPrice => {
+                                    productPrice.priceGroupName = productPrice.priceGroup.name;
+                                    productPrice.priceGroupId = productPrice.priceGroup.id;
+                                    let priceRate = selectedPriceRates.find(x => x.priceGroup.name === productPrice.priceGroup.name);
+                                    this.$set(productPrice, 'unit', priceRate.unit);
+                                    this.$set(productPrice, 'rate', priceRate.rate);
+                                });
+                            } else {
+                                if (product.category.useIndividual === true) {
+                                    let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                        return x.category && x.category.id === product.category.id;
+                                    });
+                                    product.productPrices.forEach(productPrice => {
+                                        productPrice.priceGroupName = productPrice.priceGroup.name;
+                                        productPrice.priceGroupId = productPrice.priceGroup.id;
+                                        let priceRate = selectedPriceRates.find(x => x.priceGroup.name === productPrice.priceGroup.name);
+                                        this.$set(productPrice, 'unit', priceRate.unit);
+                                        this.$set(productPrice, 'rate', priceRate.rate);
+                                    });
+                                } else {
+                                    let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                        return x.category === null;
+                                    });
+                                    product.productPrices.forEach(productPrice => {
+                                        productPrice.priceGroupName = productPrice.priceGroup.name;
+                                        productPrice.priceGroupId = productPrice.priceGroup.id;
+                                        let priceRate = selectedPriceRates.find(x => x.priceGroup.name === productPrice.priceGroup.name);
+                                        this.$set(productPrice, 'unit', priceRate.unit);
+                                        this.$set(productPrice, 'rate', priceRate.rate);
+                                    });
+                                }
+                            }
+                        }
+                    });
                 })
                 .catch(error => {
                     console.error(error);
@@ -457,7 +520,107 @@
         },
         methods: {
             applyAll: function () {
-
+                let checkedElements = $('#products tbody tr .check:checked');
+                if (checkedElements.length <= 0) {
+                    toastr.error('변경 입력한 단가가 없습니다.');
+                    return false;
+                }
+                let products = [];
+                let self = this;
+                checkedElements.each(function() {
+                    let selectedId = +$(this).val();
+                    let product = self.products.find(product => product.id === selectedId);
+                    products.push({
+                        id: product.id,
+                        buyPrice: product.buyPrice,
+                        productPriceInputs: product.productPrices,
+                    });
+                })
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post('/prices/update_all', products, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.href = '/prices';
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            apply: function (product) {
+                let token = $("meta[name='_csrf']").attr("content");
+                axios.post('/prices/update', {
+                    id: product.id,
+                    buyPrice: product.buyPrice,
+                    productPriceInputs: product.productPrices
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                    }
+                })
+                    .then(res => res.data)
+                    .then(data => {
+                        window.location.href = '/prices';
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        },
+        watch: {
+            products: {
+                deep:true,
+                handler(products) {
+                    this.products.forEach(product => {
+                        if (this.use_special_price_rate === true) {
+                            if (product.category === null) {
+                                let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                    return x.category === null;
+                                });
+                                product.productPrices.forEach(productPrice => {
+                                    productPrice.priceGroupName = productPrice.priceGroup.name;
+                                    productPrice.priceGroupId = productPrice.priceGroup.id;
+                                    if (productPrice.unit === 'p') {
+                                        productPrice.price = Math.round(product.buyPrice * (productPrice.rate / 100 + 1));
+                                    } else if (productPrice.unit === 'w') {
+                                        productPrice.price = product.buyPrice + productPrice.rate;
+                                    }
+                                });
+                            } else {
+                                if (product.category.useIndividual === true) {
+                                    let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                        return x.category && x.category.id === product.category.id;
+                                    });
+                                    product.productPrices.forEach(productPrice => {
+                                        productPrice.priceGroupName = productPrice.priceGroup.name;
+                                        productPrice.priceGroupId = productPrice.priceGroup.id;
+                                        if (productPrice.unit === 'p') {
+                                            productPrice.price = Math.round(product.buyPrice * (productPrice.rate / 100 + 1));
+                                        } else if (productPrice.unit === 'w') {
+                                            productPrice.price = product.buyPrice + productPrice.rate;
+                                        }
+                                    });
+                                } else {
+                                    let selectedPriceRates = this.fixed_price_rates.filter(x => {
+                                        return x.category === null;
+                                    });
+                                    product.productPrices.forEach(productPrice => {
+                                        productPrice.priceGroupName = productPrice.priceGroup.name;
+                                        productPrice.priceGroupId = productPrice.priceGroup.id;
+                                        if (productPrice.unit === 'p') {
+                                            productPrice.price = Math.round(product.buyPrice * (productPrice.rate / 100 + 1));
+                                        } else if (productPrice.unit === 'w') {
+                                            productPrice.price = product.buyPrice + productPrice.rate;
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
             }
         }
     })

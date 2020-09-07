@@ -420,7 +420,7 @@
                                                 <div class="form-inline">
                                                     <select class="form-control form-control-sm" v-model="orderProduct.price" style="width: 37%;">
                                                         <option v-bind:value="orderProduct.primaryPrice">기본 단가</option>
-                                                        <option v-for="groupPrice in orderProduct.product.groupPrices" v-bind:value="groupPrice.price">{{ groupPrice.priceGroup.name }}</option>
+                                                        <option v-for="groupPrice in orderProduct.product.productPrices" v-bind:value="groupPrice.price">{{ groupPrice.priceGroup.name }}</option>
                                                     </select>
                                                     <input class="form-control form-control-sm text-center mx-2" style="width: 20%;" type="number" v-model.number="orderProduct.qty">
                                                     <div class="input-group input-group-sm" style="width: 35%">
@@ -583,8 +583,6 @@
                     this.releaseStatus = data.order.releaseStatus;
                     this.returnStatus = data.order.returnStatus;
 
-                    console.log(this.returnStatus);
-
                     this.selected_shop = data.order.shop;
                     this.deliveryType = data.order.deliveryType;
                     this.selected_deliverer_id = data.order.deliverer.id;
@@ -603,6 +601,9 @@
                         } else {
                             orderProduct.primaryPrice = orderProduct.product.shopPrices[spIdx].price;
                         }
+                        this.$set(orderProduct.product, 'productPrices', orderProduct.product.productPrices.filter(x => {
+                            return (x.priceGroup.name !== 'main') && (x.priceGroup.name !== 'direct') && (x.priceGroup.name !== 'parcel')
+                        }));
 
                     });
                 })
@@ -686,12 +687,22 @@
                         category: this.selected_category_id,
                         subcategory: this.selected_subcategory_id,
                         keyword: this.product_keyword,
-                        deliveryType: (this.deliveryType === 'direct' ? 1 : 2)
+                        deliveryType: (this.deliveryType === 'direct' ? 1 : 2),
+                        shop: this.selected_shop.id
                     }
                 })
                     .then(res => res.data)
                     .then(data => {
                         this.products = data.products;
+                        this.products.forEach(product => {
+                            let spIdx = product.shopPrices.findIndex(x => x.shop.id === this.selected_shop.id);
+                            if (spIdx !== -1) {
+                                product.sellPrice = product.shopPrices[spIdx].price;
+                            }
+                            this.$set(product, 'productPrices', product.productPrices.filter(x => {
+                                return (x.priceGroup.name !== 'main') && (x.priceGroup.name !== 'direct') && (x.priceGroup.name !== 'parcel')
+                            }));
+                        });
                     })
                     .catch(err => {
                         console.log(err);

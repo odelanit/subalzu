@@ -26,9 +26,13 @@ public class PriceGroup {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.REMOVE)
     @JsonBackReference
-    Set<ProductGroupPrice> productGroupPrices;
+    Set<ProductPrice> productPrices;
+
+    @OneToMany(mappedBy = "priceGroup", cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    Set<FixedPriceRate> fixedPriceRates;
 
     public Long getId() {
         return id;
@@ -62,11 +66,19 @@ public class PriceGroup {
         this.updatedAt = updatedAt;
     }
 
-    public Set<ProductGroupPrice> getProductGroupPrices() {
-        return productGroupPrices;
+    public Set<ProductPrice> getProductPrices() {
+        return productPrices;
     }
 
-    public void setProductGroupPrices(Set<ProductGroupPrice> productGroupPrices) {
-        this.productGroupPrices = productGroupPrices;
+    public void setProductPrices(Set<ProductPrice> productPrices) {
+        this.productPrices = productPrices;
+    }
+
+    public Set<FixedPriceRate> getFixedPriceRates() {
+        return fixedPriceRates;
+    }
+
+    public void setFixedPriceRates(Set<FixedPriceRate> fixedPriceRates) {
+        this.fixedPriceRates = fixedPriceRates;
     }
 }

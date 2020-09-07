@@ -22,4 +22,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("SELECT c from Category c WHERE c.useIndividual = true ORDER BY c.id")
     List<Category> getCategoriesByUseIndividualTrue();
+
 }

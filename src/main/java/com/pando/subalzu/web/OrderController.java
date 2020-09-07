@@ -192,15 +192,19 @@ public class OrderController {
 
             Set<OrderProductForm> orderProductFormSet = formData.getOrderProducts();
             double total = 0.0;
+
             for (OrderProductForm orderProductForm : orderProductFormSet) {
                 OrderProduct orderProduct = new OrderProduct();
                 orderProduct.setOrder(order);
                 Long productId = orderProductForm.getProductId();
                 Optional<Product> optionalProduct = productRepository.findById(productId);
-                optionalProduct.ifPresent(orderProduct::setProduct);
-                orderProduct.setQty(orderProductForm.getQty());
-                orderProduct.setPrice(orderProductForm.getPrice());
-                orderProductRepository.save(orderProduct);
+                if (optionalProduct.isPresent()) {
+                    Product product = optionalProduct.get();
+                    orderProduct.setProduct(product);
+                    orderProduct.setQty(orderProductForm.getQty());
+                    orderProduct.setPrice(orderProductForm.getPrice());
+                    orderProductRepository.save(orderProduct);
+                }
                 total += orderProductForm.getQty() * orderProductForm.getPrice();
             }
 

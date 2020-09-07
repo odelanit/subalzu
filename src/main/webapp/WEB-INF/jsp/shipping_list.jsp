@@ -159,9 +159,9 @@
                                 </form:form>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-<%--                                        <a href="/shipping/print" class="btn btn-sm btn-outline-secondary">--%>
-<%--                                            <i class="fa fa-print"></i> 발주서 출력--%>
-<%--                                        </a>--%>
+                                        <button onclick="printOrder()" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fa fa-print"></i> 발주서 출력
+                                        </button>
                                     </div>
                                     <div class="col-md-6 text-md-right mt-md-0 mt-2">
                                         <a href="/shipping/create" class="btn btn-sm btn-outline-primary">
@@ -387,6 +387,18 @@
             $('#dateTo').val(strDateTo);
         }
     });
+
+    function printOrder() {
+        var ids = '';
+        $('#orders tbody input[type="checkbox"]:checked').each(function (index) {
+            ids += ($(this).val()) + ',';
+        });
+        if (ids) {
+            window.open('/shipping/print?ids=' + ids, "발주서", "width=1350, height=700, toolbar=no, menubar=no, scrollbars=yes, resizable=yes");
+        } else {
+            toastr.error('출력할 발주를 선택해주세요');
+        }
+    }
 
 </script>
 </body>

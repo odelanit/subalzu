@@ -159,6 +159,7 @@
                                                     <form:option value="" label="구분" />
                                                     <form:option value="shipping_input" label="입고" />
                                                     <form:option value="output" label="출고" />
+                                                    <form:option value="initial_input" label="최초입고" />
                                                     <form:option value="manual_input" label="수동입고" />
                                                     <form:option value="manual_output" label="수동출고" />
                                                     <form:option value="discard_output" label="폐기출고" />
@@ -211,6 +212,9 @@
                                                     </c:when>
                                                     <c:when test="${record.action == 'output'}">
                                                         출고
+                                                    </c:when>
+                                                    <c:when test="${record.action == 'initial_input'}">
+                                                        최초 입고
                                                     </c:when>
                                                     <c:when test="${record.action == 'manual_input'}">
                                                         수동입고

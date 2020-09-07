@@ -70,15 +70,6 @@ public class Product {
     Long buyPrice = 0L;
 
     @Column(nullable = false)
-    Long sellPrice = 0L; // 기본 단가
-
-    @Column(nullable = false)
-    Long directPrice = 0L; // 직배송 단가
-
-    @Column(nullable = false)
-    Long parcelPrice = 0L; // 택배송 단가
-
-    @Column(nullable = false)
     double qty = 0.0;
 
     boolean status = true;
@@ -90,10 +81,6 @@ public class Product {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    Set<ProductGroupPrice> groupPrices;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -110,6 +97,10 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<SupplyOrderProduct> supplyOrderProducts;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
+    Set<ProductPrice> productPrices;
 
     @Transient
     Long pt;
@@ -243,35 +234,33 @@ public class Product {
     }
 
     public Long getSellPrice() {
-        return sellPrice;
-    }
-
-    public void setSellPrice(Long sellPrice) {
-        this.sellPrice = sellPrice;
+        for (ProductPrice productPrice : this.productPrices) {
+            String priceGroupName = productPrice.getPriceGroup().getName();
+            if (priceGroupName.equalsIgnoreCase("main")) {
+                return productPrice.getPrice();
+            }
+        }
+        return 0L;
     }
 
     public Long getDirectPrice() {
-        return directPrice;
-    }
-
-    public void setDirectPrice(Long directPrice) {
-        this.directPrice = directPrice;
+        for (ProductPrice productPrice : this.productPrices) {
+            String priceGroupName = productPrice.getPriceGroup().getName();
+            if (priceGroupName.equalsIgnoreCase("direct")) {
+                return productPrice.getPrice();
+            }
+        }
+        return 0L;
     }
 
     public Long getParcelPrice() {
-        return parcelPrice;
-    }
-
-    public void setParcelPrice(Long parcelPrice) {
-        this.parcelPrice = parcelPrice;
-    }
-
-    public Set<ProductGroupPrice> getGroupPrices() {
-        return groupPrices;
-    }
-
-    public void setGroupPrices(Set<ProductGroupPrice> groupPrices) {
-        this.groupPrices = groupPrices;
+        for (ProductPrice productPrice : this.productPrices) {
+            String priceGroupName = productPrice.getPriceGroup().getName();
+            if (priceGroupName.equalsIgnoreCase("parcel")) {
+                return productPrice.getPrice();
+            }
+        }
+        return 0L;
     }
 
     public File getImage() {
@@ -372,5 +361,13 @@ public class Product {
 
     public void setPt(Long pt) {
         this.pt = pt;
+    }
+
+    public Set<ProductPrice> getProductPrices() {
+        return productPrices;
+    }
+
+    public void setProductPrices(Set<ProductPrice> productPrices) {
+        this.productPrices = productPrices;
     }
 }

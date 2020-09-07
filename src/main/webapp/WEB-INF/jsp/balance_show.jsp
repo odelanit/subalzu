@@ -312,7 +312,7 @@
                         <label class="col-form-label col-4" for="inputFunds">입금 금액</label>
                         <div class="col-8 text-right">
                             <input type="text" id="inputFunds" class="form-control form-control-sm text-right"
-                                   @blur="isInputActive = false" @focus="isInputActive = true" v-model="displayFunds">
+                                   v-model="displayFunds">
                         </div>
                     </div>
                     <hr>
@@ -380,7 +380,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-4">수정 금액</label>
                         <div class="col-8 text-right">
-                            <input type="text" class="form-control text-right form-control-sm" @blur="isInputActive = false" @focus="isInputActive = true" v-model="displayFunds"/>
+                            <input type="text" class="form-control text-right form-control-sm" v-model="displayFunds"/>
                         </div>
                     </div>
                     <hr>
@@ -464,11 +464,11 @@
             displayFunds: {
                 get: function () {
                     let fixedValue = this.toFixed(this.funds);
-                    if (this.isInputActive) {
-                        return fixedValue.toString();
-                    } else {
+                    // if (this.isInputActive) {
+                    //     return fixedValue.toString();
+                    // } else {
                         return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    }
+                    // }
                 },
                 set: function (modifiedValue) {
                     let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));
@@ -551,11 +551,11 @@
             displayFunds: {
                 get: function () {
                     let fixedValue = this.toFixed(this.funds);
-                    if (this.isInputActive) {
-                        return fixedValue.toString();
-                    } else {
+                    // if (this.isInputActive) {
+                    //     return fixedValue.toString();
+                    // } else {
                         return fixedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    }
+                    // }
                 },
                 set: function (modifiedValue) {
                     let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""));

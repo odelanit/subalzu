@@ -56,9 +56,6 @@ public class ProductController {
     PriceGroupRepository priceGroupRepository;
 
     @Autowired
-    ProductGroupPriceRepository productGroupPriceRepository;
-
-    @Autowired
     ProductPriceRepository productPriceRepository;
 
     @Autowired
@@ -311,11 +308,16 @@ public class ProductController {
             product = productRepository.save(product);
 
             Set<ProductPriceInput> productPriceInputs = formData.getProductPriceInputs();
+            Set<ProductPrice> productPrices = product.getProductPrices();
+            for (ProductPrice productPrice : productPrices) {
+                productPriceRepository.deleteById(productPrice.getId());
+            }
             for (ProductPriceInput productPriceInput : productPriceInputs) {
                 ProductPrice productPrice = new ProductPrice();
-                Optional<PriceGroup> optionalPGPrice = priceGroupRepository.findById(productPriceInput.getPriceGroupId());
-                optionalPGPrice.ifPresent(productPrice::setPriceGroup);
                 productPrice.setProduct(product);
+                Long priceGroupId = productPriceInput.getPriceGroupId();
+                Optional<PriceGroup> optionalPriceGroup = priceGroupRepository.findById(priceGroupId);
+                optionalPriceGroup.ifPresent(productPrice::setPriceGroup);
                 productPrice.setPrice(productPriceInput.getPrice());
                 productPriceRepository.save(productPrice);
             }
@@ -360,7 +362,19 @@ public class ProductController {
         }
 
         if (optionalProduct.isPresent()) {
-            resultMap.put("product", optionalProduct.get());
+            Product product = optionalProduct.get();
+            resultMap.put("product", product);
+
+            for (PriceGroup priceGroup : priceGroups) {
+                Optional<ProductPrice> optionalProductPrice = productPriceRepository.getByProductAndPriceGroup(product, priceGroup);
+                if (!optionalProductPrice.isPresent()) {
+                    ProductPrice productPrice = new ProductPrice();
+                    productPrice.setPrice(0L);
+                    productPrice.setPriceGroup(priceGroup);
+                    productPrice.setProduct(product);
+                    productPriceRepository.save(productPrice);
+                }
+            }
 
             List<ProductPrice> productPrices = productPriceRepository.findByProduct(optionalProduct.get());
             resultMap.put("productPrices", productPrices);
@@ -369,17 +383,6 @@ public class ProductController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
-    }
-
-    @PostMapping("/{id}")
-    public String update(@PathVariable long id, Model model, @ModelAttribute("productForm")Product productForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        productValidator.validate(productForm, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "product_edit";
-        }
-        redirectAttributes.addFlashAttribute("message", "Product Updated");
-        productRepository.save(productForm);
-        return "redirect:/products";
     }
 
     @GetMapping("/create_form")
@@ -1165,9 +1168,19 @@ public class ProductController {
                     }
                 }
                 product = productRepository.save(product);
+
+                List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+                for (PriceGroup priceGroup : priceGroups) {
+                    ProductPrice productPrice = new ProductPrice();
+                    productPrice.setPriceGroup(priceGroup);
+                    productPrice.setProduct(product);
+                    productPrice.setPrice(0L);
+                    productPriceRepository.save(productPrice);
+                }
+
                 if (product.getQty() > 0) {
                     ProductRecord productRecord = new ProductRecord();
-                    productRecord.setAction("manual_input");
+                    productRecord.setAction("initial_input");
                     productRecord.setProduct(product);
                     productRecord.setDiff(product.getQty());
                     productRecord.setQty(product.getQty());

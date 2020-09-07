@@ -1,6 +1,7 @@
 package com.pando.subalzu.web;
 
 import com.google.common.base.Strings;
+import com.pando.subalzu.form.CompanyConfigForm;
 import com.pando.subalzu.form.ShippingSearchForm;
 import com.pando.subalzu.form.SupplyOrderForm;
 import com.pando.subalzu.form.SupplyOrderProductForm;
@@ -50,6 +51,9 @@ public class ShippingController {
 
     @Autowired
     ProductRecordRepository productRecordRepository;
+
+    @Autowired
+    private CompanyConfigRepository configRepository;
 
     @Autowired
     ShippingValidator shippingValidator;
@@ -121,6 +125,7 @@ public class ShippingController {
 
         Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
         Optional<User> optionalUser = userRepository.findById(salesmanId);
+
         if (optionalSupplier.isPresent() && optionalUser.isPresent()) {
             Supplier supplier = optionalSupplier.get();
             User user = optionalUser.get();
@@ -233,6 +238,16 @@ public class ShippingController {
         return "shipping_edit_vue";
     }
 
+    @GetMapping("/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        Optional<SupplyOrder> optionalSupplyOrder = supplyOrderRepository.findById(id);
+        if (optionalSupplyOrder.isPresent()) {
+            SupplyOrder supplyOrder = optionalSupplyOrder.get();
+            supplyOrderRepository.delete(supplyOrder);
+        }
+        return "redirect:/shipping";
+    }
+
     @PostMapping("/{id}")
     public String update(Model model, @PathVariable Long id, SupplyOrder shippingForm, BindingResult bindingResult) {
         shippingValidator.validate(shippingForm, bindingResult);
@@ -309,5 +324,16 @@ public class ShippingController {
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         return resultMap;
+    }
+
+    @GetMapping("/print")
+    public String printOrder(@RequestParam List<Long> ids, Model model) {
+        List<SupplyOrder> orders = supplyOrderRepository.findAllById(ids);
+        CompanyConfigForm configForm = new CompanyConfigForm();
+        configForm.setConfigRepository(configRepository);
+        model.addAttribute("orders", orders);
+        model.addAttribute("currentCompany", configForm);
+        model.addAttribute("localDateTimeFormat", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return "shipping_print";
     }
 }

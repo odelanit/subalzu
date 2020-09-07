@@ -1,6 +1,8 @@
 package com.pando.subalzu.web;
 
 import com.pando.subalzu.form.PriceUpdateForm;
+import com.pando.subalzu.form.ProductCreationInput;
+import com.pando.subalzu.form.ProductPriceInput;
 import com.pando.subalzu.form.ProductSearchForm;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
@@ -51,6 +53,12 @@ public class PriceController {
     @Autowired
     ProductPriceRepository productPriceRepository;
 
+    @Autowired
+    CompanyConfigRepository companyConfigRepository;
+
+    @Autowired
+    FixedPriceRateRepository fixedPriceRateRepository;
+
     @ModelAttribute("categories")
     List<Category> categories() {
         return categoryRepository.findByParentNull(Sort.by(Sort.Direction.DESC, "level"));
@@ -70,7 +78,8 @@ public class PriceController {
 
     @GetMapping("/data")
     @ResponseBody
-    public Page<Product> getData(@ModelAttribute("form") ProductSearchForm form) {
+    public Map<String, Object> getData(@ModelAttribute("form") ProductSearchForm form) {
+        Map<String, Object> resultMap = new HashMap<>();
         String field = form.getField();
         String keyword = form.getKeyword();
         Category category = form.getCategory();
@@ -91,21 +100,25 @@ public class PriceController {
 
         Pageable pageable = PageRequest.of(page - 1, 50);
         productPage = productRepository.findAll(spec, pageable);
+        resultMap.put("productPage", productPage);
 
-//        List<Product> products = productPage.getContent();
-//        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
-//        for (Product product : products) {
-//            for (PriceGroup priceGroup : priceGroups) {
-//                Optional<ProductPrice> optionalProductPrice = productPriceRepository.getByProductAndPriceGroup(product, priceGroup);
-//                if (!optionalProductPrice.isPresent()) {
-//                    ProductPrice productPrice = new ProductPrice();
-//                    productPrice.setProduct(product);
-//                    productPrice.setPriceGroup(priceGroup);
-//                }
-//            }
-//        }
+        Optional<CompanyConfig> optionalCompanyConfig = companyConfigRepository.findByKey("use_special_price_rate");
+        boolean useSpecialPriceRate = false;
+        if (optionalCompanyConfig.isPresent()) {
+            CompanyConfig config = optionalCompanyConfig.get();
+            useSpecialPriceRate = Boolean.parseBoolean(config.getValue());
+        }
+        resultMap.put("use_special_price_rate", useSpecialPriceRate);
 
-        return productPage;
+        if (useSpecialPriceRate) {
+            List<FixedPriceRate> fixedPriceRates = fixedPriceRateRepository.findAll();
+            resultMap.put("fixed_price_rates", fixedPriceRates);
+        }
+
+        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+        resultMap.put("price_groups", priceGroups);
+
+        return resultMap;
     }
 
     @ModelAttribute("priceGroups")
@@ -115,35 +128,56 @@ public class PriceController {
 
     @PostMapping("/update")
     @ResponseBody
-    public Map<String, String> updatePrice(PriceUpdateForm form) {
-        Long productId = form.getProduct();
-        Optional<Product> optionalProduct = productRepository.findById(productId);
+    public Map<String, String> update(@RequestBody ProductCreationInput formData) {
+        Long id = formData.getId();
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
-            product.setBuyPrice(form.getBuyPrice());
-            product.setDirectPrice(form.getDirectPrice());
-            product.setParcelPrice(form.getParcelPrice());
-            product.setSellPrice(form.getSellPrice());
-            productRepository.save(product);
+            product.setBuyPrice(formData.getBuyPrice());
+            Set<ProductPriceInput> productPriceInputs = formData.getProductPriceInputs();
+            Set<ProductPrice> productPrices = product.getProductPrices();
+            for (ProductPrice productPrice : productPrices) {
+                productPriceRepository.deleteById(productPrice.getId());
+            }
+            for (ProductPriceInput productPriceInput : productPriceInputs) {
+                ProductPrice productPrice = new ProductPrice();
+                productPrice.setProduct(product);
+                Long priceGroupId = productPriceInput.getPriceGroupId();
+                Optional<PriceGroup> optionalPriceGroup = priceGroupRepository.findById(priceGroupId);
+                optionalPriceGroup.ifPresent(productPrice::setPriceGroup);
+                productPrice.setPrice(productPriceInput.getPrice());
+                productPriceRepository.save(productPrice);
+            }
         }
+
         Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("message", "단가 변경이 완료되었습니다.");
+        resultMap.put("message", "Success");
         return resultMap;
     }
 
     @PostMapping("/update_all")
     @ResponseBody
-    public Map<String, String> updateAll(@RequestBody List<PriceUpdateForm> infos) {
-        for (PriceUpdateForm form: infos) {
-            Long productId = form.getProduct();
-            Optional<Product> optionalProduct = productRepository.findById(productId);
+    public Map<String, String> updateAll(@RequestBody List<ProductCreationInput> infos) {
+        for (ProductCreationInput formData: infos) {
+            Long id = formData.getId();
+            Optional<Product> optionalProduct = productRepository.findById(id);
             if (optionalProduct.isPresent()) {
                 Product product = optionalProduct.get();
-                product.setBuyPrice(form.getBuyPrice());
-                product.setDirectPrice(form.getDirectPrice());
-                product.setParcelPrice(form.getParcelPrice());
-                product.setSellPrice(form.getSellPrice());
-                productRepository.save(product);
+                product.setBuyPrice(formData.getBuyPrice());
+                Set<ProductPriceInput> productPriceInputs = formData.getProductPriceInputs();
+                Set<ProductPrice> productPrices = product.getProductPrices();
+                for (ProductPrice productPrice : productPrices) {
+                    productPriceRepository.deleteById(productPrice.getId());
+                }
+                for (ProductPriceInput productPriceInput : productPriceInputs) {
+                    ProductPrice productPrice = new ProductPrice();
+                    productPrice.setProduct(product);
+                    Long priceGroupId = productPriceInput.getPriceGroupId();
+                    Optional<PriceGroup> optionalPriceGroup = priceGroupRepository.findById(priceGroupId);
+                    optionalPriceGroup.ifPresent(productPrice::setPriceGroup);
+                    productPrice.setPrice(productPriceInput.getPrice());
+                    productPriceRepository.save(productPrice);
+                }
             }
         }
         Map<String, String> resultMap = new HashMap<>();
@@ -433,13 +467,13 @@ public class PriceController {
                             product.setBuyPrice((long) currentCell.getNumericCellValue());
                             break;
                         case 7:
-                            product.setDirectPrice((long) currentCell.getNumericCellValue());
+//                            product.setDirectPrice((long) currentCell.getNumericCellValue());
                             break;
                         case 8:
-                            product.setParcelPrice((long) currentCell.getNumericCellValue());
+//                            product.setParcelPrice((long) currentCell.getNumericCellValue());
                             break;
                         case 9:
-                            product.setSellPrice((long) currentCell.getNumericCellValue());
+//                            product.setSellPrice((long) currentCell.getNumericCellValue());
                             break;
 
                         default:

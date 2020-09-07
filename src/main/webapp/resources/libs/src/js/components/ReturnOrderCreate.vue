@@ -287,7 +287,7 @@
                                                 <div class="form-inline">
                                                     <select class="form-control form-control-sm" v-model="orderProduct.price" style="width: 37%;">
                                                         <option v-bind:value="orderProduct.primaryPrice">기본 단가</option>
-                                                        <option v-for="groupPrice in orderProduct.product.groupPrices" v-bind:value="groupPrice.price">{{ groupPrice.priceGroup.name }}</option>
+                                                        <option v-for="groupPrice in orderProduct.product.productPrices" v-bind:value="groupPrice.price">{{ groupPrice.priceGroup.name }}</option>
                                                     </select>
                                                     <input class="form-control form-control-sm text-center mx-2" style="width: 20%;" type="number" v-model.number="orderProduct.qty">
                                                     <div class="input-group input-group-sm" style="width: 35%">
@@ -455,6 +455,9 @@
                             if (spIdx !== -1) {
                                 product.sellPrice = product.shopPrices[spIdx].price;
                             }
+                            this.$set(product, 'productPrices', product.productPrices.filter(x => {
+                                return (x.priceGroup.name !== 'main') && (x.priceGroup.name !== 'direct') && (x.priceGroup.name !== 'parcel')
+                            }));
                         });
                         this.prev_products = data.prev_products;
                         if (data.prev_products.length > 0) {
@@ -476,9 +479,7 @@
                     this.$set(this.orderProducts, opId, orderProduct);
                 } else {
                     let orderProduct = {};
-                    console.log(product);
                     orderProduct.product = Object.assign({}, product);
-                    // this.$set(orderProduct, 'product', product);
                     orderProduct.productId = orderProduct.product.id;
                     let spIdx = product.shopPrices.findIndex(x => x.shop.id === this.selected_shop.id);
                     if (spIdx === -1) {
@@ -486,6 +487,9 @@
                     } else {
                         orderProduct.primaryPrice = product.shopPrices[spIdx].price;
                     }
+                    this.$set(orderProduct.product, 'productPrices', orderProduct.product.productPrices.filter(x => {
+                        return (x.priceGroup.name !== 'main') && (x.priceGroup.name !== 'direct') && (x.priceGroup.name !== 'parcel')
+                    }));
                     orderProduct.price = orderProduct.primaryPrice;
                     orderProduct.qty = 0;
                     this.orderProducts.push(orderProduct);
