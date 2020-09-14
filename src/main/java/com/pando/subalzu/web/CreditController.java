@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -297,7 +298,7 @@ public class CreditController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable Long id, @ModelAttribute("form") TransactionSearchForm form, Model model, Principal principal) {
+    public String show(@PathVariable Long id, @ModelAttribute("form") TransactionSearchForm form, Model model, Principal principal, RedirectAttributes redirectAttributes) {
         Optional<Shop> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
@@ -306,6 +307,7 @@ public class CreditController {
                 User user = userDetails.getUser();
                 Set<Shop> salesShops = user.getSalesShops();
                 if (!salesShops.contains(shop)) {
+                    redirectAttributes.addFlashAttribute("error", "해당 권한이 없습니다.");
                     return "redirect:/credits";
                 }
             }

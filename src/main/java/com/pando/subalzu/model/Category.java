@@ -29,13 +29,21 @@ public class Category {
     @JsonBackReference
     private Category parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private Set<Category> children;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     @JsonIgnore
     Set<Product> products;
+
+    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    Set<Product> products_of_subcategory;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    Set<FixedPriceRate> fixedPriceRates;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -120,5 +128,21 @@ public class Category {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
+    }
+
+    public Set<FixedPriceRate> getFixedPriceRates() {
+        return fixedPriceRates;
+    }
+
+    public void setFixedPriceRates(Set<FixedPriceRate> fixedPriceRates) {
+        this.fixedPriceRates = fixedPriceRates;
+    }
+
+    public Set<Product> getProducts_of_subcategory() {
+        return products_of_subcategory;
+    }
+
+    public void setProducts_of_subcategory(Set<Product> products_of_subcategory) {
+        this.products_of_subcategory = products_of_subcategory;
     }
 }

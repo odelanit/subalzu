@@ -95,8 +95,15 @@ public class CategoryController {
     // TODO: 카테고리 이름 수정
     @PostMapping("/categories/update")
     @ResponseBody
-    public Map<String, String> update(Category category) {
-        categoryRepository.save(category);
+    public Map<String, String> update(@RequestBody Map<String, Object> payload) {
+        String name = (String) payload.get("name");
+        Long id = Long.valueOf((Integer)payload.get("id"));
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()) {
+            Category category = optionalCategory.get();
+            category.setName(name);
+            categoryRepository.save(category);
+        }
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("message", "Success");
         resultMap.put("result_code", "00");
@@ -110,11 +117,6 @@ public class CategoryController {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isPresent()) {
             Category category = optionalCategory.get();
-            Set<Category> children = category.getChildren();
-            for (Category child : children) {
-                categoryRepository.delete(child);
-            }
-            categoryRepository.deleteAll(children);
             categoryRepository.delete(category);
         }
         Map<String, String> resultMap = new HashMap<>();

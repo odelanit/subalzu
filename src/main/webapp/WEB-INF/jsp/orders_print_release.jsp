@@ -24,6 +24,11 @@
     <link href="${contextPath}/resources/bootstrap-4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/fontawesome-pro/css/all.min.css" rel="stylesheet" type="text/css"/>
     <link href="${contextPath}/resources/css/app.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .table thead th {
+            border-bottom: unset;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -41,7 +46,7 @@
                         총 상품 수량: <fmt:formatNumber type="number" value="${totalQty}" />
                     </div>
                 </div>
-                <table class="table table-middle text-center" style="border: 2px solid black">
+                <table class="table table-middle text-center" style="border: 2px solid black;">
                     <thead class="thead-light">
                     <tr>
                         <th style="width: 70px;">#</th>

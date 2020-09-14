@@ -90,6 +90,11 @@
                         <h4 class="mb-1 mt-0">외상잔액/예치금 관리</h4>
                     </div>
                 </div>
+                <c:if test="${error}">
+                    <div class="alert alert-danger">
+                        ${error}
+                    </div>
+                </c:if>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row mb-2">

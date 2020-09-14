@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -39,6 +40,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CompanyConfigRepository companyConfigRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ProductPriceRepository productPriceRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -100,6 +110,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createPriceGroupIfNotFound("direct");
         createPriceGroupIfNotFound("parcel");
         createPriceGroupIfNotFound("main");
+
+        createCompanyConfigIfNotFound("first_category_popup", "off");
+        createCompanyConfigIfNotFound("use_special_price_rate", "false");
+
+        initProductPrices();
 
         alreadySetup = true;
     }
@@ -166,5 +181,35 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             category.setName(name);
             categoryRepository.save(category);
         }
+    }
+
+    @Transactional
+    void createCompanyConfigIfNotFound(String key, String value) {
+        Optional<CompanyConfig> optionalCompanyConfig = companyConfigRepository.findByKey(key);
+        if (!optionalCompanyConfig.isPresent()) {
+            CompanyConfig companyConfig = new CompanyConfig();
+            companyConfig.setKey(key);
+            companyConfig.setValue(value);
+            companyConfigRepository.save(companyConfig);
+        }
+    }
+
+    @Transactional
+    void initProductPrices() {
+        List<Product> products = productRepository.findAll();
+        List<PriceGroup> priceGroups = priceGroupRepository.findAll();
+        for (Product product : products) {
+            for (PriceGroup priceGroup : priceGroups) {
+                Optional<ProductPrice> optionalProductPrice = productPriceRepository.getByProductAndPriceGroup(product, priceGroup);
+                if (!optionalProductPrice.isPresent()) {
+                    ProductPrice productPrice = new ProductPrice();
+                    productPrice.setPrice(0L);
+                    productPrice.setPriceGroup(priceGroup);
+                    productPrice.setProduct(product);
+                    productPriceRepository.save(productPrice);
+                }
+            }
+        }
+
     }
 }

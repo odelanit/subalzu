@@ -66,13 +66,28 @@ public class PriceController {
 
     @GetMapping("")
     public String index(@ModelAttribute("form") ProductSearchForm form, Model model) {
+        String field = form.getField();
+        String keyword = form.getKeyword();
         Category category = form.getCategory();
+        int page = form.getPage();
+
+        Page<Product> productPage;
+        Specification<Product> spec = new ProductSpecification(new SearchCriteria(field, ":", keyword));
+
         if (category != null) {
-            List<Category> subcategories = categoryRepository.findByParent(category);
-            model.addAttribute("subcategories", subcategories);
+            spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("category", ":", category)));
+            Category subcategory = form.getSubcategory();
+            if (subcategory != null) {
+                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
+            }
         } else {
             form.setSubcategory(null);
         }
+
+        Pageable pageable = PageRequest.of(page - 1, 50);
+        productPage = productRepository.findAll(spec, pageable);
+        model.addAttribute("productPage", productPage);
+        model.addAttribute("currentPage", page);
         return "price_list";
     }
 

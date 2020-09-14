@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface ProductPriceRepository extends JpaRepository<ProductPrice, Long> {
     Optional<ProductPrice> getByProductAndPriceGroup(Product product, PriceGroup priceGroup);
 
-    List<ProductPrice> findByProduct(Product product);
+    List<ProductPrice> findByProductOrderByPriceGroupId(Product product);
 }

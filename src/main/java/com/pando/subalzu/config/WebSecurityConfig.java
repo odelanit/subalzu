@@ -53,6 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .csrf().ignoringAntMatchers("/upload/")
+                .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
                 .and()

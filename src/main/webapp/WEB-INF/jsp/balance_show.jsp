@@ -204,7 +204,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <table class="table table-middle table-hover text-center">
+                                <table class="table table-middle table-striped text-center">
                                     <thead class="thead-light">
                                     <tr>
                                         <th>#</th>

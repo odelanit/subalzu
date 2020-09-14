@@ -25,13 +25,25 @@ public class OrderProductSpecification implements Specification<OrderProduct> {
             String key = criteria.getKey();
             if (key.contains("_")) {
                 String[] keyStrings = key.split("_");
-                String key0 = keyStrings[0];
-                String key1 = keyStrings[1];
-                if (root.get(key0).get(key1).getJavaType() == String.class) {
-                    return criteriaBuilder.like(root.get(key0).get(key1), "%" + criteria.getValue() + "%");
-                } else {
-                    return criteriaBuilder.equal(root.get(key0).get(key1), criteria.getValue());
+                if (keyStrings.length == 2) {
+                    String key0 = keyStrings[0];
+                    String key1 = keyStrings[1];
+                    if (root.get(key0).get(key1).getJavaType() == String.class) {
+                        return criteriaBuilder.like(root.get(key0).get(key1), "%" + criteria.getValue() + "%");
+                    } else {
+                        return criteriaBuilder.equal(root.get(key0).get(key1), criteria.getValue());
+                    }
+                } else if (keyStrings.length == 3) {
+                    String key0 = keyStrings[0];
+                    String key1 = keyStrings[1];
+                    String key2 = keyStrings[2];
+                    if (root.get(key0).get(key1).get(key2).getJavaType() == String.class) {
+                        return criteriaBuilder.like(root.get(key0).get(key1).get(key2), "%" + criteria.getValue() + "%");
+                    } else {
+                        return criteriaBuilder.equal(root.get(key0).get(key1).get(key2), criteria.getValue());
+                    }
                 }
+
             } else {
                 if (root.get(criteria.getKey()).getJavaType() == String.class) {
                     return criteriaBuilder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");

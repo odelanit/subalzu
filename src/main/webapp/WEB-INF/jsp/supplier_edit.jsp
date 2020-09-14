@@ -14,8 +14,6 @@
     <meta content="" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
-    <meta name="_csrf" content="${_csrf.token}"/>
-
     <!-- App favicon -->
     <link rel="shortcut icon" href="${contextPath}/resources/images/favicon.svg">
 
@@ -270,38 +268,10 @@
                                         </tr>
                                         <spring:bind path="username">
                                             <tr>
-                                                <th class="required"><span>아이디</span></th>
+                                                <th><span>아이디</span></th>
                                                 <td colspan="3">
-                                                    <form:input path="username" class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                placeholder="4자 이상 영문 또는 숫자만 사용 가능" />
-                                                    <div class="invalid-feedback" id="chkmsg">
-                                                        <form:errors path="username"/>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </spring:bind>
-                                        <spring:bind path="password">
-                                            <tr>
-                                                <th class="required"><span>임시 비밀번호</span></th>
-                                                <td colspan="3">
-                                                    <form:password path="password" class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                   placeholder="6자 이상 영문, 숫자 조합" />
-                                                    <small class="form-text text-primary">매입처 최초 로그인을 위한 임시 비밀번호를 설정해 주세요.</small>
-                                                    <div class="invalid-feedback">
-                                                        <form:errors path="password"/>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </spring:bind>
-                                        <spring:bind path="passwordConfirm">
-                                            <tr>
-                                                <th class="required"><span>임시 비밀번호 확인</span></th>
-                                                <td colspan="3">
-                                                    <form:password path="passwordConfirm" class="form-control ${status.error ? 'is-invalid' : ''}"
-                                                                   placeholder="비밀번호를 다시 입력해주세요." />
-                                                    <div class="invalid-feedback" id="pwd_msg">
-                                                        <form:errors path="passwordConfirm"/>
-                                                    </div>
+                                                    ${supplierForm.owner.username}
+                                                    <form:hidden path="username" />
                                                 </td>
                                             </tr>
                                         </spring:bind>
@@ -361,7 +331,7 @@
                                     </table>
                                     <div class="form-group text-center">
                                         <a href="/suppliers" class="btn btn-outline-secondary">목록으로</a>
-                                        <button id="saveButton" disabled class="btn btn-primary">저장하기</button>
+                                        <button class="btn btn-primary">저장하기</button>
                                     </div>
                                 </div>
                             </div>
@@ -454,7 +424,6 @@
 <script src="${contextPath}/resources/bootstrap-4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="${contextPath}/resources/metismenu/metisMenu.min.js"></script>
 <script src="${contextPath}/resources/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${contextPath}/resources/js/axios.js"></script>
 <script src="${contextPath}/resources/js/app.min.js"></script>
 <script src="${contextPath}/resources/js/app.js"></script>
 <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
@@ -597,63 +566,6 @@
     $('#productSearchForm').on('submit', function (e) {
         e.preventDefault();
         getProductsData();
-    });
-
-    $('#name').on('keyup', function () {
-        if ($(this).val()) {
-            $('#saveButton').attr('disabled', false);
-        } else {
-            $('#saveButton').attr('disabled', true);
-        }
-    })
-
-    $('#passwordConfirm').on('keyup', function () {
-        if ($(this).val()) {
-            $('#saveButton').attr('disabled', false);
-        } else {
-            $('#saveButton').attr('disabled', true);
-        }
-
-        if ($(this).val() === $('#password').val()) {
-            $('#saveButton').attr('disabled', false);
-            $(this).removeClass('is-invalid');
-            $('#pwd_msg').text('');
-        } else {
-            $('#saveButton').attr('disabled', true);
-            $(this).addClass('is-invalid');
-            $('#pwd_msg').text('비밀번호가 일치하지 않습니다');
-        }
-    })
-
-    $('#username').on('keyup', function () {
-        var token = $("meta[name='_csrf']").attr("content");
-        var element = $(this);
-        var username = element.val();
-        if ($(this).val()) {
-            $('#saveButton').attr('disabled', false);
-        } else {
-            $('#saveButton').attr('disabled', true);
-        }
-        if (username) {
-            axios.post('/suppliers/check_username', {
-                username: $(this).val()
-            }, {
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                }
-            })
-                .then(res => res.data)
-                .then(data => {
-                    $("#chkmsg").text("");
-                    element.removeClass('is-invalid');
-                    $('#saveButton').attr('disabled', false);
-                })
-                .catch(error => {
-                    element.addClass('is-invalid');
-                    $("#chkmsg").text("이미 사용중인 아이디입니다.");
-                    $('#saveButton').attr('disabled', true);
-                });
-        }
     })
 </script>
 </body>

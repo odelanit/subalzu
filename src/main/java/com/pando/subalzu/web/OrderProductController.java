@@ -68,6 +68,9 @@ public class OrderProductController {
         if (!Strings.isNullOrEmpty(orderStatus)) {
             spec = Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria("order_orderStatus", ":", orderStatus)));
         }
+        if (!Strings.isNullOrEmpty(shopKeyword)) {
+            spec = Specification.where(spec).and(new OrderProductSpecification(new SearchCriteria("order_shop_name", ":", shopKeyword)));
+        }
         if (category != null) {
             List<Category> subcategories = categoryRepository.findByParent(category);
             model.addAttribute("subcategories", subcategories);

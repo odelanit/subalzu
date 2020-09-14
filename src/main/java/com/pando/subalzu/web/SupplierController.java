@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.*;
 
@@ -102,17 +103,15 @@ public class SupplierController {
             return "supplier_create";
         }
 
-        if (!Strings.isNullOrEmpty(supplierForm.getUsername())) {
-            SupplyOwner owner = new SupplyOwner();
-            owner.setUsername(supplierForm.getUsername());
-            owner.setFullName(supplierForm.getFullName());
-            owner.setPhone(supplierForm.getPhone());
-            owner.setBio(supplierForm.getBio());
-            owner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
-            SupplyOwner dbUser = supplyOwnerRepository.save(owner);
+        SupplyOwner owner = new SupplyOwner();
+        owner.setUsername(supplierForm.getUsername());
+        owner.setFullName(supplierForm.getFullName());
+        owner.setPhone(supplierForm.getPhone());
+        owner.setBio(supplierForm.getBio());
+        owner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
+        SupplyOwner dbUser = supplyOwnerRepository.save(owner);
 
-            supplierForm.setOwner(dbUser);
-        }
+        supplierForm.setOwner(dbUser);
 
         Supplier supplier = supplierRepository.save(supplierForm);
 
@@ -142,7 +141,7 @@ public class SupplierController {
             }
             model.addAttribute("supplierForm", supplier);
             model.addAttribute("page_title", "매입처 수정");
-            return "supplier_create";
+            return "supplier_edit";
         } else {
             return "redirect:/suppliers";
         }
@@ -152,29 +151,15 @@ public class SupplierController {
     public String update(@ModelAttribute("supplierForm") Supplier supplierForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model, @PathVariable long id, Principal principal) {
         supplierValidator.validate(supplierForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "supplier_create";
+            return "supplier_edit";
         }
 
         SupplyOwner owner = supplierForm.getOwner();
-        if (owner != null) {
-            if (!Strings.isNullOrEmpty(supplierForm.getPassword())) {
-                owner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
-            }
-            supplyOwnerRepository.save(owner);
-        } else {
-            if (!Strings.isNullOrEmpty(supplierForm.getUsername())) {
-                SupplyOwner newOwner = new SupplyOwner();
-                newOwner.setUsername(supplierForm.getUsername());
-                newOwner.setFullName(supplierForm.getFullName());
-                newOwner.setPhone(supplierForm.getPhone());
-                newOwner.setBio(supplierForm.getBio());
-                newOwner.setPassword(bCryptPasswordEncoder.encode(supplierForm.getPassword()));
+        owner.setFullName(supplierForm.getFullName());
+        owner.setPhone(supplierForm.getPhone());
+        owner.setBio(supplierForm.getBio());
 
-                SupplyOwner dbUser = supplyOwnerRepository.save(newOwner);
-
-                supplierForm.setOwner(dbUser);
-            }
-        }
+        supplyOwnerRepository.save(owner);
 
         Supplier supplier = supplierRepository.save(supplierForm);
 
@@ -203,5 +188,20 @@ public class SupplierController {
             supplierRepository.delete(supplier);
         }
         return "redirect:/suppliers";
+    }
+
+    @PostMapping("/suppliers/check_username")
+    @ResponseBody
+    public Map<String, String> checkUsername(@RequestBody Map<String, Object> payload, HttpServletResponse response) {
+        String username = (String) payload.get("username");
+        Optional<SupplyOwner> optionalSupplyOwner =  supplyOwnerRepository.getSupplyOwnerByUsername(username);
+        Map<String, String> resultMap = new HashMap<>();
+        if (optionalSupplyOwner.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            resultMap.put("message", "Customer present");
+        } else {
+            resultMap.put("message", "Success");
+        }
+        return resultMap;
     }
 }

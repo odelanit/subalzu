@@ -11,7 +11,7 @@ public class CompanyConfig {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "cfg_key")
+    @Column(name = "cfg_key", unique = true)
     private String key;
 
     @Column(name = "cfg_value")

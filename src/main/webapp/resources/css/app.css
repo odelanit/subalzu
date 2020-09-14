@@ -277,12 +277,13 @@ input[type='number']::-webkit-outer-spin-button {
 
 .user-profile .pro-user-name {
     color: #4b4b5a;
-    font-weight: 600
+    font-weight: 600;
+    font-size: 19px;
 }
 
 .user-profile .pro-user-desc {
     text-transform: uppercase;
-    font-size: .6rem;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 1px
 }
@@ -4012,4 +4013,8 @@ body.authentication-bg {
     50% {
         transform: scale(1.5);
     }
+}
+
+[v-cloak] {
+    display: none;
 }

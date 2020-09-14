@@ -213,7 +213,7 @@ public class ShopController {
     }
 
     @GetMapping("/{id}")
-    public String show(@ModelAttribute("form") OrderSearchForm form, Model model, @PathVariable Long id, Principal principal) throws ParseException {
+    public String show(@ModelAttribute("form") OrderSearchForm form, Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) throws ParseException {
         Optional<Shop> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
@@ -222,6 +222,7 @@ public class ShopController {
                 User user = userDetails.getUser();
                 Set<Shop> salesShops = user.getSalesShops();
                 if (!salesShops.contains(shop)) {
+                    redirectAttributes.addFlashAttribute("error", "해당 권한이 없습니다.");
                     return "redirect:/shops";
                 }
             }
@@ -258,7 +259,7 @@ public class ShopController {
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable Long id, Principal principal) {
+    public String edit(Model model, @PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
         Optional<Shop> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             Shop shop = optionalShop.get();
@@ -267,6 +268,7 @@ public class ShopController {
                 User user = userDetails.getUser();
                 Set<Shop> salesShops = user.getSalesShops();
                 if (!salesShops.contains(shop)) {
+                    redirectAttributes.addFlashAttribute("error", "해당 권한이 없습니다.");
                     return "redirect:/shops";
                 }
             }

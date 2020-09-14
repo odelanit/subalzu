@@ -96,7 +96,7 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
-                                <div id="app">
+                                <div id="app" v-cloak>
                                     <table class="table table-bordered form-table">
                                         <tbody class="thead-light">
                                         <tr>
@@ -156,15 +156,21 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr v-for="(category, index) in categories" v-bind:key="index">
+                                                <tr v-for="(category, index) in categories" :key="index">
                                                     <td>
-                                                        <div class="d-flex">
-                                                            <div>
-                                                                <a href="javascript:;" @click="selectCategory(category)">{{ category.name }}</a>
+                                                        <div class="row">
+                                                            <div class="col" @click="selectCategory(category)" v-if="category.editing === false">
+                                                                <a href="javascript:;">{{ category.name }}</a>
                                                             </div>
-                                                            <div class="ml-auto">
-                                                                <a class="btn btn-sm btn-outline-warning mr-1" role="button">수정</a>
-                                                                <a class="btn btn-sm btn-outline-danger" role="button" @click="deleteCategory(category)" href="javascript:;">삭제</a>
+                                                            <div class="col" v-else>
+                                                                <input class="form-control form-control-sm" v-model="category.name">
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <a class="btn btn-sm btn-outline-warning mr-1" @click="editOrUpdate(category)" role="button">
+                                                                    {{ category.editing === false ? '수정' : '저장' }}
+                                                                </a>
+                                                                <button v-if="category.editing === true" class="btn btn-sm btn-outline-danger" role="button" @click="cancelEdit(category)">취소</button>
+                                                                <a v-if="category.editing === false" class="btn btn-sm btn-outline-danger" role="button" @click="deleteCategory(category)" href="javascript:;">삭제</a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -220,12 +226,18 @@
                                                     <tr v-for="(subcategory, index1) in selectedCategory.children">
                                                         <td>
                                                             <div class="d-flex">
-                                                                <div>
+                                                                <div class="col" v-if="subcategory.editing === false">
                                                                     {{ subcategory.name }}
                                                                 </div>
+                                                                <div class="col" v-else>
+                                                                    <input class="form-control form-control-sm" v-model="subcategory.name">
+                                                                </div>
                                                                 <div class="ml-auto">
-                                                                    <a class="btn btn-sm btn-outline-warning mr-1" role="button">수정</a>
-                                                                    <a class="btn btn-sm btn-outline-danger" role="button" @click="deleteCategory(subcategory)">삭제</a>
+                                                                    <a class="btn btn-sm btn-outline-warning mr-1" @click="editOrUpdate(subcategory)" role="button">
+                                                                        {{ subcategory.editing === false ? '수정' : '저장' }}
+                                                                    </a>
+                                                                    <button v-if="subcategory.editing === true" class="btn btn-sm btn-outline-danger" role="button" @click="cancelEdit(subcategory)">취소</button>
+                                                                    <a v-if="subcategory.editing === false" class="btn btn-sm btn-outline-danger" role="button" @click="deleteCategory(subcategory, selectedCategory)">삭제</a>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -336,18 +348,27 @@
             selectedCategory: null,
         },
         mounted() {
-            axios.get('/categories/data')
-                .then(res => res.data)
-                .then(data => {
-                    this.categories = data.categories;
-                    this.first_category_popup = data.first_category_popup;
-                    this.use_special_price_rate = data.use_special_price_rate;
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+            this.initData();
         },
         methods: {
+            initData: function () {
+                axios.get('/categories/data')
+                    .then(res => res.data)
+                    .then(data => {
+                        this.categories = data.categories;
+                        this.categories.forEach(category => {
+                            this.$set(category, 'editing', false);
+                            category.children.forEach(subcategory => {
+                                this.$set(subcategory, 'editing', false);
+                            })
+                        });
+                        this.first_category_popup = data.first_category_popup;
+                        this.use_special_price_rate = data.use_special_price_rate;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            },
             addCategory: function () {
                 let token = $("meta[name='_csrf']").attr("content");
                 if (this.new_category_name) {
@@ -361,6 +382,8 @@
                     })
                         .then(res => res.data)
                         .then(data => {
+                            data.category;
+                            data.category.editing = false;
                             this.categories.push(data.category);
                             this.new_category_name = ''
                         })
@@ -410,7 +433,8 @@
                         console.log(error);
                     });
             },
-            deleteCategory: function (category) {
+            deleteCategory: function (category, parent) {
+                console.log(parent);
                 let token = $("meta[name='_csrf']").attr("content");
                 axios.post('/categories/delete', {
                     category: category.id,
@@ -421,11 +445,45 @@
                 })
                     .then(res => res.data)
                     .then(data => {
-                        window.location.reload();
+                        if (parent) {
+                            let index = this.selectedCategory.children.findIndex(x => x.id === category.id);
+                            this.selectedCategory.children.splice(index, 1);
+                        } else {
+                            let index = this.categories.findIndex(x => x.id === category.id);
+                            this.categories.splice(index, 1);
+                            this.selectedCategory = null;
+                        }
                     })
                     .catch(error => {
                         console.log(error);
                     });
+            },
+            editOrUpdate: function (category) {
+                if (category.editing === false) {
+                    this.$set(category, 'editing', true);
+                    this.$set(category, 'old_name', category.name);
+                } else {
+                    let token = $("meta[name='_csrf']").attr("content");
+                    axios.post('/categories/update', {
+                        id: category.id,
+                        name: category.name,
+                    }, {
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                        }
+                    })
+                        .then(res => res.data)
+                        .then(data => {
+                            this.$set(category, 'editing', false);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            },
+            cancelEdit: function (category) {
+                this.$set(category, 'name', category.old_name);
+                this.$set(category, 'editing', false);
             }
         },
         watch: {

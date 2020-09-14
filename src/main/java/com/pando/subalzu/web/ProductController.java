@@ -19,10 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.*;
 import javax.servlet.http.HttpServletResponse;
@@ -123,7 +121,7 @@ public class ProductController {
             form.setSubcategory(null);
         }
 
-        Pageable pageable = PageRequest.of(page - 1, 50);
+        Pageable pageable = PageRequest.of(page - 1, 50, Sort.by("createdAt").descending());
         productPage = productRepository.findAll(spec, pageable);
         List<Product> products = productPage.getContent();
 
@@ -184,7 +182,24 @@ public class ProductController {
 
         if (optionalSupplier.isPresent()) {
             Supplier supplier = optionalSupplier.get();
+            Long categoryId = form5.getCategoryId();
+            Long subcategoryId = form5.getSubcategoryId();
+            String keyword = form5.getKeyword();
+
             Specification<Product> spec = new ProductSpecification(new SearchCriteria("supplier", ":", supplier));
+            spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("name", ":", keyword)));
+            if (categoryId != null) {
+                Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+                Category category = optionalCategory.get();
+                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("category", ":", category)));
+            }
+
+            if (subcategoryId != null) {
+                Optional<Category> optionalCategory = categoryRepository.findById(subcategoryId);
+                Category subcategory = optionalCategory.get();
+                spec = Specification.where(spec).and(new ProductSpecification(new SearchCriteria("subCategory", ":", subcategory)));
+            }
+
             List<Product> products = productRepository.findAll(spec);
             resultMap.put("products", products);
         }
@@ -376,7 +391,7 @@ public class ProductController {
                 }
             }
 
-            List<ProductPrice> productPrices = productPriceRepository.findByProduct(optionalProduct.get());
+            List<ProductPrice> productPrices = productPriceRepository.findByProductOrderByPriceGroupId(optionalProduct.get());
             resultMap.put("productPrices", productPrices);
             return resultMap;
         } else {

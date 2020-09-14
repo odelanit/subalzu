@@ -99,6 +99,7 @@ public class Product {
     Set<SupplyOrderProduct> supplyOrderProducts;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @OrderBy("priceGroup.id")
     @JsonManagedReference
     Set<ProductPrice> productPrices;
 

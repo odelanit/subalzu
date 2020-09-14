@@ -337,10 +337,11 @@ public class BalanceController {
             CellStyle defaultStyle = workbook.createCellStyle();
             defaultStyle.setFont(defaultFont);
 
+            Supplier supplier = optionalSupplier.get();
 
             Row row = sheet.createRow(0);
             Cell cell = row.createCell(0);
-            cell.setCellValue("매입처잔액 상세 내역");
+            cell.setCellValue(supplier.getName() + " 매입처잔액 상세 내역");
             cell.setCellStyle(defaultStyle);
 
             row = sheet.createRow(1);
@@ -373,7 +374,6 @@ public class BalanceController {
             cell.setCellValue("비고");
             cell.setCellStyle(headerCellStyle);
 
-            Supplier supplier = optionalSupplier.get();
             Specification<SupplierTransaction> spec = new SupplierTransactionSpecification(new SearchCriteria("supplier", ":", supplier));
             List<SupplierTransaction> transactions = transactionRepository.findAll(spec);
 

@@ -94,7 +94,7 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div id="app">
+                        <div id="app" v-cloak>
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <h5 class="card-title">정액/정률 사용 설정 <span data-toggle="modal"

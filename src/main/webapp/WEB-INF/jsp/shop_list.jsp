@@ -91,6 +91,11 @@
                         <h4 class="mb-1 mt-0">거래처 목록</h4>
                     </div>
                 </div>
+                <c:if test="${error}">
+                    <div class="alert alert-danger">
+                            ${error}
+                    </div>
+                </c:if>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">

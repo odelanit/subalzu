@@ -150,7 +150,7 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <div id="price-table">
+                                <div id="price-table" v-cloak>
                                     <div class="row mb-3">
                                         <div class="col-6">
                                             <span>전체 {{ totalElements }}건</span>
@@ -197,6 +197,49 @@
                                             </tr>
                                             </tbody>
                                         </table>
+                                        <c:if test="${productPage.totalPages > 1}">
+                                            <div>
+                                                    <nav>
+                                                        <ul class="pagination pagination-sm justify-content-center">
+                                                            <c:choose>
+                                                                <c:when test="${productPage.hasPrevious()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" data-page="${currentPage - 1}" href="javascript:;">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &laquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <c:forEach var="i" begin="1" end="${productPage.totalPages}">
+                                                                <li class="page-item <c:if test="${i == currentPage}">active</c:if>"><a href="javascript:;" class="page-link" data-page="${i}">${i}</a></li>
+                                                            </c:forEach>
+                                                            <c:choose>
+                                                                <c:when test="${productPage.hasNext()}">
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" data-page="${currentPage + 1}" href="javascript:;">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item disabled">
+                                                                        <a class="page-link" href="#">
+                                                                            &raquo;
+                                                                        </a>
+                                                                    </li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </ul>
+                                                    </nav>
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>
@@ -511,6 +554,11 @@
                                     });
                                 }
                             }
+                        } else {
+                            product.productPrices.forEach(productPrice => {
+                                productPrice.priceGroupName = productPrice.priceGroup.name;
+                                productPrice.priceGroupId = productPrice.priceGroup.id;
+                            });
                         }
                     });
                 })

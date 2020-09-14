@@ -63,6 +63,12 @@ public class OrderController {
     CategoryRepository categoryRepository;
 
     @Autowired
+    SupplyOrderRepository supplyOrderRepository;
+
+    @Autowired
+    SupplierRepository supplierRepository;
+
+    @Autowired
     OrderValidator orderValidator;
 
     @Autowired
@@ -165,9 +171,18 @@ public class OrderController {
         return builder.toString();
     }
 
+    public SupplyOrder findSupplyOrder(String name, List<SupplyOrder> supplyOrders) {
+        for (SupplyOrder supplyOrder : supplyOrders) {
+            if (supplyOrder.getSupplier().getName().equals(name)) {
+                return supplyOrder;
+            }
+        }
+        return null;
+    }
+
     @PostMapping(value = "/orders/store")
     @ResponseBody
-    public Map<String, String> store(@RequestBody OrderForm formData, HttpServletResponse response) {
+    public Map<String, String> store(@RequestBody OrderForm formData, Principal principal, HttpServletResponse response) {
         Order order = new Order();
         order.setOrderCode(randomAlphaNumeric(10));
         Long shopId = formData.getShopId();
@@ -193,6 +208,9 @@ public class OrderController {
             Set<OrderProductForm> orderProductFormSet = formData.getOrderProducts();
             double total = 0.0;
 
+            List<SupplyOrder> supplyOrders = new ArrayList<>();
+            List<Supplier> suppliers = new ArrayList<>();
+
             for (OrderProductForm orderProductForm : orderProductFormSet) {
                 OrderProduct orderProduct = new OrderProduct();
                 orderProduct.setOrder(order);
@@ -204,8 +222,58 @@ public class OrderController {
                     orderProduct.setQty(orderProductForm.getQty());
                     orderProduct.setPrice(orderProductForm.getPrice());
                     orderProductRepository.save(orderProduct);
+
+                    if (product.getShippingMethod().equalsIgnoreCase("automatic") && product.getSupplier() != null) {
+                        if (suppliers.contains(product.getSupplier())) {
+                            SupplyOrder supplyOrder = findSupplyOrder(product.getSupplier().getName(), supplyOrders);
+                            Set<SupplyOrderProduct> supplyOrderProducts = supplyOrder.getSupplyOrderProducts();
+
+                            SupplyOrderProduct supplyOrderProduct = new SupplyOrderProduct();
+                            supplyOrderProduct.setSupplyOrder(supplyOrder);
+                            supplyOrderProduct.setProduct(product);
+                            supplyOrderProduct.setPrice(product.getBuyPrice());
+                            supplyOrderProduct.setQty(orderProduct.getQty());
+
+                            supplyOrderProducts.add(supplyOrderProduct);
+
+                        } else {
+                            suppliers.add(product.getSupplier());
+
+                            SupplyOrder supplyOrder = new SupplyOrder();
+                            supplyOrder.setSupplier(product.getSupplier());
+                            supplyOrder.setDeliverBy(LocalDateTime.now());
+                            supplyOrder.setShippingStatus("completed");
+                            Optional<User> optionalUser = userRepository.findByUsername(principal.getName());
+                            optionalUser.ifPresent(supplyOrder::setUser);
+                            supplyOrder.setOrderCode(randomAlphaNumeric(10));
+
+                            Set<SupplyOrderProduct> supplyOrderProducts = new HashSet<>();
+
+                            SupplyOrderProduct supplyOrderProduct = new SupplyOrderProduct();
+                            supplyOrderProduct.setSupplyOrder(supplyOrder);
+                            supplyOrderProduct.setProduct(product);
+                            supplyOrderProduct.setPrice(product.getBuyPrice());
+                            supplyOrderProduct.setQty(orderProduct.getQty());
+
+                            supplyOrderProducts.add(supplyOrderProduct);
+
+                            supplyOrder.setSupplyOrderProducts(supplyOrderProducts);
+
+                            supplyOrders.add(supplyOrder);
+                        }
+                    }
                 }
                 total += orderProductForm.getQty() * orderProductForm.getPrice();
+            }
+
+            if (supplyOrders.size() > 0) {
+                supplyOrderRepository.saveAll(supplyOrders);
+
+                for (SupplyOrder supplyOrder : supplyOrders) {
+                    Supplier supplier = supplyOrder.getSupplier();
+                    supplier.setDealtAt(LocalDateTime.now());
+                    supplierRepository.save(supplier);
+                }
             }
 
             Transaction transaction = new Transaction();
@@ -394,6 +462,7 @@ public class OrderController {
                 orderProduct.setReQty(orderProductForm.getReQty());
                 orderProduct.setPrice(orderProductForm.getPrice());
                 funds += orderProductForm.getReQty() * orderProductForm.getPrice();
+                orderProductRepository.save(orderProduct);
             }
 
             Transaction transaction = new Transaction();
