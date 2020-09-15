@@ -94,6 +94,11 @@
                         <h4 class="mb-1 mt-0">주문 목록</h4>
                     </div>
                 </div>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger">
+                            ${error}
+                    </div>
+                </c:if>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">

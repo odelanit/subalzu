@@ -211,4 +211,20 @@ public class User {
     public void setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
     }
+
+    public boolean isDeliverer() {
+        for (Role role : this.roles) {
+            if (role.getName().equalsIgnoreCase("deliverer"))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isSalesman() {
+        for (Role role : this.roles) {
+            if (role.getName().equalsIgnoreCase("sales"))
+                return true;
+        }
+        return false;
+    }
 }

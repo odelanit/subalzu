@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import com.pando.subalzu.form.*;
 import com.pando.subalzu.model.*;
 import com.pando.subalzu.repository.*;
+import com.pando.subalzu.service.UserDetailsImpl;
+import com.pando.subalzu.service.UserDetailsServiceImpl;
 import com.pando.subalzu.specification.OrderSpecification;
 import com.pando.subalzu.specification.SearchCriteria;
 import com.pando.subalzu.validator.OrderValidator;
@@ -17,10 +19,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -75,7 +80,13 @@ public class OrderController {
     private PriceGroupRepository priceGroupRepository;
 
     @Autowired
+    private SupplyOrderProductRepository supplyOrderProductRepository;
+
+    @Autowired
     private CompanyConfigRepository configRepository;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @ModelAttribute("shops")
     List<Shop> shopList() {
@@ -267,9 +278,14 @@ public class OrderController {
             }
 
             if (supplyOrders.size() > 0) {
-                supplyOrderRepository.saveAll(supplyOrders);
-
                 for (SupplyOrder supplyOrder : supplyOrders) {
+                    supplyOrderRepository.save(supplyOrder);
+                    Set<SupplyOrderProduct> supplyOrderProducts = supplyOrder.getSupplyOrderProducts();
+                    for (SupplyOrderProduct supplyOrderProduct : supplyOrderProducts) {
+                        supplyOrderProduct.setSupplyOrder(supplyOrder);
+                        supplyOrderProductRepository.save(supplyOrderProduct);
+                    }
+
                     Supplier supplier = supplyOrder.getSupplier();
                     supplier.setDealtAt(LocalDateTime.now());
                     supplierRepository.save(supplier);
@@ -365,9 +381,31 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{id}")
-    public String show(@PathVariable Long id, Model model) {
+    public String show(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
+        String referer = request.getHeader("Referer");
         if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(principal.getName());
+            if (userDetails.hasPermission("in_charge")) {
+                User user = userDetails.getUser();
+                if (user.isDeliverer()) {
+                    Set<Order> deliverOrders = user.getDeliverOrders();
+                    if (!deliverOrders.contains(order)) {
+                        redirectAttributes.addFlashAttribute("error", "해당 권한이 없습니다.");
+                        return "redirect:" + referer;
+                    }
+                }
+                if (user.isSalesman()) {
+                    Set<Order> salesOrders = user.getSalesOrders();
+                    if (!salesOrders.contains(order)) {
+                        redirectAttributes.addFlashAttribute("error", "해당 권한이 없습니다.");
+                        return "redirect:" + referer;
+                    }
+                }
+            }
+
             return "order_edit_vue";
         }
         return "redirect:/orders";

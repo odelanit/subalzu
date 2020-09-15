@@ -89,6 +89,11 @@
                         <h4 class="mb-1 mt-0">상품별 주문 목록</h4>
                     </div>
                 </div>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger">
+                            ${error}
+                    </div>
+                </c:if>
                 <div class="row">
                     <div class="col">
                         <div class="card">
@@ -197,6 +202,7 @@
                                                     </form:select>
                                                     <form:select class="form-control form-control-sm mr-2 w-15" path="subcategory">
                                                         <form:option value="" label="2차 카테고리" />
+                                                        <form:options items="${subcategories}" itemValue="id" itemLabel="name" />
                                                     </form:select>
                                                 </div>
                                             </td>

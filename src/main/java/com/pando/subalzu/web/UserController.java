@@ -152,6 +152,7 @@ public class UserController {
             } else {
                 userForm.setPassword(dbPassword);
             }
+            userForm.setEnabled(true);
             userRepository.save(userForm);
             redirectAttributes.addFlashAttribute("message", "User Updated");
         }

@@ -180,9 +180,7 @@ public class Order {
     public double getFunds() {
         double funds = 0;
         for (OrderProduct orderProduct : this.orderProducts) {
-            if (orderProduct.reQty == 0) {
-                funds += orderProduct.qty * orderProduct.price;
-            }
+            funds += (orderProduct.qty - orderProduct.reQty) * orderProduct.price;
         }
         return funds;
     }
