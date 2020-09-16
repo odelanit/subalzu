@@ -197,7 +197,7 @@
                                             <td>${order.orderCode}</td>
                                             <td>${order.shop.name}</td>
                                             <td>${order.totalQty}</td>
-                                            <td><fmt:formatNumber value="${order.funds}" type="number" /></td>
+                                            <td><fmt:formatNumber value="${order.orderFunds}" type="number" /></td>
                                             <td><fmt:formatNumber value="${order.reQty}" type="number" /></td>
                                             <td><fmt:formatNumber value="${order.reFunds}" type="number" /></td>
                                             <td>

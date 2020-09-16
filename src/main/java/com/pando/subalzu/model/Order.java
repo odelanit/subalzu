@@ -217,6 +217,14 @@ public class Order {
         this.releaseCancelMemo = releaseCancelMemo;
     }
 
+    public double getOrderFunds() {
+        double funds = 0;
+        for (OrderProduct orderProduct : this.orderProducts) {
+            funds += orderProduct.qty * orderProduct.price;
+        }
+        return funds;
+    }
+
     public double getReFunds() {
         double refunds = 0.0;
         for (OrderProduct orderProduct : this.orderProducts) {

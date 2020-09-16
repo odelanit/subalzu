@@ -287,9 +287,9 @@
                                                     <form:password path="password" class="form-control ${status.error ? 'is-invalid' : ''}"
                                                                    placeholder="6자 이상 영문, 숫자 조합" />
                                                     <small class="form-text text-primary">매입처 최초 로그인을 위한 임시 비밀번호를 설정해 주세요.</small>
-<%--                                                    <div class="invalid-feedback">--%>
-<%--                                                        <form:errors path="password"/>--%>
-<%--                                                    </div>--%>
+                                                    <div class="invalid-feedback">
+                                                        <form:errors path="password"/>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </spring:bind>
@@ -606,6 +606,15 @@
             $('#saveButton').attr('disabled', true);
         }
     })
+
+    $('#password').on('keyup', function () {
+        if ($(this).val()) {
+            $(this).removeClass('is-invalid');
+            $('#saveButton').attr('disabled', false);
+        } else {
+            $('#saveButton').attr('disabled', true);
+        }
+    });
 
     $('#passwordConfirm').on('keyup', function () {
         if ($(this).val()) {
